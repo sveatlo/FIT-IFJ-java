@@ -13,6 +13,7 @@ FILE* parse_parameters(int, char**);
 int main(int argc, char** argv) {
     set_error(ERR_NONE);
 
+    //should return
     FILE* f = parse_parameters(argc, argv);
 
     if(get_error()->type) {

@@ -1,7 +1,7 @@
 /**
- *  @defgroup Error Error
- *  Module containing functions for managing errors
-*/
+ *  @defgroup Error
+ *  @brief Module containing functions for managing errors
+ */
 
 #ifndef ERROR_H
 #define ERROR_H
@@ -13,15 +13,19 @@
  *  @ingroup Error
  */
 typedef enum {
-        ERR_NONE, ///<No error
-        ERR_UNKNOWN, ///<Unknown error
+    //general errors
+    ERR_NONE, ///<No error
+    ERR_UNKNOWN, ///<Unknown error
 
-        ERR_PARAMS, ///<Bad program parameters
-        ERR_CANNOT_OPEN_FILE ///<Cannot open input file
+    //interpret start errors
+    ERR_PARAMS, ///<Bad program parameters
+    ERR_CANNOT_OPEN_FILE ///<Cannot open input file
 } ErrorType;
 
 /**
- *  Structure describing an Error
+ *  @brief Structure describing an Error
+ *
+ *  This struct is used to save all the informations needed to specify an error
  *
  *  @ingroup Error
  */
@@ -44,7 +48,22 @@ typedef struct {
  */
 extern Error last_error;
 
+/**
+ *  Macro used for setting error
+ *
+ *  A macro is used due to the possibility to get the filename, line and function in which the error occured
+ *
+ *  @ingroup Error
+ */
 #define set_error(err_type) set_error_fn(err_type, __FILE__, __LINE__, __func__)
+
+/**
+ *  Actual function setting error
+ *
+ *  Called from #set_error macro. Sets type, filename, line no. and function name in which the error occured
+ *
+ *  @ingroup Error
+ */
 static inline void set_error_fn(ErrorType type, const char* filename, int line, const char* function) {
         last_error.type = type;
         last_error.filename = filename;
