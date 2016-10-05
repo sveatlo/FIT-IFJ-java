@@ -5,11 +5,13 @@
 
 Error last_error;
 char err_strings[255][255] = {
-    "ziadna chyba",
-    "neznama chyba",
+    "No error",
+    "Unknown error",
 
-    "chyba parametrov",
-    "chyba pri otvarani suboru"
+    "Bad parameters",
+    "Cannot open input file",
+
+    "Lexical error"
 };
 
 Error* get_error () {
