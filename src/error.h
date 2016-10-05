@@ -35,9 +35,9 @@ typedef struct {
          *  @see ErrorType
          */
         ErrorType type;
-        const char* filename; ///<filename where the error took place
+        const char *filename; ///<filename where the error took place
         int line; ///<line no. where the error took place
-        const char* function; ///<name of the function where the error took place
+        const char *function; ///<name of the function where the error took place
 } Error;
 
 

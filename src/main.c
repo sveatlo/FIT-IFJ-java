@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     set_error(ERR_NONE);
 
     //should return
-    FILE* f = parse_parameters(argc, argv);
+    FILE *f = parse_parameters(argc, argv);
 
     if(get_error()->type) {
         print_error();
@@ -32,7 +32,7 @@ FILE* parse_parameters(int argc, char** argv) {
         return NULL;
     }
 
-    FILE* f = fopen(argv[1], "r");
+    FILE *f = fopen(argv[1], "r");
     if(f == NULL) {
         set_error(ERR_CANNOT_OPEN_FILE);
         return NULL;
