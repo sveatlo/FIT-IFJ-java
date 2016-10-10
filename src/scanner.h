@@ -21,6 +21,8 @@ typedef enum {
     SS_EMPTY,
     SS_LEX_ERROR,
 
+    SS_ALNUM,
+    SS_AND,
     SS_SLASH,
     SS_COMMENT_LINE,
     SS_COMMENT_BLOCK,

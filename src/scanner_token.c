@@ -16,43 +16,43 @@ void token_delete (ScannerToken *token) {
 char* token_to_string (ScannerToken *token) {
     switch (token->type) {
     case STT_EMPTY:
-        return "<empty token>";
+        return "<STT_EMPTY>";
     case STT_COMMENT:
-        return "<comment (inline or block)>";
+        return "<STT_COMMENT>";
     case STT_IDENT:
-        return "<identificator>";
+        return "<STT_IDENT>";
     case STT_KEYWORD:
-        return "<one of keywords>";
+        return "<STT_KEYWORD>";
     case STT_PLUS:
-        return "<`+`>";
+        return "<STT_PLUS>";
     case STT_MINUS:
-        return "<`-`>";
+        return "<STT_MINUS>";
     case STT_MULTIPLY:
-        return "<`*`>";
+        return "<STT_MULTIPLY>";
     case STT_DIVIDE:
-        return "</>";
+        return "<STT_DIVIDE>";
     case STT_EQUALS:
-        return "<=>";
+        return "<STT_EQUALS>";
     case STT_LESS:
-        return "<<>";
+        return "<STT_LESS>";
     case STT_LESS_EQUALS:
-        return "<<=>";
+        return "<STT_LESS_EQUALS>";
     case STT_GREATER:
-        return "<>>";
+        return "<STT_GREATER>";
     case STT_GREATER_EQUALS:
-        return "<>=>";
+        return "<STT_GREATER_EQUALS>";
     case STT_AND:
-        return "<&&>";
+        return "<STT_AND>";
     case STT_OR:
-        return "<||>";
+        return "<STT_OR>";
     case STT_LEFT_PARENTHESE:
-        return "<(>";
+        return "<STT_LEFT_PARENTHESE>";
     case STT_RIGHT_PARENTHESE:
-        return "<)>";
+        return "<STT_RIGHT_PARENTHESE>";
     case STT_LEFT_BRACE:
-        return "<{>";
+        return "<STT_LEFT_BRACE>";
     case STT_RIGHT_BRACE:
-        return "<}>";
+        return "<STT_RIGHT_BRACE>";
     default:
         return "<unknown>";
     }

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
 
@@ -13,10 +14,12 @@ List *list_init () {
 
 void list_dispose (List *list) {
     ListItem *tmp;
-    while (list->first != NULL){
-        tmp = list->first;
-        list->first = list->first->next;
-        // uvolnime celou polozku
+
+    list_activate_first(list);
+    while(list->active != NULL) {
+        tmp = list->active;
+        list_activate_next(list);
+        //delete token, then delete the item
         token_delete(tmp->data.token);
         free(tmp);
     }
@@ -26,6 +29,11 @@ void list_dispose (List *list) {
 
 void list_insert_first (List *list, ListItemData data) {
     ListItem *list_item = (ListItem *)malloc(sizeof(ListItem));
+    if(list_item == NULL) {
+        //malloc error
+        //TODO: throw exception (or some C equivalent)
+    }
+
     list_item->data = data;
     list_item->next = NULL;
     list_item->prev = NULL;

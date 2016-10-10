@@ -29,7 +29,6 @@ int main(int argc, char** argv) {
     printf("\n");
 
     list_dispose(token_list);
-    fclose(f);
 
     // List *token_list = list_init();
     //
@@ -43,13 +42,23 @@ int main(int argc, char** argv) {
     // ListItemData data2;
     // data2.token = token2;
     //
-    // list_insert_first(token_list, data1);
-    // list_insert_first(token_list, data2);
+    // ScannerToken *token3 = token_init();
+    // token3->type = STT_LEFT_PARENTHESE;
+    // ListItemData data3;
+    // data3.token = token3;
     //
-    // printf("type of token of last item in token_list %d\n", token_list->last->data.token->type);
+    // list_insert_last(token_list, data1);
+    // list_insert_last(token_list, data2);
+    // list_insert_last(token_list, data3);
+    //
+    // list_activate_first(token_list);
+    // while(token_list->active != NULL) {
+    //     printf("%s ", token_to_string(token_list->active->data.token));
+    //     list_activate_next(token_list);
+    // }
 
 
-
+    fclose(f);
     return 0;
 }
 
