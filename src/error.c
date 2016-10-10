@@ -9,7 +9,9 @@ char err_strings[255][255] = {
     "Unknown error",
 
     "Bad parameters",
-    "Cannot open input file"
+    "Cannot open input file",
+
+    "Lexical error"
 };
 
 Error* get_error () {

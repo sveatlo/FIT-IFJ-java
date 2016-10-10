@@ -19,7 +19,10 @@ typedef enum {
 
     //interpret start errors
     ERR_PARAMS, ///<Bad program parameters
-    ERR_CANNOT_OPEN_FILE ///<Cannot open input file
+    ERR_CANNOT_OPEN_FILE, ///<Cannot open input file,
+
+    //scanner errors
+    ERR_LEX
 } ErrorType;
 
 /**
