@@ -81,6 +81,8 @@ ScannerToken* get_next_token(FILE *f) {
                     //is space => end of identificator => parse
                 }
 
+                break;
+
             case SS_AND:
                 if(c == '&') {
                     token->type = STT_AND;
@@ -140,6 +142,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_LEX_ERROR:
+                ungetc(c, f);
             default:
                 set_error(ERR_LEX);
                 token->type = STT_EMPTY;

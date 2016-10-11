@@ -32,8 +32,8 @@ typedef enum {
     STT_RIGHT_PARENTHESE, ///< )
     STT_LEFT_BRACE, ///< {
     STT_RIGHT_BRACE, ///< }
-    // STT_LEFT_CHEVRON, ///< (
-    // STT_RIGHT_CHEVRON, ///< )
+    // STT_LEFT_CHEVRON, ///< <
+    // STT_RIGHT_CHEVRON, ///< >
 } ScannerTokenType;
 
 /**
@@ -53,7 +53,7 @@ typedef union {
  */
 typedef struct {
     ScannerTokenType type; ///< type of the ScannerToken defined in #ScannerTokenType
-    // ScannerTokenData data; ///< data for the ScannerToken
+    ScannerTokenData data; ///< data for the ScannerToken
 } ScannerToken;
 
 /**
