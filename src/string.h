@@ -62,6 +62,7 @@ int str_append(string *s1, char c);
 
 /**
  *  Copy the content of <tt>s1</tt> to <tt>s2</tt>
+ *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
 int str_copy_string(string *s1, string *s2);
@@ -70,6 +71,7 @@ int str_copy_string(string *s1, string *s2);
  *  Compares two strings
  *
  *  Implementation via strcmp
+ *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
 int str_cmp(string *s1, string *s2);
