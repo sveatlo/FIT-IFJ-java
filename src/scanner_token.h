@@ -7,6 +7,8 @@
 #ifndef SCANNER_TOKEN_H
 #define SCANNER_TOKEN_H
 
+#include "string.h"
+
 /**
  *  Enumeration of all token types used in ScannerToken
  *
@@ -17,6 +19,8 @@ typedef enum {
     STT_COMMENT, ///< comment (inline or block)
     STT_IDENT, ///< identificator
     STT_KEYWORD, ///< one of keywords
+    STT_INT,  ///< integer number
+    STT_DOUBLE, ///< double number
     STT_PLUS,   ///< `+`
     STT_MINUS, ///< `-`
     STT_MULTIPLY, ///< `*`
@@ -41,8 +45,18 @@ typedef enum {
  *
  *  @ingroup ScannerToken
  */
+
+typedef struct ident {
+    string class;
+    string name;
+  } Ident;
+
 typedef union {
     //TODO: add some data fields
+    int i;
+    double d;
+    string str;
+    Ident* id;
 } ScannerTokenData;
 
 

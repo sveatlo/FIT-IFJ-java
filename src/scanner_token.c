@@ -4,11 +4,13 @@
 ScannerToken* token_init () {
     ScannerToken *token = (ScannerToken *) malloc(sizeof(ScannerToken));
     token->type = STT_EMPTY;
+    token->data.id = (Ident*) malloc(sizeof(Ident));
 
     return token;
 }
 
 void token_delete (ScannerToken *token) {
+    free(token->data.id);
     free(token);
 }
 
@@ -23,6 +25,10 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_IDENT>";
     case STT_KEYWORD:
         return "<STT_KEYWORD>";
+    case STT_DOUBLE:
+        return "<STT_DOUBLE>";
+    case STT_INT:
+        return "<STT_INT>";
     case STT_PLUS:
         return "<STT_PLUS>";
     case STT_MINUS:

@@ -10,7 +10,7 @@ List *scan_file(FILE *f, List *token_list) {
         };
         list_insert_last(token_list, list_item_data);
 
-        if(token->type == STT_EMPTY) {
+        if (token->type == STT_EMPTY) {
             break;
         }
     }
@@ -38,9 +38,13 @@ ScannerToken* get_next_token(FILE *f) {
                 if (isspace(c)) {
                     //ignore space
                     current_state = SS_EMPTY;
-                } else if(isalpha(c)) {
+                } else if (isalpha(c)) {
                     //keyword or id
                     current_state = SS_ALNUM;
+                } else if ((c == '_') || (c == '$')) {
+                    current_state = SS_IDENT;
+                } else if (isdigit(c)) {
+                    current_state = SS_NUMBER;
                 } else if (c == '(') {
                     token->type = STT_LEFT_PARENTHESE;
                     return token;
@@ -75,7 +79,7 @@ ScannerToken* get_next_token(FILE *f) {
             case SS_ALNUM:
                 //is keyword or identificator
                 //load whole string
-                if(!isspace(c)) {
+                if (!isspace(c)) {
                     //not space => append
                 } else {
                     //is space => end of identificator => parse
@@ -83,8 +87,126 @@ ScannerToken* get_next_token(FILE *f) {
 
                 break;
 
+            case SS_NUMBER:
+                //is keyword or identificator
+                //load whole string
+                if (isdigit(c)) {
+                    //is digit => append
+                    current_state = SS_NUMBER;
+                } else if ((c == 'e') || (c == 'E')) {
+                    //is exponent => append
+                    current_state = SS_DOUBLE_EX_1;
+                } else if (c == '.') {
+                    //is decimal mark => append
+                    current_state = SS_DOUBLE_DEC_1;
+                } else if (isspace(c)) {
+                    //is space => integer number
+                    token->type = STT_INT;
+                    return token;
+                } else {
+                    //lex error
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_DOUBLE_EX_1:
+                //is double with exponent
+                // posible chars
+                if ((c == '-') || (c == '+')) {
+                    // +,- => must be append number
+                    current_state = SS_DOUBLE_EX_2;
+                } else if (isdigit(c)) {
+                    // is digit => append
+                    current_state = SS_DOUBLE_EX_3;
+                } else {
+                    //is space => error
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_DOUBLE_EX_2:
+                //is double with exponent with +,-
+                // must be number
+                if (isdigit(c)) {
+                    // is digit => append
+                    current_state = SS_DOUBLE_EX_3;
+                } else {
+                    //is something else => error
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_DOUBLE_EX_3:
+                //is double => must be digit or space
+                // is number
+                if (isdigit(c)) {
+                    // is digit => append
+                    current_state = SS_DOUBLE_EX_3;
+                } else if (isspace(c)) {
+                    // is space
+                    token->type = STT_DOUBLE;
+                    return token;
+                } else {
+                    //is something else => error
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+              case SS_DOUBLE_DEC_1:
+                 //is double => must be only digit
+                 // is number
+                 if (isdigit(c)) {
+                     // is digit => append
+                     current_state = SS_DOUBLE_DEC_2;
+                 } else {
+                     //is something else => error
+                     current_state = SS_LEX_ERROR;
+                 }
+
+                 break;
+
+             case SS_DOUBLE_DEC_2:
+                //is double => must be digit or exponent
+                // is number
+                if (isdigit(c)) {
+                    // is digit => append
+                    current_state = SS_DOUBLE_DEC_2;
+                } else if ((c == 'e') || (c == 'E')) {
+                    // is exponent
+                    current_state = SS_DOUBLE_EX_1;
+                } else if (isspace(c)){
+                    // is space
+                    token->type = STT_DOUBLE;
+                    return token;
+                } else {
+                    //is something else => error
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+
+            case SS_IDENT:
+                //is identificator
+                //load whole string
+                if (!isspace(c)) {
+                    //not space => append
+                    current_state = SS_IDENT;
+                } else {
+                    //is space => end of identificator => parse
+                    token->type = STT_IDENT;
+                    return token;
+                }
+
+                break;
+
+
             case SS_AND:
-                if(c == '&') {
+                if (c == '&') {
                     token->type = STT_AND;
                     return token;
                 } else {
@@ -95,7 +217,7 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_SLASH:
                 //after SS_EMPTY we got a slash char => this could be a comment
-                if(c == '/') {
+                if (c == '/') {
                     //definitely inline comment
                     current_state = SS_COMMENT_LINE;
                 } else if (c == '*') {
@@ -108,7 +230,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_COMMENT_LINE:
-                if(c == '\n'){
+                if (c == '\n'){
                     //end of line = end of comment
                     token->type = STT_COMMENT;
                     return token;
@@ -120,7 +242,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_COMMENT_BLOCK:
-                if(c == '*'){
+                if (c == '*'){
                     //could be end of block comment
                     current_state = SS_COMMENT_BLOCK_END;
                 } else {
@@ -131,7 +253,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_COMMENT_BLOCK_END:
-                if(c == '/') {
+                if (c == '/') {
                     token->type = STT_COMMENT;
                     return token;
                 } else {
