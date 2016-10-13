@@ -9,6 +9,7 @@ char err_strings[255][255] = {
     "Unknown error",
 
     "Bad parameters",
+    "Memory allocation error",
     "Cannot open input file",
 
     "Lexical error"
