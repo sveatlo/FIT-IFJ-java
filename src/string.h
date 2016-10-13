@@ -30,7 +30,7 @@ typedef struct {
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-static int str_init_n(string *s, int n);
+string* str_init_n(int n);
 
 /**
  *  Wrapper for str_init_n
@@ -40,7 +40,14 @@ static int str_init_n(string *s, int n);
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-int str_init(string *s);
+string* str_init();
+
+/**
+ *  Used for all resizing operations
+ *
+ *  @ingroup String
+ */
+void _str_resize_raw(string *s, int n);
 
 /**
  *  Frees the memory allocated for the string structure
@@ -58,14 +65,14 @@ void str_clear(string *s);
  *  Appends char to string
  *  @ingroup String
  */
-int str_append(string *s1, char c);
+void str_append(string *s1, char c);
 
 /**
  *  Copy the content of <tt>s1</tt> to <tt>s2</tt>
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-int str_copy_string(string *s1, string *s2);
+void str_copy_string(string *s1, string *s2);
 
 /**
  *  Compares two strings

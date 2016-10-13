@@ -5,6 +5,8 @@
 #include "scanner.h"
 #include "scanner_token.h"
 
+#include "string.h"
+
 /**
  *  @brief parses parameters
  */
@@ -16,19 +18,17 @@ FILE* parse_parameters(int, char**);
 int main(int argc, char** argv) {
     set_error(ERR_NONE);
 
-    FILE *f = parse_parameters(argc, argv);
-    List *token_list = list_init();
-
-    token_list = scan_file(f, token_list);
-
-    list_activate_first(token_list);
-    while(token_list->active != NULL) {
-        printf("%s ", token_to_string(token_list->active->data.token));
-        list_activate_next(token_list);
-    }
-    printf("\n");
-
-    list_dispose(token_list);
+    // string* str0 = str_init();
+    // str_append(str0, 'a');
+    // str_append(str0, 'b');
+    // str_append(str0, 'c');
+    //
+    // // printf("%s\n", str_get_str(str0));
+    // // str_clear(str0);
+    // // printf("%s\n", str0->str);
+    // printf("%d\n", str_cmp_const(str0, "abc\0"));
+    //
+    // str_free(str0);
 
     // List *token_list = list_init();
     //
@@ -56,6 +56,21 @@ int main(int argc, char** argv) {
     //     printf("%s ", token_to_string(token_list->active->data.token));
     //     list_activate_next(token_list);
     // }
+
+
+    FILE *f = parse_parameters(argc, argv);
+    List *token_list = list_init();
+
+    token_list = scan_file(f, token_list);
+
+    list_activate_first(token_list);
+    while(token_list->active != NULL) {
+        printf("%s ", token_to_string(token_list->active->data.token));
+        list_activate_next(token_list);
+    }
+    printf("\n");
+
+    list_dispose(token_list);
 
 
     fclose(f);
