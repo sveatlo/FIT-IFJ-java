@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "scanner_token.h"
+#include "string.h"
 
 List *scan_file(FILE *f, List *token_list) {
     while (42) {
@@ -26,6 +27,8 @@ ScannerToken* get_next_token(FILE *f) {
     //initialize token we will return
     ScannerToken *token = token_init();
 
+    string* token_data_str = str_init();
+
     while (69) {
         //get next char from file
         if(current_state != SS_LEX_ERROR) {
@@ -38,13 +41,14 @@ ScannerToken* get_next_token(FILE *f) {
                 if (isspace(c)) {
                     //ignore space
                     current_state = SS_EMPTY;
-                } else if (isalpha(c)) {
+                } else if (isalpha(c) || c == '_' || c == '$') {
                     //keyword or id
-                    current_state = SS_ALNUM;
-                } else if ((c == '_') || (c == '$')) {
-                    current_state = SS_IDENT;
+                    current_state = SS_KEYWORD_IDENT;
                 } else if (isdigit(c)) {
                     current_state = SS_NUMBER;
+                } else if (c == '=') {
+                    token->type = STT_EQUALS;
+                    return token;
                 } else if (c == '(') {
                     token->type = STT_LEFT_PARENTHESE;
                     return token;
@@ -76,13 +80,17 @@ ScannerToken* get_next_token(FILE *f) {
 
                 break;
 
-            case SS_ALNUM:
+            case SS_KEYWORD_IDENT:
                 //is keyword or identificator
                 //load whole string
                 if (!isspace(c)) {
                     //not space => append
+                    str_append(token_data_str, c);
                 } else {
                     //is space => end of identificator => parse
+                    token->type = STT_IDENT;
+                    token->data.str = token_data_str;
+                    return token;
                 }
 
                 break;
@@ -185,21 +193,6 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     //is something else => error
                     current_state = SS_LEX_ERROR;
-                }
-
-                break;
-
-
-            case SS_IDENT:
-                //is identificator
-                //load whole string
-                if (!isspace(c)) {
-                    //not space => append
-                    current_state = SS_IDENT;
-                } else {
-                    //is space => end of identificator => parse
-                    token->type = STT_IDENT;
-                    return token;
                 }
 
                 break;

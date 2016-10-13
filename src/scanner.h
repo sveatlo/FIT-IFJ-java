@@ -21,7 +21,7 @@ typedef enum {
     SS_EMPTY,
     SS_LEX_ERROR,
     SS_IDENT,
-    SS_ALNUM,
+    SS_KEYWORD_IDENT,
     SS_NUMBER,
     SS_DOUBLE_EX_1,
     SS_DOUBLE_EX_2,

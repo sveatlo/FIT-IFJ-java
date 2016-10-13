@@ -21,6 +21,7 @@ typedef enum {
     STT_KEYWORD, ///< one of keywords
     STT_INT,  ///< integer number
     STT_DOUBLE, ///< double number
+    STT_STRING, ///< string
     STT_PLUS,   ///< `+`
     STT_MINUS, ///< `-`
     STT_MULTIPLY, ///< `*`
@@ -47,15 +48,15 @@ typedef enum {
  */
 
 typedef struct ident {
-    string class;
-    string name;
+    string* class;
+    string* name;
   } Ident;
 
 typedef union {
     //TODO: add some data fields
     int i;
     double d;
-    string str;
+    string* str;
     Ident* id;
 } ScannerTokenData;
 
