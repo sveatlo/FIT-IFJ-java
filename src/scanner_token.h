@@ -47,10 +47,10 @@ typedef enum {
  *  @ingroup ScannerToken
  */
 
-typedef struct ident {
+typedef struct {
     string* class;
     string* name;
-  } Ident;
+} Ident;
 
 typedef union {
     //TODO: add some data fields

@@ -28,6 +28,7 @@ typedef enum {
     SS_DOUBLE_EX_3,
     SS_DOUBLE_DEC_1,
     SS_DOUBLE_DEC_2,
+    SS_STRING,
     SS_AND,
     SS_SLASH,
     SS_COMMENT_LINE,

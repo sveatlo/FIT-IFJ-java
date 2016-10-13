@@ -26,7 +26,7 @@ ScannerToken* get_next_token(FILE *f) {
     int c;
     //initialize token we will return
     ScannerToken *token = token_init();
-
+    //initialize string
     string* token_data_str = str_init();
 
     while (69) {
@@ -44,11 +44,16 @@ ScannerToken* get_next_token(FILE *f) {
                 } else if (isalpha(c) || c == '_' || c == '$') {
                     //keyword or id
                     current_state = SS_KEYWORD_IDENT;
+                    str_append(token_data_str, c);
                 } else if (isdigit(c)) {
+                    str_append(token_data_str, c);
                     current_state = SS_NUMBER;
                 } else if (c == '=') {
                     token->type = STT_EQUALS;
                     return token;
+                } else if (c == '"') {
+                    str_append(token_data_str, c);
+                    current_state = SS_STRING;
                 } else if (c == '(') {
                     token->type = STT_LEFT_PARENTHESE;
                     return token;
@@ -96,19 +101,23 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER:
-                //is keyword or identificator
+                //is number
                 //load whole string
                 if (isdigit(c)) {
                     //is digit => append
+                    str_append(token_data_str, c);
                     current_state = SS_NUMBER;
                 } else if ((c == 'e') || (c == 'E')) {
                     //is exponent => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_1;
                 } else if (c == '.') {
                     //is decimal mark => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_DEC_1;
                 } else if (isspace(c)) {
                     //is space => integer number
+                    token->data.i = atoi(str_get_str(token_data_str));
                     token->type = STT_INT;
                     return token;
                 } else {
@@ -123,9 +132,11 @@ ScannerToken* get_next_token(FILE *f) {
                 // posible chars
                 if ((c == '-') || (c == '+')) {
                     // +,- => must be append number
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_2;
                 } else if (isdigit(c)) {
                     // is digit => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is space => error
@@ -139,6 +150,7 @@ ScannerToken* get_next_token(FILE *f) {
                 // must be number
                 if (isdigit(c)) {
                     // is digit => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is something else => error
@@ -152,9 +164,11 @@ ScannerToken* get_next_token(FILE *f) {
                 // is number
                 if (isdigit(c)) {
                     // is digit => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_3;
                 } else if (isspace(c)) {
                     // is space
+                    token->data.d = atof(str_get_str(token_data_str));
                     token->type = STT_DOUBLE;
                     return token;
                 } else {
@@ -169,6 +183,7 @@ ScannerToken* get_next_token(FILE *f) {
                  // is number
                  if (isdigit(c)) {
                      // is digit => append
+                     str_append(token_data_str, c);
                      current_state = SS_DOUBLE_DEC_2;
                  } else {
                      //is something else => error
@@ -182,17 +197,52 @@ ScannerToken* get_next_token(FILE *f) {
                 // is number
                 if (isdigit(c)) {
                     // is digit => append
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_DEC_2;
                 } else if ((c == 'e') || (c == 'E')) {
                     // is exponent
+                    str_append(token_data_str, c);
                     current_state = SS_DOUBLE_EX_1;
                 } else if (isspace(c)){
                     // is space
+                    token->data.d = atof(str_get_str(token_data_str));
                     token->type = STT_DOUBLE;
                     return token;
                 } else {
                     //is something else => error
                     current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_IDENT:
+                //is identificator
+                //load whole string
+                if (!isspace(c)) {
+                    //not space => append
+                    str_append(token_data_str, c);
+                    current_state = SS_IDENT;
+                } else {
+                    //is space => end of identificator => parse
+                    token->data.str = token_data_str;
+                    token->type = STT_IDENT;
+                    return token;
+                }
+
+                break;
+
+            case SS_STRING:
+                //is string
+                //load whole read char !='"'
+                if (c != '"') {
+                    //not '"' => append
+                    str_append(token_data_str, c);
+                    current_state = SS_STRING;
+                } else {
+                    //is '"' => end of string => parse
+                    token->data.str = token_data_str;
+                    token->type = STT_STRING;
+                    return token;
                 }
 
                 break;
@@ -258,6 +308,7 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_LEX_ERROR:
                 ungetc(c, f);
+                str_free(token_data_str);
             default:
                 set_error(ERR_LEX);
                 token->type = STT_EMPTY;

@@ -27,6 +27,8 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_KEYWORD>";
     case STT_DOUBLE:
         return "<STT_DOUBLE>";
+    case STT_STRING:
+        return "<STT_STRING>";
     case STT_INT:
         return "<STT_INT>";
     case STT_PLUS:
