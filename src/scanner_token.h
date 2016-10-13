@@ -21,6 +21,7 @@ typedef enum {
     STT_KEYWORD, ///< one of keywords
     STT_INT,  ///< integer number
     STT_DOUBLE, ///< double number
+    STT_STRING, ///< string text
     STT_PLUS,   ///< `+`
     STT_MINUS, ///< `-`
     STT_MULTIPLY, ///< `*`

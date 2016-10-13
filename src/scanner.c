@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "scanner.h"
 #include "scanner_token.h"
+#include "string.h"
 
 List *scan_file(FILE *f, List *token_list) {
     while (42) {
@@ -25,6 +26,8 @@ ScannerToken* get_next_token(FILE *f) {
     int c;
     //initialize token we will return
     ScannerToken *token = token_init();
+    //initialize string
+    string *str = str_init();
 
     while (69) {
         //get next char from file
@@ -40,11 +43,17 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_EMPTY;
                 } else if (isalpha(c)) {
                     //keyword or id
+                    str = str_append(c);
                     current_state = SS_ALNUM;
                 } else if ((c == '_') || (c == '$')) {
+                    str = str_append(c);
                     current_state = SS_IDENT;
                 } else if (isdigit(c)) {
+                    str = str_append(c);
                     current_state = SS_NUMBER;
+                } else if (c == '"') {
+                    str = str_append(c);
+                    current_state = SS_STRING;
                 } else if (c == '(') {
                     token->type = STT_LEFT_PARENTHESE;
                     return token;
@@ -88,19 +97,23 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER:
-                //is keyword or identificator
+                //is number
                 //load whole string
                 if (isdigit(c)) {
                     //is digit => append
+                    str = str_append(c);
                     current_state = SS_NUMBER;
                 } else if ((c == 'e') || (c == 'E')) {
                     //is exponent => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_1;
                 } else if (c == '.') {
                     //is decimal mark => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_DEC_1;
                 } else if (isspace(c)) {
                     //is space => integer number
+                    token->data = atoi(str);
                     token->type = STT_INT;
                     return token;
                 } else {
@@ -115,9 +128,11 @@ ScannerToken* get_next_token(FILE *f) {
                 // posible chars
                 if ((c == '-') || (c == '+')) {
                     // +,- => must be append number
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_2;
                 } else if (isdigit(c)) {
                     // is digit => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is space => error
@@ -131,6 +146,7 @@ ScannerToken* get_next_token(FILE *f) {
                 // must be number
                 if (isdigit(c)) {
                     // is digit => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is something else => error
@@ -144,9 +160,11 @@ ScannerToken* get_next_token(FILE *f) {
                 // is number
                 if (isdigit(c)) {
                     // is digit => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_3;
                 } else if (isspace(c)) {
                     // is space
+                    token->data = atof(str);
                     token->type = STT_DOUBLE;
                     return token;
                 } else {
@@ -161,6 +179,7 @@ ScannerToken* get_next_token(FILE *f) {
                  // is number
                  if (isdigit(c)) {
                      // is digit => append
+                     str = str_append(c);
                      current_state = SS_DOUBLE_DEC_2;
                  } else {
                      //is something else => error
@@ -174,12 +193,15 @@ ScannerToken* get_next_token(FILE *f) {
                 // is number
                 if (isdigit(c)) {
                     // is digit => append
+                    str = str_append(c);
                     current_state = SS_DOUBLE_DEC_2;
                 } else if ((c == 'e') || (c == 'E')) {
                     // is exponent
+                    str = str_append(c);
                     current_state = SS_DOUBLE_EX_1;
                 } else if (isspace(c)){
                     // is space
+                    token->data = atof(str);
                     token->type = STT_DOUBLE;
                     return token;
                 } else {
@@ -195,10 +217,28 @@ ScannerToken* get_next_token(FILE *f) {
                 //load whole string
                 if (!isspace(c)) {
                     //not space => append
+                    str = str_append(c);
                     current_state = SS_IDENT;
                 } else {
                     //is space => end of identificator => parse
+                    token->data = str;
                     token->type = STT_IDENT;
+                    return token;
+                }
+
+                break;
+
+            case SS_STRING:
+                //is string
+                //load whole read char !='"'
+                if (c != '"') {
+                    //not '"' => append
+                    str = str_append(c);
+                    current_state = SS_STRING;
+                } else {
+                    //is '"' => end of string => parse
+                    token->data = str;
+                    token->type = STT_STRING;
                     return token;
                 }
 
@@ -265,6 +305,7 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_LEX_ERROR:
                 ungetc(c, f);
+                free(str);
             default:
                 set_error(ERR_LEX);
                 token->type = STT_EMPTY;
