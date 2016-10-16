@@ -37,6 +37,11 @@ typedef enum {
     STT_RIGHT_PARENTHESE, ///< )
     STT_LEFT_BRACE, ///< {
     STT_RIGHT_BRACE, ///< }
+    STT_CLASS_AND_FUNC, ///< Structure classs.function
+    STT_SEMICOLON, ///< ;
+    STT_NEGATE, /// !
+    STT_PLUS_EQUAL, /// +=
+    STT_MINUS_EQUAL, /// -=
     // STT_LEFT_CHEVRON, ///< <
     // STT_RIGHT_CHEVRON, ///< >
 } ScannerTokenType;
@@ -49,10 +54,10 @@ typedef enum {
 
 typedef struct {
     string* class;
-    string* name;
+    string* function;
 } Ident;
 
-typedef union {
+typedef struct {
     //TODO: add some data fields
     int i;
     double d;
@@ -68,7 +73,7 @@ typedef union {
  */
 typedef struct {
     ScannerTokenType type; ///< type of the ScannerToken defined in #ScannerTokenType
-    ScannerTokenData data; ///< data for the ScannerToken
+    ScannerTokenData* data; ///< data for the ScannerToken
 } ScannerToken;
 
 /**

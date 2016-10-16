@@ -58,7 +58,7 @@ void str_copy_string(string *s1, string *s2) {
     int retlength = s1->length;
 
     if (retlength >= s2->mem_size) {
-        _str_resize_raw(s1, s1->length + STR_INC_SIZE);
+        _str_resize_raw(s2, s1->length + STR_INC_SIZE);
     }
     strcpy(s2->str, s1->str);
     s2->length = retlength;

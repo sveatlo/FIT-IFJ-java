@@ -4,13 +4,21 @@
 ScannerToken* token_init () {
     ScannerToken *token = (ScannerToken *) malloc(sizeof(ScannerToken));
     token->type = STT_EMPTY;
-    token->data.id = (Ident*) malloc(sizeof(Ident));
+    token->data = malloc(sizeof(ScannerTokenData));
+    token->data->id = (Ident*) malloc(sizeof(Ident));
+    token->data->id->class = str_init();
+    token->data->id->function = str_init();
+    token->data->str = str_init();
 
     return token;
 }
 
 void token_delete (ScannerToken *token) {
-    free(token->data.id);
+    str_free(token->data->str);
+    str_free(token->data->id->class);
+    str_free(token->data->id->function);
+    free(token->data->id);
+    free(token->data);
     free(token);
 }
 
@@ -31,10 +39,16 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_STRING>";
     case STT_INT:
         return "<STT_INT>";
+    case STT_SEMICOLON:
+        return "<STT_SEMICOLON>";
     case STT_PLUS:
         return "<STT_PLUS>";
+    case STT_PLUS_EQUAL:
+        return "<STT_PLUS_EQUAL>";
     case STT_MINUS:
         return "<STT_MINUS>";
+    case STT_MINUS_EQUAL:
+        return "<STT_MINUS_EQUAL>";
     case STT_MULTIPLY:
         return "<STT_MULTIPLY>";
     case STT_DIVIDE:
@@ -53,6 +67,8 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_AND>";
     case STT_OR:
         return "<STT_OR>";
+    case STT_NEGATE:
+        return "<STT_NEGATE>";
     case STT_LEFT_PARENTHESE:
         return "<STT_LEFT_PARENTHESE>";
     case STT_RIGHT_PARENTHESE:
