@@ -20,13 +20,26 @@
 typedef enum {
     SS_EMPTY,
     SS_LEX_ERROR,
-
-    SS_ALNUM,
-    SS_AND,
+    SS_IDENT,
+    SS_KEYWORD_IDENT,
+    SS_CLASS_AND_FUNCTION,
+    SS_NUMBER,
+    SS_DOUBLE_EX_1,
+    SS_DOUBLE_EX_2,
+    SS_DOUBLE_EX_3,
+    SS_DOUBLE_DEC_1,
+    SS_DOUBLE_DEC_2,
+    SS_STRING,
+    SS_PLUS,
+    SS_MINUS,
     SS_SLASH,
     SS_COMMENT_LINE,
     SS_COMMENT_BLOCK,
-    SS_COMMENT_BLOCK_END
+    SS_COMMENT_BLOCK_END,
+    SS_LESS, ///< <
+    SS_GREATER, ///< >
+    SS_AND, ///< &&
+    SS_OR, ///< ||
 } ScannerState;
 
 /**
