@@ -7,6 +7,10 @@
 
 #include "string.h"
 
+int line;
+
+
+
 /**
  *  @brief parses parameters
  */
@@ -17,6 +21,7 @@ FILE* parse_parameters(int, char**);
  */
 int main(int argc, char** argv) {
     set_error(ERR_NONE);
+    line = 1;
 
     // string* str0 = str_init();
     // str_append(str0, 'a');

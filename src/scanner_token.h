@@ -42,6 +42,7 @@ typedef enum {
     STT_NEGATE, /// !
     STT_PLUS_EQUAL, /// +=
     STT_MINUS_EQUAL, /// -=
+    STT_EOF /// end of file
     // STT_LEFT_CHEVRON, ///< <
     // STT_RIGHT_CHEVRON, ///< >
 } ScannerTokenType;

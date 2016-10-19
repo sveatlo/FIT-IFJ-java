@@ -3,6 +3,9 @@
 #include "scanner_token.h"
 #include "string.h"
 
+//line of file
+int line;
+
 int compare_symbols(char c) {
     char symbols[14] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')'};
     for (int i = 0; i < 14; i++) {
@@ -79,7 +82,7 @@ List *scan_file(FILE *f, List *token_list) {
         };
         list_insert_last(token_list, list_item_data);
 
-        if (token->type == STT_EMPTY) {
+        if (token->type == STT_EOF) {
             break;
         }
     }
@@ -99,8 +102,11 @@ ScannerToken* get_next_token(FILE *f) {
 
     while (69) {
         //get next char from file
-        if(current_state != SS_LEX_ERROR) {
+        if (current_state != SS_LEX_ERROR) {
             c = getc(f);
+            if (c == '\n') {
+                line++;
+            }
         }
 
         switch (current_state) {
@@ -161,6 +167,8 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_LESS;
                 } else if (c == '/') {
                     current_state = SS_SLASH;
+                } else if (c == EOF) {
+                    current_state = SS_EOF;
                 } else {
                     current_state = SS_LEX_ERROR;
                 }
@@ -511,12 +519,25 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_LEX_ERROR:
-                ungetc(c, f);
-                // str_free(token->data->str);
-            default:
                 set_error(ERR_LEX);
+                printf("Line error:%d\n",line );
+
+                while (c == isalnum(c)) {
+                    c = getc(f);
+                    if (c == '\n') {
+                        line++;
+                    }
+                }
                 token->type = STT_EMPTY;
                 return token;
+
+                break;
+
+            case SS_EOF:
+                token->type = STT_EOF;
+                return token;
+
+                break;
         }
     }
 }

@@ -8,6 +8,11 @@
 
 #include <string.h>
 /**
+ *  global various - line of file
+ */
+extern int line;
+
+/**
  *  Enum of all error types
  *
  *  @ingroup Error

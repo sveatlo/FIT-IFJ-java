@@ -40,6 +40,7 @@ typedef enum {
     SS_GREATER, ///< >
     SS_AND, ///< &&
     SS_OR, ///< ||
+    SS_EOF, ///end of file
 } ScannerState;
 
 /**
