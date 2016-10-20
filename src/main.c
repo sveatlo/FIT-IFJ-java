@@ -9,7 +9,7 @@
 
 int line;
 
-
+char* name_of_file;
 
 /**
  *  @brief parses parameters
@@ -77,6 +77,8 @@ int main(int argc, char** argv) {
 
     list_dispose(token_list);
 
+    print_error();
+
 
     fclose(f);
     return 0;
@@ -93,6 +95,7 @@ FILE* parse_parameters(int argc, char** argv) {
         set_error(ERR_CANNOT_OPEN_FILE);
         return NULL;
     }
+    name_of_file = argv[1];
 
     return f;
 }

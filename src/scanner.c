@@ -6,6 +6,8 @@
 //line of file
 int line;
 
+char* name_of_file;
+
 int compare_symbols(char c) {
     char symbols[14] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')'};
     for (int i = 0; i < 14; i++) {
@@ -489,6 +491,12 @@ ScannerToken* get_next_token(FILE *f) {
                     //end of line = end of comment
                     token->type = STT_COMMENT;
                     return token;
+                } else if (c == EOF) {
+                    // end of file = end of comment
+                    ungetc(c, f);
+                    set_error_lex(ERR_LEX,name_of_file,line);
+                    token->type = STT_EMPTY;
+                    return token;
                 } else {
                     //stay in state
                     current_state = SS_COMMENT_LINE;
@@ -500,6 +508,12 @@ ScannerToken* get_next_token(FILE *f) {
                 if (c == '*') {
                     //could be end of block comment
                     current_state = SS_COMMENT_BLOCK_END;
+                } else if (c == EOF) {
+                    // end of file = end of comment
+                    ungetc(c, f);
+                    set_error_lex(ERR_LEX,name_of_file,line);
+                    token->type = STT_EMPTY;
+                    return token;
                 } else {
                     //stay in state
                     current_state = SS_COMMENT_BLOCK;
@@ -511,6 +525,12 @@ ScannerToken* get_next_token(FILE *f) {
                 if (c == '/') {
                     token->type = STT_COMMENT;
                     return token;
+                } else if (c == EOF) {
+                    // end of file = end of comment
+                    ungetc(c, f);
+                    set_error_lex(ERR_LEX,name_of_file,line);
+                    token->type = STT_EMPTY;
+                    return token;
                 } else {
                     //not end => go back to block comment state
                     current_state = SS_COMMENT_BLOCK;
@@ -519,14 +539,15 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_LEX_ERROR:
-                set_error(ERR_LEX);
-                printf("Line error:%d\n",line );
-
+                if (c == '\n') {
+                    line--;
+                }
+                set_error_lex(ERR_LEX,name_of_file,line);
+                if (c == '\n') {
+                    line++;
+                }
                 while (c == isalnum(c)) {
                     c = getc(f);
-                    if (c == '\n') {
-                        line++;
-                    }
                 }
                 token->type = STT_EMPTY;
                 return token;

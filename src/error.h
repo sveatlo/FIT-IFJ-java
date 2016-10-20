@@ -7,10 +7,16 @@
 #define ERROR_H
 
 #include <string.h>
+
 /**
  *  global various - line of file
  */
 extern int line;
+
+/**
+ *  global various - neme of file
+ */
+extern char* name_of_file;
 
 /**
  *  Enum of all error types
@@ -67,6 +73,15 @@ extern Error last_error;
 #define set_error(err_type) set_error_fn(err_type, __FILE__, __LINE__, __func__)
 
 /**
+ *  Macro used for setting error
+ *
+ *  A macro is used due to the possibility to get the filename, line and function in which the error occured
+ *
+ *  @ingroup Error
+ */
+#define set_error_lex(err_type, filename, line) set_error_fn(err_type, filename, line, __func__)
+
+/**
  *  Actual function setting error
  *
  *  Called from #set_error macro. Sets type, filename, line no. and function name in which the error occured
@@ -79,6 +94,7 @@ static inline void set_error_fn(ErrorType type, const char* filename, int line, 
         last_error.line = line;
         last_error.function = function;
 }
+
 /**
  *  Function returning last set Error
  *
