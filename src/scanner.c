@@ -9,8 +9,8 @@ int line;
 char* name_of_file;
 
 int compare_symbols(char c) {
-    char symbols[14] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')'};
-    for (int i = 0; i < 14; i++) {
+    char symbols[15] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')','.'};
+    for (int i = 0; i < 15; i++) {
         if (c == symbols[i]) {
             return 1;
         }
@@ -216,11 +216,15 @@ ScannerToken* get_next_token(FILE *f) {
                 if (isalnum(c)) {
                     str_append(token->data->id->function, c);
                     current_state = SS_CLASS_AND_FUNCTION;
-                } else if (isspace(c)) {
+                } else if ((isspace(c)) || (compare_symbols(c) == 1)) {
+                    ungetc(c, f);
+                    token->type = STT_CLASS_AND_FUNC;
                     return token;
                 } else {
                     current_state = SS_LEX_ERROR;
                 }
+
+                break;
 
             case SS_NUMBER:
                 //is number

@@ -77,6 +77,8 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_LEFT_BRACE>";
     case STT_RIGHT_BRACE:
         return "<STT_RIGHT_BRACE>";
+    case STT_CLASS_AND_FUNC:
+        return "<STT_CLASS_AND_FUNC>";
     case STT_EOF:
         return "<STT_EOF>";
     default:
