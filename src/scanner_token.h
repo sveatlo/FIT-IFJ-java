@@ -48,22 +48,54 @@ typedef enum {
 } ScannerTokenType;
 
 /**
- *  Union used to save various data for the ScannerToken
+ *  Enumeration of all keywords
  *
- *  @ingroup ScannerToken
+ * @ingroup ScannerToken
  */
+typedef enum {
+    KW_BOOLEAN, ///< boolean
+    KW_BREAK, ///< break
+    KW_CLASS, ///< class
+    KW_CONTINUE, ///< continue
+    KW_DO, ///< do
+    KW_DOUBLE, ///< double
+    KW_ELSE, ///< else
+    KW_FALSE, ///< false
+    KW_FOR, ///< for
+    KW_IF, ///< if
+    KW_INT, ///< int
+    KW_RETURN, ///< return
+    KW_STRING, ///< string
+    KW_STATIC, ///< static
+    KW_TRUE, ///< true
+    KW_VOID, ///< void
+    KW_WHILE, ///< while
+} KeywordType;
 
+
+/**
+*  Struct used to save class and member
+*
+*  @ingroup ScannerToken
+*/
 typedef struct {
     String* class;
     String* function;
 } Ident;
 
-typedef struct {
+
+/**
+*  Union used to save various data for the ScannerToken
+*
+*  @ingroup ScannerToken
+*/
+typedef union  {
     //TODO: add some data fields
     int i;
     double d;
     String* str;
     Ident* id;
+    KeywordType keyword_type;
 } ScannerTokenData;
 
 

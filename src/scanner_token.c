@@ -4,21 +4,40 @@
 ScannerToken* token_init () {
     ScannerToken *token = (ScannerToken *) malloc(sizeof(ScannerToken));
     token->type = STT_EMPTY;
-    token->data = malloc(sizeof(ScannerTokenData));
-    token->data->id = (Ident*) malloc(sizeof(Ident));
-    token->data->id->class = str_init();
-    token->data->id->function = str_init();
-    token->data->str = str_init();
+    // token->data = malloc(sizeof(ScannerTokenData));
+    // token->data->id = (Ident*) malloc(sizeof(Ident));
+    // token->data->id->class = str_init();
+    // token->data->id->function = str_init();
+    // token->data->str = str_init();
 
     return token;
 }
 
 void token_delete (ScannerToken *token) {
-    str_free(token->data->str);
-    str_free(token->data->id->class);
-    str_free(token->data->id->function);
-    free(token->data->id);
-    free(token->data);
+    // str_free(token->data->str);
+    // str_free(token->data->id->class);
+    // str_free(token->data->id->function);
+    // free(token->data->id);
+    // free(token->data);
+    if (token->type == STT_INT) {
+        free(token->data);
+    } else if (token->type == STT_DOUBLE) {
+        free(token->data);
+    } else if (token->type == STT_KEYWORD) {
+        free(token->data);
+    } else if (token->type == STT_IDENT) {
+        str_free(token->data->id->member);
+        free(token->data->id);
+        free(token->data);
+    } else if (token->type == STT_CLASS_AND_FUNC) {
+        str_free(token->data->id->member);
+        str_free(token->data->id->class);
+        free(token->data->id);
+        free(token->data);
+    } else if (token->type == STT_STRING) {
+        str_free(token->data->str);
+        free(token->data);
+    }
     free(token);
 }
 
