@@ -3,8 +3,8 @@
 #include "error.h"
 #include "string.h"
 
-string* str_init_n(int n) {
-    string* s = (string*) malloc(sizeof(string));
+String* str_init_n(int n) {
+    String* s = (String*) malloc(sizeof(String));
     s->str = (char*) malloc(n * STR_INC_SIZE);
     if(s == NULL || s->str == NULL) {
         set_error(ERR_ALLOCATION);
@@ -21,11 +21,11 @@ string* str_init_n(int n) {
     return s;
 }
 
-string* str_init() {
+String* str_init() {
     return str_init_n(1);
 }
 
-void _str_resize_raw(string *s, int size) {
+void _str_resize_raw(String* s, int size) {
     s->str = (char*) realloc(s->str, size);
     if (!s->str) {
         set_error(ERR_ALLOCATION);
@@ -34,17 +34,17 @@ void _str_resize_raw(string *s, int size) {
     s->mem_size = size;
 }
 
-void str_free(string *s) {
+void str_free(String* s) {
     free(s->str);
     free(s);
 }
 
-void str_clear(string *s) {
+void str_clear(String* s) {
     s->str[0] = '\0';
     s->length = 0;
 }
 
-void str_append(string *s1, char c) {
+void str_append(String* s1, char c) {
     if (s1->length + 1 >= s1->mem_size) {
         _str_resize_raw(s1, s1->length + STR_INC_SIZE);
     }
@@ -54,7 +54,7 @@ void str_append(string *s1, char c) {
     s1->str[s1->length] = '\0';
 }
 
-void str_copy_string(string *s1, string *s2) {
+void str_copy_string(String* s1, String* s2) {
     int retlength = s1->length;
 
     if (retlength >= s2->mem_size) {
@@ -64,18 +64,18 @@ void str_copy_string(string *s1, string *s2) {
     s2->length = retlength;
 }
 
-int str_cmp(string *s1, string *s2) {
+int str_cmp(String* s1, String* s2) {
     return strcmp(s1->str, s2->str);
 }
 
-int str_cmp_const(string *s1, char *s2) {
+int str_cmp_const(String* s1, char *s2) {
     return strcmp( s1->str, s2);
 }
 
-char* str_get_str(string *s) {
+char* str_get_str(String* s) {
     return s->str;
 }
 
-int str_length(string *s){
+int str_length(String* s){
     return s->length;
 }

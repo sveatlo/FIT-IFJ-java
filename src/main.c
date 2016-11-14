@@ -2,14 +2,10 @@
 #include <stdlib.h>
 #include "error.h"
 #include "list.h"
-#include "scanner.h"
+#include "parser.h"
 #include "scanner_token.h"
-
+#include "scanner.h"
 #include "string.h"
-
-int line;
-
-char* name_of_file;
 
 /**
  *  @brief parses parameters
@@ -21,7 +17,6 @@ FILE* parse_parameters(int, char**);
  */
 int main(int argc, char** argv) {
     set_error(ERR_NONE);
-    line = 1;
 
     // string* str0 = str_init();
     // str_append(str0, 'a');
@@ -75,9 +70,15 @@ int main(int argc, char** argv) {
     }
     printf("\n");
 
-    list_dispose(token_list);
+    // list_dispose(token_list);
 
-    print_error();
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return -1;
+    }
+
+    parse(token_list);
 
 
     fclose(f);
@@ -95,7 +96,6 @@ FILE* parse_parameters(int argc, char** argv) {
         set_error(ERR_CANNOT_OPEN_FILE);
         return NULL;
     }
-    name_of_file = argv[1];
 
     return f;
 }

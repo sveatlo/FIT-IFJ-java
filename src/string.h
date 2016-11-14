@@ -19,7 +19,7 @@ typedef struct {
     char* str;  ///< Actual pointer to the chars
     int length; ///< Real string length
     int mem_size; ///< Memory allocated for the string
-} string;
+} String;
 
 
 /**
@@ -30,7 +30,7 @@ typedef struct {
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-string* str_init_n(int n);
+String* str_init_n(int n);
 
 /**
  *  Wrapper for str_init_n
@@ -40,39 +40,39 @@ string* str_init_n(int n);
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-string* str_init();
+String* str_init();
 
 /**
  *  Used for all resizing operations
  *
  *  @ingroup String
  */
-void _str_resize_raw(string *s, int n);
+void _str_resize_raw(String* s, int n);
 
 /**
  *  Frees the memory allocated for the string structure
  *  @ingroup String
  */
-void str_free(string *s);
+void str_free(String* s);
 
 /**
  *  Sets the string to empty string
  *  @ingroup String
  */
-void str_clear(string *s);
+void str_clear(String* s);
 
 /**
  *  Appends char to string
  *  @ingroup String
  */
-void str_append(string *s1, char c);
+void str_append(String* s1, char c);
 
 /**
  *  Copy the content of <tt>s1</tt> to <tt>s2</tt>
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-void str_copy_string(string *s1, string *s2);
+void str_copy_string(String* s1, String* s2);
 
 /**
  *  Compares two strings
@@ -81,7 +81,7 @@ void str_copy_string(string *s1, string *s2);
  *  @return 1 for success; 0 for failure
  *  @ingroup String
  */
-int str_cmp(string *s1, string *s2);
+int str_cmp(String* s1, String* s2);
 
 /**
  *  Compares string and char*
@@ -89,7 +89,7 @@ int str_cmp(string *s1, string *s2);
  *  Implementation via strcmp
  *  @ingroup String
  */
-int str_cmp_const(string *s1, char *s2);
+int str_cmp_const(String* s1, char *s2);
 
 /**
  *  Returns the content of string
@@ -97,7 +97,7 @@ int str_cmp_const(string *s1, char *s2);
  *  @return Pointer to the string's c-string
  *  @ingroup String
  */
-char* str_get_str(string *s);
+char* str_get_str(String* s);
 
 /**
  *  Function used to get current length of the string
@@ -105,6 +105,6 @@ char* str_get_str(string *s);
  *  @return length of the string
  *  @ingroup String
  */
-int str_length(string *s);
+int str_length(String* s);
 
 #endif

@@ -54,15 +54,15 @@ typedef enum {
  */
 
 typedef struct {
-    string* class;
-    string* function;
+    String* class;
+    String* function;
 } Ident;
 
 typedef struct {
     //TODO: add some data fields
     int i;
     double d;
-    string* str;
+    String* str;
     Ident* id;
 } ScannerTokenData;
 
