@@ -8,16 +8,6 @@ int line;
 
 char* name_of_file;
 
-// int compare_symbols(char c) {
-//     char symbols[15] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')','.'};
-//     for (int i = 0; i < 15; i++) {
-//         if (c == symbols[i]) {
-//             return 1;
-//         }
-//     }
-//     return 0;
-// }
-
 ScannerToken key_or_ident (ScannerToken *token) {
     if (str_cmp_const(token->data->id->member, "boolean") == 0) {
         token->type = STT_KEYWORD;
@@ -150,8 +140,13 @@ ScannerToken* get_next_token(FILE *f) {
     int c;
     //initialize token we will return
     ScannerToken *token = token_init();
+    if (token == NULL) {
+        set_error(ERR_ALLOCATION);
+        return NULL;
+    }
     //initialize string
     //string* token_data_str = str_init();
+    //if lexical error => kind of free
 
     while (69) {
         //get next char from file
@@ -171,31 +166,78 @@ ScannerToken* get_next_token(FILE *f) {
                 } else if (isalpha(c)) {
                     //keyword or ident
                     token->data = malloc(sizeof(ScannerTokenData));
+                    if (token->data == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        return NULL;
+                    }
                     token->data->id = (Ident*) malloc(sizeof(Ident));
+                    if (token->data->id == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data);
+                        return NULL;
+                    }
                     token->data->id->member = str_init();
+                    if (token->data->id->member == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data->id);
+                        free(token->data);
+                        return NULL;
+                    }
                     str_append(token->data->id->member, c);
                     current_state = SS_KEYWORD_IDENT;
                 } else if ( c == '_' || c == '$') {
                     //ident
                     token->data = malloc(sizeof(ScannerTokenData));
+                    if (token->data == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        return NULL;
+                    }
                     token->data->id = (Ident*) malloc(sizeof(Ident));
+                    if (token->data->id == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data);
+                        return NULL;
+                    }
                     token->data->id->member = str_init();
+                    if (token->data->id->member == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data->id);
+                        free(token->data);
+                        return NULL;
+                    }
                     str_append(token->data->id->member, c);
                     current_state = SS_IDENT;
                 } else if (isdigit(c)) {
                     token->data = malloc(sizeof(ScannerTokenData));
+                    if (token->data == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        return NULL;
+                    }
                     token->data->str = str_init();
+                    if (token->data->str == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data);
+                        return NULL;
+                    }
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER;
                 } else if (c == '=') {
-                    token->type = STT_EQUALS;
-                    return token;
+                    current_state = SS_EQUAL;
                 } else if (c == ';') {
                     token->type = STT_SEMICOLON;
                     return token;
                 } else if (c == '"') {
                     token->data = malloc(sizeof(ScannerTokenData));
+                    if (token->data == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        return NULL;
+                    }
                     token->data->str = str_init();
+                    if (token->data->str == NULL) {
+                        set_error(ERR_ALLOCATION);
+                        free(token->data);
+                        return NULL;
+                    }
                     str_append(token->data->str, c);
                     current_state = SS_STRING;
                 } else if (c == '(') {
@@ -214,8 +256,7 @@ ScannerToken* get_next_token(FILE *f) {
                     token->type = STT_MULTIPLY;
                     return token;
                 } else if (c == '!') {
-                    token->type = STT_NEGATE;
-                    return token;
+                    current_state = SS_NEGATE;
                 } else if (c == '+') {
                     current_state = SS_PLUS;
                 } else if (c == '-') {
@@ -247,10 +288,17 @@ ScannerToken* get_next_token(FILE *f) {
                         if (c == '.') {
                             token->type = STT_CLASS_AND_FUNC;
                             token->data->id->class = str_init();
+                            if (token->data->id->class == NULL) {
+                                set_error(ERR_ALLOCATION);
+                                str_free(token->data->id->member);
+                                free(token->data->id);
+                                free(token->data);
+                                return NULL;
+                            }
                             //cut content from token->data->str to token->data->id->class and ignore .
                             str_copy_string(token->data->id->member, token->data->id->class);
                             str_clear(token->data->id->member);
-                            current_state = SS_CLASS_AND_FUNCTION;
+                            current_state = SS_CLASS_AND_FUNCTION_1;
                         } else {
                             // next token
                             key_or_ident(token);
@@ -269,12 +317,29 @@ ScannerToken* get_next_token(FILE *f) {
 
                 break;
 
-            case SS_CLASS_AND_FUNCTION:
+            case SS_CLASS_AND_FUNCTION_1:
+                // id is identificator with .
+                // append alnum chars for 2. identificator
+                if (isalpha(c)) {
+                    str_append(token->data->id->member, c);
+                    current_state = SS_CLASS_AND_FUNCTION_2;
+                } else {
+                    str_free(token->data->id->class);
+                    str_free(token->data->id->member);
+                    free(token->data->id);
+                    free(token->data);
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+
+            case SS_CLASS_AND_FUNCTION_2:
                 // id is identificator with .
                 // append alnum chars for 2. identificator
                 if (isalnum(c)) {
                     str_append(token->data->id->member, c);
-                    current_state = SS_CLASS_AND_FUNCTION;
+                    current_state = SS_CLASS_AND_FUNCTION_2;
                 } else {
                     ungetc(c, f);
                     token->type = STT_CLASS_AND_FUNC;
@@ -323,6 +388,8 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is space => error
+                    str_free(token->data->str);
+                    free(token->data);
                     current_state = SS_LEX_ERROR;
                 }
 
@@ -337,6 +404,8 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is something else => error
+                    str_free(token->data->str);
+                    free(token->data);
                     current_state = SS_LEX_ERROR;
                 }
 
@@ -370,6 +439,8 @@ ScannerToken* get_next_token(FILE *f) {
                      current_state = SS_DOUBLE_DEC_2;
                  } else {
                      //is something else => error
+                     str_free(token->data->str);
+                     free(token->data);
                      current_state = SS_LEX_ERROR;
                  }
 
@@ -516,6 +587,30 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     token->type = STT_DIVIDE;
                     ungetc(c, f);
+                    return token;
+                }
+
+                break;
+
+            case SS_EQUAL:
+                if (c == '=') {
+                    token->type = STT_LOGIC_EQUAL;
+                    return token;
+                } else {
+                    ungetc(c, f);
+                    token->type = STT_EQUALS;
+                    return token;
+                }
+
+                break;
+
+            case SS_NEGATE:
+                if (c == '=') {
+                    token->type = STT_LOGIC_NOT_EQUAL;
+                    return token;
+                } else {
+                    ungetc(c, f);
+                    token->type = STT_NEGATE;
                     return token;
                 }
 

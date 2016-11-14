@@ -27,6 +27,8 @@ typedef enum {
     STT_MULTIPLY, ///< `*`
     STT_DIVIDE, ///< /
     STT_EQUALS, ///< =
+    STT_LOGIC_EQUAL, ///< ==
+    STT_LOGIC_NOT_EQUAL, ///< !=
     STT_LESS, ///< <
     STT_LESS_EQUALS, ///< <=
     STT_GREATER, ///< >
