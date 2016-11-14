@@ -8,67 +8,118 @@ int line;
 
 char* name_of_file;
 
-int compare_symbols(char c) {
-    char symbols[15] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')','.'};
-    for (int i = 0; i < 15; i++) {
-        if (c == symbols[i]) {
-            return 1;
-        }
-    }
-    return 0;
-}
+// int compare_symbols(char c) {
+//     char symbols[15] = {';', '=', '+', '-', '*', '/', '!', '"', '|', '&', '<', '>', '(', ')','.'};
+//     for (int i = 0; i < 15; i++) {
+//         if (c == symbols[i]) {
+//             return 1;
+//         }
+//     }
+//     return 0;
+// }
 
 ScannerToken key_or_ident (ScannerToken *token) {
-    if (str_cmp_const(token->data->str, "boolean") == 0) {
+    if (str_cmp_const(token->data->id->member, "boolean") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_BOOLEAN;
         return *token;
-    } else if (str_cmp_const(token->data->str, "break") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "break") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_BREAK;
         return *token;
-    } else if (str_cmp_const(token->data->str, "class") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "class") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_CLASS;
         return *token;
-    } else if (str_cmp_const(token->data->str, "continue") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "continue") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_CONTINUE;
         return *token;
-    } else if (str_cmp_const(token->data->str, "do") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "do") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_DO;
         return *token;
-    } else if (str_cmp_const(token->data->str, "double") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "double") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_DOUBLE;
         return *token;
-    } else if (str_cmp_const(token->data->str, "else") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "else") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_ELSE;
         return *token;
-    } else if (str_cmp_const(token->data->str, "false") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "false") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_FALSE;
         return *token;
-    } else if (str_cmp_const(token->data->str, "for") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "for") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_FOR;
         return *token;
-    } else if (str_cmp_const(token->data->str, "if") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "if") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_IF;
         return *token;
-    } else if (str_cmp_const(token->data->str, "int") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "int") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_INT;
         return *token;
-    } else if (str_cmp_const(token->data->str, "return") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "return") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_RETURN;
         return *token;
-    } else if (str_cmp_const(token->data->str, "String") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "String") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_STRING;
         return *token;
-    } else if (str_cmp_const(token->data->str, "static") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "static") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_STATIC;
         return *token;
-    } else if (str_cmp_const(token->data->str, "true") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "true") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_TRUE;
         return *token;
-    } else if (str_cmp_const(token->data->str, "void") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "void") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_VOID;
         return *token;
-    } else if (str_cmp_const(token->data->str, "while") == 0) {
+    } else if (str_cmp_const(token->data->id->member, "while") == 0) {
         token->type = STT_KEYWORD;
+        str_free(token->data->id->member);
+        free(token->data->id);
+        token->data->keyword_type = KW_WHILE;
         return *token;
     } else {
         token->type = STT_IDENT;
@@ -119,13 +170,21 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_EMPTY;
                 } else if (isalpha(c)) {
                     //keyword or ident
-                    str_append(token->data->str, c);
+                    token->data = malloc(sizeof(ScannerTokenData));
+                    token->data->id = (Ident*) malloc(sizeof(Ident));
+                    token->data->id->member = str_init();
+                    str_append(token->data->id->member, c);
                     current_state = SS_KEYWORD_IDENT;
                 } else if ( c == '_' || c == '$') {
                     //ident
-                    str_append(token->data->str, c);
+                    token->data = malloc(sizeof(ScannerTokenData));
+                    token->data->id = (Ident*) malloc(sizeof(Ident));
+                    token->data->id->member = str_init();
+                    str_append(token->data->id->member, c);
                     current_state = SS_IDENT;
                 } else if (isdigit(c)) {
+                    token->data = malloc(sizeof(ScannerTokenData));
+                    token->data->str = str_init();
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER;
                 } else if (c == '=') {
@@ -135,6 +194,8 @@ ScannerToken* get_next_token(FILE *f) {
                     token->type = STT_SEMICOLON;
                     return token;
                 } else if (c == '"') {
+                    token->data = malloc(sizeof(ScannerTokenData));
+                    token->data->str = str_init();
                     str_append(token->data->str, c);
                     current_state = SS_STRING;
                 } else if (c == '(') {
@@ -185,25 +246,23 @@ ScannerToken* get_next_token(FILE *f) {
                     if (!isalnum(c)) {
                         if (c == '.') {
                             token->type = STT_CLASS_AND_FUNC;
+                            token->data->id->class = str_init();
                             //cut content from token->data->str to token->data->id->class and ignore .
-                            str_copy_string(token->data->str, token->data->id->class);
-                            str_clear(token->data->str);
+                            str_copy_string(token->data->id->member, token->data->id->class);
+                            str_clear(token->data->id->member);
                             current_state = SS_CLASS_AND_FUNCTION;
-                        } else if (compare_symbols(c) == 1) {
+                        } else {
                             // next token
                             key_or_ident(token);
                             ungetc(c, f);
                             return token;
-                        } else {
-                           current_state = SS_LEX_ERROR;
                         }
                     } else {
                         //not space and alnum => append
-                        str_append(token->data->str, c);
+                        str_append(token->data->id->member, c);
                     }
                 } else {
                     //is space => end of identificator or keyword => parse
-                    // key_or_ident(token->data->str);
                     key_or_ident(token);
                     return token;
                 }
@@ -214,14 +273,12 @@ ScannerToken* get_next_token(FILE *f) {
                 // id is identificator with .
                 // append alnum chars for 2. identificator
                 if (isalnum(c)) {
-                    str_append(token->data->id->function, c);
+                    str_append(token->data->id->member, c);
                     current_state = SS_CLASS_AND_FUNCTION;
-                } else if ((isspace(c)) || (compare_symbols(c) == 1)) {
+                } else {
                     ungetc(c, f);
                     token->type = STT_CLASS_AND_FUNC;
                     return token;
-                } else {
-                    current_state = SS_LEX_ERROR;
                 }
 
                 break;
@@ -241,20 +298,14 @@ ScannerToken* get_next_token(FILE *f) {
                     //is decimal mark => append
                     str_append(token->data->str, c);
                     current_state = SS_DOUBLE_DEC_1;
-                } else if (isspace(c)) {
-                    //is space => integer number
-                    token->data->i = atoi(str_get_str(token->data->str));
-                    token->type = STT_INT;
-                    return token;
-                } else if (compare_symbols(c) == 1) {
-                    // next token
-                    ungetc(c, f);
-                    token->data->i = atoi(str_get_str(token->data->str));
-                    token->type = STT_INT;
-                    return token;
                 } else {
-                    //lex error
-                    current_state = SS_LEX_ERROR;
+                    // next token
+                    int i = atoi(str_get_str(token->data->str));
+                    str_free(token->data->str);
+                    token->data->i = i;
+                    token->type = STT_INT;
+                    ungetc(c, f);
+                    return token;
                 }
 
                 break;
@@ -298,20 +349,14 @@ ScannerToken* get_next_token(FILE *f) {
                     // is digit => append
                     str_append(token->data->str, c);
                     current_state = SS_DOUBLE_EX_3;
-                } else if (isspace(c)) {
-                    // is space
-                    token->data->d = atof(str_get_str(token->data->str));
-                    token->type = STT_DOUBLE;
-                    return token;
-                } else if (compare_symbols(c) == 1) {
+                } else {
                     // next token
                     ungetc(c, f);
-                    token->data->d = atof(str_get_str(token->data->str));
+                    double number = atof(str_get_str(token->data->str));
+                    str_free(token->data->str);
+                    token->data->d = number;
                     token->type = STT_DOUBLE;
                     return token;
-                } else {
-                    //lex error
-                    current_state = SS_LEX_ERROR;
                 }
 
                 break;
@@ -341,20 +386,14 @@ ScannerToken* get_next_token(FILE *f) {
                     // is exponent
                     str_append(token->data->str, c);
                     current_state = SS_DOUBLE_EX_1;
-                } else if (isspace(c)) {
-                    // is space
-                    token->data->d = atof(str_get_str(token->data->str));
-                    token->type = STT_DOUBLE;
-                    return token;
-                } else if (compare_symbols(c) == 1) {
+                } else {
                     // next token
                     ungetc(c, f);
-                    token->data->d = atof(str_get_str(token->data->str));
+                    double number = atof(str_get_str(token->data->str));
+                    str_free(token->data->str);
+                    token->data->d = number;
                     token->type = STT_DOUBLE;
                     return token;
-                } else {
-                    //lex error
-                    current_state = SS_LEX_ERROR;
                 }
 
                 break;
@@ -364,21 +403,13 @@ ScannerToken* get_next_token(FILE *f) {
                 //load whole string
                 if (!isspace(c)) {
                     //not space => append
-                    str_append(token->data->str, c);
+                    str_append(token->data->id->member, c);
                     current_state = SS_IDENT;
-                } else if (compare_symbols(c) == 1) {
+                } else {
                     //next token
                     ungetc(c, f);
                     token->type = STT_IDENT;
                     return token;
-                } else if (isspace(c)) {
-                    //is space => end of identificator => parse
-                    // token->data->str = token->data->str;
-                    token->type = STT_IDENT;
-                    return token;
-                } else {
-                    //lex error
-                    current_state = SS_LEX_ERROR;
                 }
 
                 break;
