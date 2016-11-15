@@ -1,140 +1,142 @@
 #include "bvs.h"
+#include "string.h"
 
 
-TableUzol tabsym;
+SymbolTableNode* symbol_table;
 
 
-void tabsyminit(void) {
-    BTS_Init(&tabsym);
+void table_init(void) {
+    tree_init(symbol_table);
 }
 
 
-void tabsymdispose(void) {
-    BTS_Dispose(&tabsym);
+void table_dispose(void) {
+    tree_dispose(symbol_table);
 }
 
 
-tBTSS *TSvlozSymbol(tBTSS symbol) {
-  TableUzol uzol;
-  uzol = BTS_Insert(&tabsym, symbol.name, symbol);
+Symbol* table_insert_symbol(Symbol* symbol) {
+    printf("inserting symbol with bool data: %d\n", symbol->value.b);
+    SymbolTableNode* node;
+    node = tree_insert(symbol_table, symbol->name, symbol);
 
-  if (uzol) {
-    return &(uzol->data);
-  }
+    if (node != NULL) {
+        printf("new node is not null and has symbol bool data: %d\n", node->data->value.b);
+        return node->data;
+    }
 
-  return NULL;
+    return NULL;
 }
 
-tBTSS *TSvlozBool(TableName name, bool data) {
-    tBTSS symbol;
+Symbol* table_insert_bool(SymbolName name, bool data) {
+    Symbol symbol;
 
     symbol.name = name;
-    symbol.typ = T_BOOL;
+    symbol.type = ST_BOOL;
     symbol.value.b = data;
 
-    return TSvlozSymbol(symbol);
+    return table_insert_symbol(&symbol);
 }
 
 
-tBTSS *TSvlozDouble(TableName name, double data) {
-    tBTSS symbol;
+Symbol* table_insert_double(SymbolName name, double data) {
+    Symbol symbol;
 
     symbol.name = name;
-    symbol.typ = T_DOUBLE;
+    symbol.type = ST_DOUBLE;
     symbol.value.d = data;
 
-    return TSvlozSymbol(symbol);
+    return table_insert_symbol(&symbol);
 }
 
-tBTSS *TSvlozString(TableName name, char *string) {
-    tBTSS symbol;
+Symbol *table_insert_string(SymbolName name, string* str) {
+    Symbol symbol;
 
     symbol.name = name;
-    symbol.typ = T_STRING;
-    symbol.value.s = string;
+    symbol.type = ST_STRING;
+    symbol.value.s = str;
 
-    return TSvlozSymbol(symbol);
+    return table_insert_symbol(&symbol);
 }
 
-void TSinitSymbol(tBTSS *symbol) {
-  if (symbol != NULL) {
-    symbol->name = NULL;
-    symbol->typ = T_NIL;
-  }
-}
-
-TableUzol Readsymbol(TableName name) {
-  TableUzol uzol;
-
-  if (tabsym != NULL) {
-    uzol = BTS_Search(tabsym, name);
-
-    if (uzol != NULL) {
-          return uzol;
+void table_init_symbol(Symbol *symbol) {
+    if (symbol != NULL) {
+        symbol->name = NULL;
+        symbol->type = ST_NULL;
     }
-  }
-
-  return NULL;
 }
 
-void BTS_Init (TableUzol * node) {
+SymbolTableNode* table_find_symbol(SymbolName name) {
+    SymbolTableNode* node;
 
-*node = NULL;
+    if (symbol_table != NULL) {
+        node = tree_search(symbol_table, name);
 
-}
-
-TableUzol BTS_Search (TableUzol node, TableName key) {
-  if ( node != NULL ) {
-  	int cmp = strcmp(node->key, key);
-
-    if (cmp == 0) {
-      return node;
+        if (node != NULL) {
+            return node;
+        }
     }
 
-    else if ( cmp > 0 ) { // je mensi hladame v lavo
-  		return BTS_Search(node->rptr, key);
-  	}
-  	else { // hladame v pravo
-  		return BTS_Search(node->lptr, key);
-  	}
-  }
-  return NULL;
+    return NULL;
 }
 
-TableUzol BTS_Insert (TableUzol *node, TableName key, tBTSS symbol) {
-  if (*node == NULL) {
+void tree_init(SymbolTableNode* node) {
+    node = NULL;
+}
 
-		if ((*node = malloc(sizeof(struct tBTSuzol))) != NULL ) {
-			(*node)->key = key; // novy kluc
-      (*node)->data = symbol; // vlozenie obsahu
-			(*node)->lptr = NULL;
-			(*node)->rptr = NULL;
-		}
-  }
-  else { // ak je neprazdni
-    int cmp = strcmp(key, (*node)->key);
+SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key) {
+    if(node != NULL ) {
+        int cmp = str_cmp(node->key, key);
 
-    if(cmp > 0) {  // je vacsi nez aktualny , vkladame do lava
-      return BTS_Insert(&((*node)->rptr), key, symbol);
+        if (cmp == 0) {
+            return node;
+        } else if (cmp > 0) { // je mensi hladame v lavo
+            return tree_search(node->right, key);
+        } else { // hladame v pravo
+            return tree_search(node->left, key);
+        }
     }
-    else if (cmp < 0) { // je mensi nez aktualny , vkladame do lava
-      return BTS_Insert(&((*node)->lptr), key, symbol);
+    return NULL;
+}
+
+SymbolTableNode* tree_insert(SymbolTableNode* node, SymbolName key, Symbol* symbol) {
+    if (node == NULL) {
+        if ((node = (SymbolTableNode*)malloc(sizeof(SymbolTableNode))) != NULL ) {
+            node->key = key; // novy kluc
+            node->data = symbol; // vlozenie obsahu
+            node->left = NULL;
+            node->right = NULL;
+
+            symbol_table = node;
+        }
+    } else { // ak je neprazdni
+        int cmp = str_cmp(key, node->key);
+
+        if(cmp > 0) { // je vacsi nez aktualny , vkladame do lava
+            return tree_insert(node->right, key, symbol);
+        } else if (cmp < 0) { // je mensi nez aktualny , vkladame do lava
+            return tree_insert(node->left, key, symbol);
+        } else {
+            node->data = symbol;
+        }
     }
-    else {
-      (*node)->data = symbol;
-    }
-  }
-  return *node;
+
+    return node;
 }
 
 
-void BTS_Dispose (TableUzol *node) {
-
-  if ( *node != NULL ) {
-		BTS_Dispose(&((*node)->rptr)); //dispose pravych uzlov
-		BTS_Dispose(&((*node)->lptr)); //dispose lavych uzlov
-		free (*node);
-		*node = NULL; // povodny stav
-	}
-
+void tree_dispose(SymbolTableNode* node) {
+    if (node != NULL) {
+        fprintf(stderr, "node is not NULL\n");
+        tree_dispose(node->right); //dispose pravych uzlov
+        tree_dispose(node->left); //dispose lavych uzlov
+        str_free(node->key);
+        if(node->data->type == ST_STRING) {
+            str_free(node->data->value.s);
+        }
+        free(node);
+        node = NULL; // povodny stav
+    } else {
+        fprintf(stderr, "node is NULL\n");
+    }
 }

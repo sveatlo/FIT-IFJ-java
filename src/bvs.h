@@ -1,135 +1,139 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdarg.h>
-#include<string.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdbool.h>
+#include "string.h"
 
-typedef char *TableName;  /* Kluc pre binarne vyhladavanie */
 
-typedef enum /* interne typy symbolov */
-{
-  T_NIL,
-  T_BOOL,
-  T_DOUBLE,
-  T_STRING,
-} TableTypSymbolu;
+typedef string* SymbolName;
 
-typedef union TableSymbolValue // union pre data symbolu
-{
-	int int;
-	double d;
-	char *s;
-	bool b;
-} TableSymbolValue;
+typedef enum {
+    ST_NULL,
+    ST_BOOL,
+    ST_DOUBLE,
+    ST_STRING
+} SymbolType;
 
-typedef struct tBTSS
-{
-	bool defined;
-	TableName name; //nazov symbolu
-	TableTypSymbolu typ; //datovy typ symbolu
-  int counter;
-  void * nextnode; // dalsi argument funkcie
-  TableSymbolValue value;
-  int jmp;
-} tBTSS, *TableSymbol;
 
-typedef struct tBTSuzol {
-	TableName key;			                                      /* klíč */
-	tBTSS data;                                           /* užitečný obsah uzlu */
-	struct tBTSuzol *lptr;                                /* levý podstrom */
-	struct tBTSuzol *rptr;                                /* pravý podstrom */
-} *TableUzol;                                         /* uzol binarneho stromu */
+typedef union {
+    int i;
+    double d;
+    string* s;
+    bool b;
+} SymbolTableValue;
 
-extern TableUzol tabsym;                              /* tabulka symbolov */
-/**
-* Inicializing table of variables
-*
-* @return Inicialized table of variables
-* @ingroup IAL
-*/
-void TSinit(void);
+
+typedef struct {
+    bool defined;
+    SymbolName name;
+    SymbolType type;
+    int counter;
+    void* nextnode;
+    SymbolTableValue value;
+    int jmp;
+} Symbol;
+
+
+typedef struct SymbolTableNodeStruct {
+    SymbolName key;
+    Symbol* data;
+    struct SymbolTableNodeStruct* left;
+    struct SymbolTableNodeStruct* right;
+} SymbolTableNode;
+
+extern SymbolTableNode* symbol_table;
+
 
 /**
-* Cancel table of variables
-*
-* @return Canceled table of variables
-* @ingroup IAL
-*/
-void TSdispose(void);
+ * Inicializing table of variables
+ *
+ * @return Inicialized table of variables
+ * @ingroup IAL
+ */
+void table_init(void);
 
 /**
-* Inicializing variable in decleration
-*
-* @ingroup IAL
-*/
-void TSinitSymbol(tBTSS *symbol);
+ * Cancel table of variables
+ *
+ * @return Canceled table of variables
+ * @ingroup IAL
+ */
+void table_dispose(void);
 
 /**
-* Insert variable into table
-*
-* @return Inserted variable
-* @ingroup IAL
-*/
-tBTSS *TSvlozSymbol(tBTSS symbol);
+ * Inicializing variable in decleration
+ *
+ * @ingroup IAL
+ */
+void table_init_symbol(Symbol* symbol);
 
 /**
-* Insert variable into table type of Bool
-*
-* @return Inserted variable
-* @ingroup IAL
-*/
-tBTSS *TSvlozBool(TableName name, bool data);
+ * Insert variable into table
+ *
+ * @return Inserted variable
+ * @ingroup IAL
+ */
+Symbol* table_insert_symbol(Symbol* symbol);
 
 /**
-* Insert variable into table type of Double
-*
-* @return Inserted variable
-* @ingroup IAL
-*/
-tBTSS *TSvlozDouble(TableName name, double data);
+ * Insert variable into table type of Bool
+ *
+ * @return Inserted variable
+ * @ingroup IAL
+ */
+Symbol* table_insert_bool(SymbolName name, bool data);
 
 /**
-* Insert variable into table type of string
-*
-* @return Inserted variable
-* @ingroup IAL
-*/
-tBTSS *TSvlozString(TableName name, char *string);
+ * Insert variable into table type of Double
+ *
+ * @return Inserted variable
+ * @ingroup IAL
+ */
+Symbol* table_insert_double(SymbolName name, double data);
 
 /**
-* Read variable from table
-*
-* @return Loaded variable from table
-* @ingroup IAL
-*/
-TableUzol Readsymbol(TableName name);
+ * Insert variable into table type of string
+ *
+ * @return Inserted variable
+ * @ingroup IAL
+ */
+Symbol* table_insert_string(SymbolName name, string* str);
 
 /**
-* Inicializing Binary Tree
-*
-* @ingroup IAL
-*/
-void BTS_Init (TableUzol * node);
+ * Read variable from table
+ *
+ * @return Loaded variable from table
+ * @ingroup IAL
+ */
+SymbolTableNode* table_find_symbol(SymbolName name);
 
 /**
-* Function for searching in tree ussing key
-*
-* @return node When finding word is equal to key
-* @ingroup IAL
-*/
-TableUzol BTS_Search (TableUzol node, TableName key);
+ * Inicializing Binary Tree
+ *
+ * @ingroup IAL
+ */
+void tree_init(SymbolTableNode * node);
 
 /**
-* Function for insert  into tree ussing key and content for insert
-*
-* @return node with inserted
-* @ingroup IAL
-*/
-TableUzol BTS_Insert (TableUzol *node, TableName key, tBTSS symbol);
+ * Function for searching in tree ussing key
+ *
+ * @return node When finding word is equal to key
+ * @ingroup IAL
+ */
+SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key);
 
 /**
-* Function for Deleting everything in tree
-*
-* @ingroup IAL
-*/
-void BTS_Dispose (TableUzol *node) ;
+ * Function for insert into tree ussing key and content for insert
+ *
+ * @return node with inserted
+ * @ingroup IAL
+ */
+SymbolTableNode* tree_insert(SymbolTableNode* node, SymbolName key, Symbol* symbol);
+
+/**
+ * Function for Deleting everything in tree
+ *
+ * @ingroup IAL
+ */
+void tree_dispose(SymbolTableNode* node);
