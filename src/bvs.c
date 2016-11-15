@@ -1,22 +1,22 @@
 #include "bvs.h"
 
 
-tBVSuzolptr tabsym;
+TableUzol tabsym;
 
 
 void tabsyminit(void) {
-    BVSFunction_Init(&tabsym);
+    BTS_Init(&tabsym);
 }
 
 
 void tabsymdispose(void) {
-    BVSFunction_Dispose(&tabsym);
+    BTS_Dispose(&tabsym);
 }
 
 
-tBVSS *InsertSymbol(tBVSS symbol) {
-  tBVSuzolptr uzol;
-  uzol = BVSFunktion_Insert(&tabsym, symbol.name, symbol);
+tBTSS *TSvlozSymbol(tBTSS symbol) {
+  TableUzol uzol;
+  uzol = BTS_Insert(&tabsym, symbol.name, symbol);
 
   if (uzol) {
     return &(uzol->data);
@@ -25,42 +25,49 @@ tBVSS *InsertSymbol(tBVSS symbol) {
   return NULL;
 }
 
-tBVSS *TSvlozBool(tName name, bool data) {
-    tBVSS symbol;
+tBTSS *TSvlozBool(TableName name, bool data) {
+    tBTSS symbol;
 
     symbol.name = name;
-    symbol.typ = tBool;
+    symbol.typ = T_BOOL;
     symbol.value.b = data;
 
-    return InsertSymbol(symbol);
+    return TSvlozSymbol(symbol);
 }
 
 
-tBVSS *TSvlozDouble(tName name, double data) {
-    tBVSS symbol;
+tBTSS *TSvlozDouble(TableName name, double data) {
+    tBTSS symbol;
 
     symbol.name = name;
-    symbol.typ = tDouble;
+    symbol.typ = T_DOUBLE;
     symbol.value.d = data;
 
-    return InsertSymbol(symbol);
+    return TSvlozSymbol(symbol);
 }
 
-tBVSS *TSvlozString(tName name, char *string) {
-    tBVSS symbol;
+tBTSS *TSvlozString(TableName name, char *string) {
+    tBTSS symbol;
 
     symbol.name = name;
-    symbol.typ = tString;
+    symbol.typ = T_STRING;
     symbol.value.s = string;
 
-    return InsertSymbol(symbol);
+    return TSvlozSymbol(symbol);
 }
 
-tBVSuzolptr Readsymbol(tName name) {
-  tBVSuzolptr uzol;
+void TSinitSymbol(tBTSS *symbol) {
+  if (symbol != NULL) {
+    symbol->name = NULL;
+    symbol->typ = T_NIL;
+  }
+}
+
+TableUzol Readsymbol(TableName name) {
+  TableUzol uzol;
 
   if (tabsym != NULL) {
-    uzol = BVSFunction_Search(tabsym, name);
+    uzol = BTS_Search(tabsym, name);
 
     if (uzol != NULL) {
           return uzol;
@@ -70,13 +77,13 @@ tBVSuzolptr Readsymbol(tName name) {
   return NULL;
 }
 
-void BVSFunction_Init (tBVSuzolptr * node) {
+void BTS_Init (TableUzol * node) {
 
 *node = NULL;
 
 }
 
-tBVSuzolptr BVSFunction_Search (tBVSuzolptr node, tName key) {
+TableUzol BTS_Search (TableUzol node, TableName key) {
   if ( node != NULL ) {
   	int cmp = strcmp(node->key, key);
 
@@ -85,33 +92,33 @@ tBVSuzolptr BVSFunction_Search (tBVSuzolptr node, tName key) {
     }
 
     else if ( cmp > 0 ) { // je mensi hladame v lavo
-  		return BVSFunction_Search(node->RPtr, key);
+  		return BTS_Search(node->rptr, key);
   	}
   	else { // hladame v pravo
-  		return BVSFunction_Search(node->LPtr, key);
+  		return BTS_Search(node->lptr, key);
   	}
   }
   return NULL;
 }
 
-tBVSuzolptr BVSFunktion_Insert (tBVSuzolptr *node, tName key, tBVSS symbol) {
+TableUzol BTS_Insert (TableUzol *node, TableName key, tBTSS symbol) {
   if (*node == NULL) {
 
-		if ((*node = malloc(sizeof(struct tBVSuzol))) != NULL ) {
-			(*node)->key = key;
-      (*node)->data = symbol;
-			(*node)->LPtr = NULL;
-			(*node)->RPtr = NULL;
+		if ((*node = malloc(sizeof(struct tBTSuzol))) != NULL ) {
+			(*node)->key = key; // novy kluc
+      (*node)->data = symbol; // vlozenie obsahu
+			(*node)->lptr = NULL;
+			(*node)->rptr = NULL;
 		}
   }
   else { // ak je neprazdni
     int cmp = strcmp(key, (*node)->key);
 
-    if(cmp > 0) {
-      return BVSFunktion_Insert(&((*node)->RPtr), key, symbol);
+    if(cmp > 0) {  // je vacsi nez aktualny , vkladame do lava
+      return BTS_Insert(&((*node)->rptr), key, symbol);
     }
-    else if (cmp < 0) {
-      return BVSFunktion_Insert(&((*node)->LPtr), key, symbol);
+    else if (cmp < 0) { // je mensi nez aktualny , vkladame do lava
+      return BTS_Insert(&((*node)->lptr), key, symbol);
     }
     else {
       (*node)->data = symbol;
@@ -121,11 +128,11 @@ tBVSuzolptr BVSFunktion_Insert (tBVSuzolptr *node, tName key, tBVSS symbol) {
 }
 
 
-void BVSFunction_Dispose (tBVSuzolptr *node) {
+void BTS_Dispose (TableUzol *node) {
 
   if ( *node != NULL ) {
-		BVSFunction_Dispose(&((*node)->RPtr)); //dispose pravych uzlov
-		BVSFunction_Dispose(&((*node)->LPtr)); //dispose lavych uzlov
+		BTS_Dispose(&((*node)->rptr)); //dispose pravych uzlov
+		BTS_Dispose(&((*node)->lptr)); //dispose lavych uzlov
 		free (*node);
 		*node = NULL; // povodny stav
 	}
