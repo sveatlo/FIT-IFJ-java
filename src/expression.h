@@ -4,10 +4,11 @@
  */
 
 
-#ifndef EXPR_H
-#define EXPR_H
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 
 #include "ial.h"
+#include "list.h"
 
 /**
  *  Defines priority between tokens on the stack and input token
@@ -16,10 +17,10 @@
  **/
 typedef enum
 {
-    L, ///< Token on the top of the stack has Ler priority than input token
-    H, ///< Token on the top of the stack has Her priority than input token
-    E, ///< Token on the top of the stack has same priority as input token
-    N  ///< Token on the top of the stack cannot be folLed by input token, syntax N
+    L, ///< LOW. Token on the top of the stack has Ler priority than input token
+    H, ///< HIGH. Token on the top of the stack has Her priority than input token
+    E, ///< EQUAL. Token on the top of the stack has same priority as input token
+    N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
 } TokenPrecedence;
 
 /**
@@ -28,8 +29,7 @@ typedef enum
  *
  *  @ingroup Expression
  **/
-static TokenPrecedence precedenceTable[19][19] =
-{
+static TokenPrecedence precedenceTable[19][19] = {
 //   +  -  *  /  .  <  >  <= >= == != && || !  (  )  func ,  var
     {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// +
     {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// -
@@ -78,15 +78,53 @@ typedef struct ExpressionStruct {
 } Expression;
 
 
+/**
+ *  Data for stack item
+ *
+ *  @ingroup Expression
+ */
 typedef union {
-    Symbol* data;
+    Symbol* symbol;
     ExpressionOperation* op;
+} StackItemData;
+
+
+/**
+ *  Item in stack - will be used in expression creation
+ *
+ *  @ingroup Expression
+ */
+typedef struct StackItemStruct {
+    struct StackItemStruct* next;
+    StackItemData data;
 } StackItem;
 
+/**
+ *  Stack used for creating expressions
+ *
+ *  @ingroup Expression
+ */
 typedef struct {
     StackItem* top;
 } Stack;
 
+
+void stack_init(Stack* stack);
+void stack_push(Stack* stack, StackItemData item);
+void stack_pop(Stack* stack);
+void stack_top(Stack* stack, StackItemData* item);
+void stack_top_and_pop(Stack* stack, StackItemData* item);
+bool stack_empty(Stack* zasobnik);
+
+
+/**
+ *  Parses tokens, which should be expression
+ *
+ *  @param[in]  token_list   Token vector, which is currently being processed by parser
+ *
+ *  @ingroup Expression
+ */
+void parse_expression_tokens(List* token_list);
 
 
 #endif

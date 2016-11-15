@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "error.h"
+#include "expression.h"
 #include "list.h"
 #include "parser.h"
 #include "scanner_token.h"
@@ -18,6 +19,14 @@ static inline ScannerToken* next_token() {
 // sets previous token as current_token
 static inline ScannerToken* prev_token() {
     list_activate_prev(token_list);
+    current_token = token_list->active->data.token;
+
+    return current_token;
+}
+
+// sets active item as current_token
+// used when token_list is modified in other modules
+static inline ScannerToken* refresh_current_token() {
     current_token = token_list->active->data.token;
 
     return current_token;
@@ -176,5 +185,6 @@ void bool_expression_rule() {
 }
 
 void expression_rule() {
-
+    parse_expression_tokens(token_list);
+    refresh_current_token();
 }

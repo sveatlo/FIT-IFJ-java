@@ -22,10 +22,15 @@ typedef enum {
     IC_DIV ///< res=op1/op2
 } InstructionCode;
 
+/**
+ *  Structure defining an instruction
+ *
+ *  @ingroup Instruction
+ */
 typedef struct {
     InstructionCode code; ///< code/type of instruction. Defines the operation of the instruction
     void* op1; ///< first instruction operand
-    void* op2; ///< secnd instruction operand
+    void* op2; ///< second instruction operand
     void* res; ///< where to put result
 } Instruction;
 

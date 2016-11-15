@@ -16,11 +16,11 @@ stats:
 
 
 # Link all the modules together
-interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o
+interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o expression.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
 		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)parser.o $(DIST_DIR)instruction.o \
-		$(DIST_DIR)ial.o \
+		$(DIST_DIR)ial.o $(DIST_DIR)expression.o \
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
@@ -40,6 +40,8 @@ instruction.o: $(SRC_DIR)instruction.c $(SRC_DIR)instruction.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)instruction.c -o $(DIST_DIR)instruction.o
 ial.o: $(SRC_DIR)ial.c $(SRC_DIR)ial.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)ial.c -o $(DIST_DIR)ial.o
+expression.o: $(SRC_DIR)expression.c $(SRC_DIR)expression.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)expression.c -o $(DIST_DIR)expression.o
 
 
 zip:

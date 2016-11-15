@@ -186,6 +186,7 @@ SymbolTableNode* table_find_symbol(SymbolName name) {
 }
 
 void tree_init(SymbolTableNode* node) {
+    (void)node; // warning hack
     node = NULL;
 }
 
