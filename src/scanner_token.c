@@ -26,12 +26,10 @@ void token_delete (ScannerToken *token) {
     } else if (token->type == STT_KEYWORD) {
         free(token->data);
     } else if (token->type == STT_IDENT) {
-        str_free(token->data->id->member);
-        free(token->data->id);
-        free(token->data);
-    } else if (token->type == STT_CLASS_AND_FUNC) {
-        str_free(token->data->id->member);
-        str_free(token->data->id->class);
+        if(token->data->id->class != NULL) {
+            str_free(token->data->id->class);
+        }
+        str_free(token->data->id->name);
         free(token->data->id);
         free(token->data);
     } else if (token->type == STT_STRING) {
@@ -52,12 +50,16 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_IDENT>";
     case STT_KEYWORD:
         return "<STT_KEYWORD>";
+    case STT_KEYWORD_TYPE:
+        return "<STT_KEYWORD_TYPE>";
     case STT_DOUBLE:
         return "<STT_DOUBLE>";
     case STT_STRING:
         return "<STT_STRING>";
     case STT_INT:
         return "<STT_INT>";
+    case STT_COMMA:
+        return "<STT_COMMA>";
     case STT_SEMICOLON:
         return "<STT_SEMICOLON>";
     case STT_PLUS:
@@ -96,8 +98,6 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_LEFT_BRACE>";
     case STT_RIGHT_BRACE:
         return "<STT_RIGHT_BRACE>";
-    case STT_CLASS_AND_FUNC:
-        return "<STT_CLASS_AND_FUNC>";
     case STT_EOF:
         return "<STT_EOF>";
     default:

@@ -34,7 +34,10 @@ typedef enum {
     ERR_CANNOT_OPEN_FILE, ///<Cannot open input file,
 
     //scanner errors
-    ERR_LEX
+    ERR_LEX, ///< Lexical error
+
+    //parser errors
+    ERR_SYNTAX ///< Syntax error
 } ErrorType;
 
 /**

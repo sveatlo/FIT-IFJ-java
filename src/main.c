@@ -80,6 +80,12 @@ int main(int argc, char** argv) {
 
     parse(token_list);
 
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return -1;
+    }
+
 
     fclose(f);
     return 0;

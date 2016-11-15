@@ -24,9 +24,9 @@ typedef enum {
 
 typedef struct {
     InstructionCode code; ///< code/type of instruction. Defines the operation of the instruction
-    int op1; ///< first instruction operand
-    int op2; ///< secnd instruction operand
-    int res; ///< where to put result
+    void* op1; ///< first instruction operand
+    void* op2; ///< secnd instruction operand
+    void* res; ///< where to put result
 } Instruction;
 
 #endif

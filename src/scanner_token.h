@@ -19,6 +19,7 @@ typedef enum {
     STT_COMMENT, ///< comment (inline or block)
     STT_IDENT, ///< identificator
     STT_KEYWORD, ///< one of keywords
+    STT_KEYWORD_TYPE, ///< var type keywords
     STT_INT,  ///< integer number
     STT_DOUBLE, ///< double number
     STT_STRING, ///< string
@@ -37,7 +38,7 @@ typedef enum {
     STT_RIGHT_PARENTHESE, ///< )
     STT_LEFT_BRACE, ///< {
     STT_RIGHT_BRACE, ///< }
-    STT_CLASS_AND_FUNC, ///< Structure classs.function
+    STT_COMMA, ///< ,
     STT_SEMICOLON, ///< ;
     STT_NEGATE, /// !
     STT_PLUS_EQUAL, /// +=
@@ -69,7 +70,7 @@ typedef enum {
     KW_STATIC, ///< static
     KW_TRUE, ///< true
     KW_VOID, ///< void
-    KW_WHILE, ///< while
+    KW_WHILE ///< while
 } KeywordType;
 
 
@@ -80,7 +81,7 @@ typedef enum {
 */
 typedef struct {
     String* class;
-    String* function;
+    String* name;
 } Ident;
 
 
@@ -130,7 +131,7 @@ void token_delete (ScannerToken *);
  *
  *  @ingroup ScannerToken
  */
-char *token_to_string(ScannerToken *);
+char* token_to_string(ScannerToken *);
 
 
 #endif

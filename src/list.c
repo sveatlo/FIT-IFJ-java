@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "list.h"
 
-List *list_init () {
-    List *list = (List *) malloc(sizeof(List));
+List* list_init () {
+    List* list = (List* ) malloc(sizeof(List));
 
     list->active = NULL;
     list->first = NULL;
@@ -12,7 +12,7 @@ List *list_init () {
     return list;
 }
 
-void list_dispose (List *list) {
+void list_dispose (List* list) {
     ListItem *tmp;
 
     list_activate_first(list);
@@ -27,7 +27,7 @@ void list_dispose (List *list) {
     free(list);
 }
 
-void list_insert_first (List *list, ListItemData data) {
+void list_insert_first (List* list, ListItemData data) {
     ListItem *list_item = (ListItem *)malloc(sizeof(ListItem));
     if(list_item == NULL) {
         //malloc error
@@ -50,7 +50,7 @@ void list_insert_first (List *list, ListItemData data) {
     list->first = list_item;
 }
 
-void list_insert_last (List *list, ListItemData data) {
+void list_insert_last (List* list, ListItemData data) {
     ListItem *list_item = (ListItem *)malloc(sizeof(ListItem));
     list_item->data = data;
     list_item->next = NULL;
@@ -69,7 +69,7 @@ void list_insert_last (List *list, ListItemData data) {
 }
 
 
-void list_delete_first (List *list) {
+void list_delete_first (List* list) {
     if(list->first == NULL) {
         //empty list
         return;
@@ -80,7 +80,7 @@ void list_delete_first (List *list) {
     list->first->prev = NULL;
 }
 
-void list_delete_last (List *list) {
+void list_delete_last (List* list) {
     if(list->first == NULL) {
         //empty list
         return;
@@ -91,12 +91,18 @@ void list_delete_last (List *list) {
     list->last->next = NULL;
 }
 
-void list_activate_first (List *list) {
+void list_activate_first (List* list) {
     list->active = list->first;
 }
 
-void list_activate_next (List *list) {
+void list_activate_next (List* list) {
     if(list->active != NULL) {
         list->active = list->active->next;
+    }
+}
+
+void list_activate_prev (List* list) {
+    if(list->active != NULL) {
+        list->active = list->active->prev;
     }
 }

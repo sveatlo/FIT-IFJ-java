@@ -62,4 +62,81 @@ void class_members_rule();
  */
 void class_member_rule();
 
+/**
+ *  Parses parameters for function
+ *
+ *  Parses <params_list> rule
+ *  <params_list> -> <definition>,<params_list>
+ *
+ *  @ingroup Parser
+ */
+void params_list_rule();
+
+/**
+ *  Parses variables definitions
+ *
+ *  Parses <definition> rule
+ *  <definition> -> TYPE ID
+ *
+ *  @ingroup Parser
+ */
+void definition_rule();
+
+/**
+ *  Parses statements
+ *
+ *  Parses <stat_list> rule
+ *  <stat_list> -> <stat><stat_list>
+ *
+ *  @ingroup Parser
+ */
+void stat_list_rule();
+
+/**
+ *  Parses statements
+ *
+ *  Parses <stat> rule
+ *  <stat> -> "IF" "(" <expr> ")" "{" <stat_list> "}" [<else>]
+ *  <stat> -> "while" "(" <expr> ")" "{" <stat_list> "}"
+ *  <stat> -> ID "=" <expr> ";"
+ *  <stat> -> ID "("<params_list>")"
+ *
+ *  @ingroup Parser
+ */
+void stat_rule();
+
+/**
+ *  Parses boolean expressions
+ *
+ *  Parses <bool_expr> rules
+ *  <bool_expr> -> "(" <bool_expr> ")"
+ *  <bool_expr> -> true
+ *  <bool_expr> -> false
+ *  <bool_expr> -> INT
+ *  <bool_expr> -> ID
+ *  <bool_expr> -> ID "(" <params_list> ")"
+ *  <bool_expr> -> <bool_expr> "&&" <bool_expr>
+ *  <bool_expr> -> <bool_expr> "||" <bool_expr>
+ *  <bool_expr> -> <bool_expr> "!=" <bool_expr>
+ *  <bool_expr> -> <bool_expr> "==" <bool_expr>
+ *
+ *  @ingroup Parser
+ */
+void bool_expression_rule();
+
+/**
+ *  Parses boolean expressions
+ *
+ *  Parses <expr> rules
+ *  <expr> -> "(" <expr> ")"
+ *  <expr> -> <bool_expr>
+ *  <expr> -> <expr> "+" <expr>
+ *  <expr> -> <expr> "-" <expr>
+ *  <expr> -> <expr> "*" <expr>
+ *  <expr> -> <expr> "/" <expr>
+ *
+ *  @ingroup Parser
+ */
+void expression_rule();
+
 #endif
