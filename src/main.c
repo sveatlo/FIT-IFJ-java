@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "bvs.h"
 #include "error.h"
 #include "list.h"
-#include "scanner.h"
 #include "scanner_token.h"
+#include "scanner.h"
 #include "string.h"
 
 /**

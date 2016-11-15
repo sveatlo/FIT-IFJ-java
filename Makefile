@@ -11,10 +11,10 @@ docs: $(wildcard $(SRC_DIR)*)
 	doxygen
 
 # Link all the modules together
-interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o bvs.o
+interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o ial.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
-		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)bvs.o \
+		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)ial.o \
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
@@ -28,8 +28,8 @@ list.o: $(SRC_DIR)list.c $(SRC_DIR)list.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)list.c -o $(DIST_DIR)list.o
 string.o: $(SRC_DIR)string.c $(SRC_DIR)string.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)string.c -o $(DIST_DIR)string.o
-bvs.o: $(SRC_DIR)bvs.c $(SRC_DIR)bvs.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)bvs.c -o $(DIST_DIR)bvs.o
+ial.o: $(SRC_DIR)ial.c $(SRC_DIR)ial.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)ial.c -o $(DIST_DIR)ial.o
 
 
 zip:
