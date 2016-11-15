@@ -9,21 +9,10 @@ ScannerToken* token_init () {
         return NULL;
     }
     token->type = STT_EMPTY;
-    // token->data = malloc(sizeof(ScannerTokenData));
-    // token->data->id = (Ident*) malloc(sizeof(Ident));
-    // token->data->id->class = str_init();
-    // token->data->id->function = str_init();
-    // token->data->str = str_init();
-
     return token;
 }
 
 void token_delete (ScannerToken *token) {
-    // str_free(token->data->str);
-    // str_free(token->data->id->class);
-    // str_free(token->data->id->function);
-    // free(token->data->id);
-    // free(token->data);
     if (token->type == STT_INT) {
         free(token->data);
     } else if (token->type == STT_DOUBLE) {
