@@ -34,9 +34,11 @@ void _str_resize_raw(String* s, int size) {
     s->mem_size = size;
 }
 
-void str_free(String* s) {
-    free(s->str);
-    free(s);
+void str_free(String *s) {
+    if(s != NULL) {
+        free(s->str);
+        free(s);
+    }
 }
 
 void str_clear(String* s) {

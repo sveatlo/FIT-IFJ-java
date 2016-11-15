@@ -7,6 +7,8 @@
 #ifndef EXPR_H
 #define EXPR_H
 
+#include "ial.h"
+
 /**
  *  Defines priority between tokens on the stack and input token
  *
