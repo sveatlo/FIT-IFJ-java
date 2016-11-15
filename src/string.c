@@ -35,8 +35,10 @@ void _str_resize_raw(string *s, int size) {
 }
 
 void str_free(string *s) {
-    free(s->str);
-    free(s);
+    if(s != NULL) {
+        free(s->str);
+        free(s);
+    }
 }
 
 void str_clear(string *s) {

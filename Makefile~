@@ -14,7 +14,7 @@ docs: $(wildcard $(SRC_DIR)*)
 interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o bvs.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
-		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)bvs.o \
+		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)bvs.o\
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
