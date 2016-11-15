@@ -1,8 +1,13 @@
 #include <stdlib.h>
 #include "scanner_token.h"
+#include "error.h"
 
 ScannerToken* token_init () {
     ScannerToken *token = (ScannerToken *) malloc(sizeof(ScannerToken));
+    if (token == NULL) {
+        set_error(ERR_ALLOCATION);
+        return NULL;
+    }
     token->type = STT_EMPTY;
     // token->data = malloc(sizeof(ScannerTokenData));
     // token->data->id = (Ident*) malloc(sizeof(Ident));
@@ -76,6 +81,10 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_DIVIDE>";
     case STT_EQUALS:
         return "<STT_EQUALS>";
+    case STT_LOGIC_EQUAL:
+        return "<STT_LOGIC_EQUAL>";
+    case STT_LOGIC_NOT_EQUAL:
+        return "<STT_LOGIC_NOT_EQUAL>";
     case STT_LESS:
         return "<STT_LESS>";
     case STT_LESS_EQUALS:

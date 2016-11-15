@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
+#include "error.h"
 
 List* list_init () {
-    List* list = (List* ) malloc(sizeof(List));
+    List* list = (List*) malloc(sizeof(List));
+    if (list == NULL) {
+        set_error(ERR_ALLOCATION);
+        return NULL;
+    }
 
     list->active = NULL;
     list->first = NULL;
