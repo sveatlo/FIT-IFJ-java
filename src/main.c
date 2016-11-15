@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include "error.h"
 #include "list.h"
-#include "scanner.h"
 #include "scanner_token.h"
-
+#include "scanner.h"
 #include "string.h"
 
 int line;
@@ -27,6 +26,11 @@ int main(int argc, char** argv) {
     // str_append(str0, 'a');
     // str_append(str0, 'b');
     // str_append(str0, 'c');
+    //
+    // string* str1 = str_init();
+    // str_append(str1, 'd');
+    // str_append(str1, 'e');
+    // str_append(str1, 'f');
     //
     // // printf("%s\n", str_get_str(str0));
     // // str_clear(str0);
@@ -81,6 +85,12 @@ int main(int argc, char** argv) {
 
 
     fclose(f);
+
+    // table_init();
+    // table_insert_bool(str0, 1);
+    // table_insert_string(str0, str1);
+    // table_dispose();
+
     return 0;
 }
 
