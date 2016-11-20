@@ -72,7 +72,7 @@ typedef struct ExpressionStruct {
     ExpressionOperation op; ///< operation of the expression
     struct ExpressionStruct* expr1; ///< pointer to child expression (if available)
     struct ExpressionStruct* expr2; ///< pointer to second child expression (if available)
-    void* symbol;   ///< pointer to symbol table
+    Symbol* symbol;   ///< pointer to symbol table
     int i;  ///< integer const value
     double d; ///< double const value
 } Expression;
