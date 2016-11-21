@@ -11,103 +11,103 @@ char* name_of_file;
 ScannerToken key_or_ident (ScannerToken *token) {
     if (str_cmp_const(token->data->id->name, "boolean") == 0) {
         token->type = STT_KEYWORD_TYPE;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_BOOLEAN;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "break") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_BREAK;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "class") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_CLASS;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "continue") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_CONTINUE;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "do") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_DO;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "double") == 0) {
         token->type = STT_KEYWORD_TYPE;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_DOUBLE;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "else") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_ELSE;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "false") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_FALSE;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "for") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_FOR;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "if") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_IF;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "int") == 0) {
         token->type = STT_KEYWORD_TYPE;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_INT;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "return") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_RETURN;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "String") == 0) {
         token->type = STT_KEYWORD_TYPE;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_STRING;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "static") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_STATIC;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "true") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_TRUE;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "void") == 0) {
         token->type = STT_KEYWORD_TYPE;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_VOID;
         return *token;
     } else if (str_cmp_const(token->data->id->name, "while") == 0) {
         token->type = STT_KEYWORD;
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         token->data->keyword_type = KW_WHILE;
         return *token;
@@ -290,7 +290,7 @@ ScannerToken* get_next_token(FILE *f) {
                             token->data->id->class = str_init();
                             if (token->data->id->class == NULL) {
                                 set_error(ERR_ALLOCATION);
-                                str_free(token->data->id->name);
+                                str_dispose(token->data->id->name);
                                 free(token->data->id);
                                 free(token->data);
                                 return NULL;
@@ -324,8 +324,8 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->id->name, c);
                     current_state = SS_CLASS_AND_FUNCTION_2;
                 } else {
-                    str_free(token->data->id->class);
-                    str_free(token->data->id->name);
+                    str_dispose(token->data->id->class);
+                    str_dispose(token->data->id->name);
                     free(token->data->id);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -366,7 +366,7 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     // next token
                     int i = atoi(str_get_str(token->data->str));
-                    str_free(token->data->str);
+                    str_dispose(token->data->str);
                     token->data->i = i;
                     token->type = STT_INT;
                     ungetc(c, f);
@@ -388,7 +388,7 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is space => error
-                    str_free(token->data->str);
+                    str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
                 }
@@ -404,7 +404,7 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_DOUBLE_EX_3;
                 } else {
                     //is something else => error
-                    str_free(token->data->str);
+                    str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
                 }
@@ -422,7 +422,7 @@ ScannerToken* get_next_token(FILE *f) {
                     // next token
                     ungetc(c, f);
                     double number = atof(str_get_str(token->data->str));
-                    str_free(token->data->str);
+                    str_dispose(token->data->str);
                     token->data->d = number;
                     token->type = STT_DOUBLE;
                     return token;
@@ -439,7 +439,7 @@ ScannerToken* get_next_token(FILE *f) {
                      current_state = SS_DOUBLE_DEC_2;
                  } else {
                      //is something else => error
-                     str_free(token->data->str);
+                     str_dispose(token->data->str);
                      free(token->data);
                      current_state = SS_LEX_ERROR;
                  }
@@ -461,7 +461,7 @@ ScannerToken* get_next_token(FILE *f) {
                     // next token
                     ungetc(c, f);
                     double number = atof(str_get_str(token->data->str));
-                    str_free(token->data->str);
+                    str_dispose(token->data->str);
                     token->data->d = number;
                     token->type = STT_DOUBLE;
                     return token;

@@ -19,9 +19,9 @@ ScannerToken* token_init () {
 }
 
 void token_delete (ScannerToken *token) {
-    // str_free(token->data->str);
-    // str_free(token->data->id->class);
-    // str_free(token->data->id->function);
+    // str_dispose(token->data->str);
+    // str_dispose(token->data->id->class);
+    // str_dispose(token->data->id->function);
     // free(token->data->id);
     // free(token->data);
     if (token->type == STT_INT) {
@@ -32,13 +32,13 @@ void token_delete (ScannerToken *token) {
         free(token->data);
     } else if (token->type == STT_IDENT) {
         if(token->data->id->class != NULL) {
-            str_free(token->data->id->class);
+            str_dispose(token->data->id->class);
         }
-        str_free(token->data->id->name);
+        str_dispose(token->data->id->name);
         free(token->data->id);
         free(token->data);
     } else if (token->type == STT_STRING) {
-        str_free(token->data->str);
+        str_dispose(token->data->str);
         free(token->data);
     }
     free(token);

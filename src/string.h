@@ -53,7 +53,7 @@ void _str_resize_raw(String* s, int n);
  *  Frees the memory allocated for the string structure
  *  @ingroup String
  */
-void str_free(String* s);
+void str_dispose(String* s);
 
 /**
  *  Sets the string to empty string

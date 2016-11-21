@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "context.h"
 #include "error.h"
+#include "ial.h"
 #include "list.h"
 #include "parser.h"
 #include "scanner_token.h"
@@ -18,22 +20,22 @@ FILE* parse_parameters(int, char**);
 int main(int argc, char** argv) {
     set_error(ERR_NONE);
 
-    // string* str0 = str_init();
-    // str_append(str0, 'a');
-    // str_append(str0, 'b');
-    // str_append(str0, 'c');
-    //
-    // string* str1 = str_init();
-    // str_append(str1, 'd');
-    // str_append(str1, 'e');
-    // str_append(str1, 'f');
-    //
+    String* str0 = str_init();
+    str_append(str0, 'a');
+    str_append(str0, 'b');
+    str_append(str0, 'c');
+
+    String* str1 = str_init();
+    str_append(str1, 'd');
+    str_append(str1, 'e');
+    str_append(str1, 'f');
+
     // // printf("%s\n", str_get_str(str0));
     // // str_clear(str0);
     // // printf("%s\n", str0->str);
     // printf("%d\n", str_cmp_const(str0, "abc\0"));
     //
-    // str_free(str0);
+    // str_dispose(str0);
 
     // List *token_list = list_init();
     //
@@ -62,18 +64,27 @@ int main(int argc, char** argv) {
     //     list_activate_next(token_list);
     // }
 
+    // Context* ctx = context_init();
+    // context_delete(ctx);
+    // (void)argv;
+    // (void)argc;
+    // SymbolTableNode* table = table_init();
+    // table_insert_bool(table, str0, 0);
+    // table_insert_string(table, str1, str0);
+    // table_dispose(table);
+
 
     FILE *f = parse_parameters(argc, argv);
     List *token_list = list_init();
 
     token_list = scan_file(f, token_list);
 
-    list_activate_first(token_list);
-    while(token_list->active != NULL) {
-        printf("%s ", token_to_string(token_list->active->data.token));
-        list_activate_next(token_list);
-    }
-    printf("\n");
+    // list_activate_first(token_list);
+    // while(token_list->active != NULL) {
+    //     printf("%s ", token_to_string(token_list->active->data.token));
+    //     list_activate_next(token_list);
+    // }
+    // printf("\n");
 
     // list_dispose(token_list);
 
@@ -94,10 +105,6 @@ int main(int argc, char** argv) {
 
     fclose(f);
 
-    // table_init();
-    // table_insert_bool(str0, 1);
-    // table_insert_string(str0, str1);
-    // table_dispose();
 
     return 0;
 }

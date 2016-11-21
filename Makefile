@@ -16,11 +16,11 @@ stats:
 
 
 # Link all the modules together
-interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o expression.o interpret.o
+interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o expression.o symbol.o context.o interpret.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
 		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)parser.o $(DIST_DIR)instruction.o \
-		$(DIST_DIR)ial.o $(DIST_DIR)expression.o $(DIST_DIR)interpret.o \
+		$(DIST_DIR)ial.o $(DIST_DIR)expression.o $(DIST_DIR)symbol.o $(DIST_DIR)context.o $(DIST_DIR)interpret.o \
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
@@ -38,12 +38,16 @@ parser.o: $(SRC_DIR)parser.c $(SRC_DIR)parser.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)parser.c -o $(DIST_DIR)parser.o
 instruction.o: $(SRC_DIR)instruction.c $(SRC_DIR)instruction.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)instruction.c -o $(DIST_DIR)instruction.o
-ial.o: $(SRC_DIR)ial.c $(SRC_DIR)ial.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)ial.c -o $(DIST_DIR)ial.o
 expression.o: $(SRC_DIR)expression.c $(SRC_DIR)expression.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)expression.c -o $(DIST_DIR)expression.o
 interpret.o: $(SRC_DIR)interpret.c $(SRC_DIR)interpret.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)interpret.c -o $(DIST_DIR)interpret.o
+ial.o: $(SRC_DIR)ial.c $(SRC_DIR)ial.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)ial.c -o $(DIST_DIR)ial.o
+symbol.o: $(SRC_DIR)symbol.c $(SRC_DIR)symbol.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)symbol.c -o $(DIST_DIR)symbol.o
+context.o: $(SRC_DIR)context.c $(SRC_DIR)context.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)context.c -o $(DIST_DIR)context.o
 
 zip:
 	zip $(ZIPFILENAME).zip src/*.c src/*.h Makefile Doxyfile

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "error.h"
 #include "string.h"
@@ -34,7 +35,7 @@ void _str_resize_raw(String* s, int size) {
     s->mem_size = size;
 }
 
-void str_free(String *s) {
+void str_dispose(String *s) {
     if(s != NULL) {
         free(s->str);
         free(s);
