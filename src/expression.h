@@ -23,35 +23,6 @@ typedef enum
     N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
 } TokenPrecedence;
 
-/**
- *  Precedence table defines all combinations of top of the stack/input token and priorities between them.
- *  Rows mean top of the stack and columns mean input token.
- *
- *  @ingroup Expression
- **/
-static TokenPrecedence precedenceTable[19][19] = {
-//   +  -  *  /  .  <  >  <= >= == != && || !  (  )  func ,  var
-    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// +
-    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// -
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// *
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// /
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// .
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <=
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >=
-    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// ==
-    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// !=
-    {L, L, L, L, L, L, L, L, L, L, L, H, H, L, L, H, L,   H, L},// &&
-    {L, L, L, L, L, L, L, L, L, L, L, L, H, L, L, H, L,   H, L},// ||
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// !
-    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// (
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, H, N, H, N,   H, N},// )
-    {N, N, N, N, N, N, N, N, N, N, N, N, N, N, E, N, N,   N, N},// func
-    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// ,
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, N, N, H, N,   H, N} // var
-};
-
 typedef enum {
     SYMBOL, ///< when operand is a symbol
     CONST_INTEGER, ///< when operand is an integer constant

@@ -5,6 +5,35 @@
 #include "list.h"
 #include "scanner_token.h"
 
+/**
+ *  Precedence table defines all combinations of top of the stack/input token and priorities between them.
+ *  Rows mean top of the stack and columns mean input token.
+ *
+ *  @ingroup Expression
+ **/
+const TokenPrecedence precedenceTable[19][19] = {
+//   +  -  *  /  .  <  >  <= >= == != && || !  (  )  func ,  var
+    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// +
+    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// -
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// *
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// /
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// .
+    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <
+    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >
+    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <=
+    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >=
+    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// ==
+    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// !=
+    {L, L, L, L, L, L, L, L, L, L, L, H, H, L, L, H, L,   H, L},// &&
+    {L, L, L, L, L, L, L, L, L, L, L, L, H, L, L, H, L,   H, L},// ||
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// !
+    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// (
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, H, N, H, N,   H, N},// )
+    {N, N, N, N, N, N, N, N, N, N, N, N, N, N, E, N, N,   N, N},// func
+    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// ,
+    {H, H, H, H, H, H, H, H, H, H, H, H, H, N, N, H, N,   H, N} // var
+};
+
 //inicializace &stacku
 void stack_init(Stack* stack) {
     stack->top = NULL;

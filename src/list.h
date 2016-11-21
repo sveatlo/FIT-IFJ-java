@@ -7,10 +7,12 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include "instruction.h"
 #include "scanner_token.h"
 
 typedef union  {
-    ScannerToken *token;
+    ScannerToken* token;
+    Instruction* instruction;
 } ListItemData;
 
 /**
@@ -19,8 +21,8 @@ typedef union  {
  *  @ingroup List
  */
 typedef struct ListItemStruct {
-    struct ListItemStruct *prev; ///< Pointer to previous ListItem
-    struct ListItemStruct *next; ///< Pointer to next ListItem
+    struct ListItemStruct* prev; ///< Pointer to previous ListItem
+    struct ListItemStruct* next; ///< Pointer to next ListItem
 
     ListItemData data; ///< Data stored in ListItem (#ListItemData)
 } ListItem;
@@ -31,10 +33,10 @@ typedef struct ListItemStruct {
  *  @ingroup List
  */
 typedef struct {
-    ListItem *active;
+    ListItem* active;
 
-    ListItem *first;
-    ListItem *last;
+    ListItem* first;
+    ListItem* last;
 } List;
 
 /**

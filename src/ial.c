@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "context.h"
 #include "error.h"
 #include "ial.h"
+#include "symbol.h"
 #include "string.h"
-
-SymbolTableNode* symbol_table;
 
 int ial_find(String s, String search) {
     int* fail;
@@ -15,7 +15,7 @@ int ial_find(String s, String search) {
         return 0;
     }
 
-    fail = (int*)malloc((str_length(&search)*sizeof(*fail)));
+    fail = (int*)malloc(str_length(&search)*sizeof(*fail));
     fail[0] = 0;
     int i = 1;
     int j = 0;
@@ -109,73 +109,69 @@ void ial_sort_shiftdown(char *s, int last) {
     }
 }
 
-
-void table_init(void) {
+SymbolTableNode* table_init() {
+    SymbolTableNode* symbol_table = (SymbolTableNode*)malloc(sizeof(SymbolTableNode));
     tree_init(symbol_table);
+
+    return symbol_table;
 }
 
 
-void table_dispose(void) {
+
+void table_dispose(SymbolTableNode* symbol_table) {
     tree_dispose(symbol_table);
 }
 
 
-Symbol* table_insert_symbol(Symbol* symbol) {
-    printf("inserting symbol with bool data: %d\n", symbol->value.b);
-    SymbolTableNode* node;
-    node = tree_insert(symbol_table, symbol->name, symbol);
+Symbol* table_insert_symbol(SymbolTableNode* symbol_table, Symbol* symbol) {
+    // node = new node inserted into symbol_table
+    SymbolTableNode* node = tree_insert(symbol_table, symbol->name, symbol);
 
     if (node != NULL) {
-        printf("new node is not null and has symbol bool data: %d\n", node->data->value.b);
         return node->data;
     }
 
     return NULL;
 }
 
-Symbol* table_insert_bool(SymbolName name, bool data) {
-    Symbol symbol;
+Symbol* table_insert_bool(SymbolTableNode* symbol_table, SymbolName name, bool data) {
 
-    symbol.name = name;
-    symbol.type = ST_BOOL;
-    symbol.value.b = data;
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_BOOL);
+    symbol->data.var->value.b = data;
 
-    return table_insert_symbol(&symbol);
+    return table_insert_symbol(symbol_table, symbol);
+}
+
+Symbol* table_insert_integer(SymbolTableNode* symbol_table, SymbolName name, int data) {
+
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_INTEGER);
+    symbol->data.var->value.i = data;
+
+    return table_insert_symbol(symbol_table, symbol);
 }
 
 
-Symbol* table_insert_double(SymbolName name, double data) {
-    Symbol symbol;
+Symbol* table_insert_double(SymbolTableNode* symbol_table, SymbolName name, double data) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_DOUBLE);
+    symbol->data.var->value.d = data;
 
-    symbol.name = name;
-    symbol.type = ST_DOUBLE;
-    symbol.value.d = data;
-
-    return table_insert_symbol(&symbol);
+    return table_insert_symbol(symbol_table, symbol);
 }
 
-Symbol *table_insert_string(SymbolName name, String* str) {
-    Symbol symbol;
+Symbol *table_insert_string(SymbolTableNode* symbol_table, SymbolName name, String* str) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_STRING);
+    symbol->data.var->value.s = str;
 
-    symbol.name = name;
-    symbol.type = ST_STRING;
-    symbol.value.s = str;
-
-    return table_insert_symbol(&symbol);
+    return table_insert_symbol(symbol_table, symbol);
 }
 
-void table_init_symbol(Symbol *symbol) {
-    if (symbol != NULL) {
-        symbol->name = NULL;
-        symbol->type = ST_NULL;
-    }
-}
-
-SymbolTableNode* table_find_symbol(SymbolName name) {
-    SymbolTableNode* node;
-
+SymbolTableNode* table_find_symbol(SymbolTableNode* symbol_table, SymbolName name) {
     if (symbol_table != NULL) {
-        node = tree_search(symbol_table, name);
+        SymbolTableNode* node = tree_search(symbol_table, name);
 
         if (node != NULL) {
             return node;
@@ -186,8 +182,10 @@ SymbolTableNode* table_find_symbol(SymbolName name) {
 }
 
 void tree_init(SymbolTableNode* node) {
-    (void)node; // warning hack
-    node = NULL;
+    node->key = NULL;
+    node->data = NULL;
+    node->left = NULL;
+    node->right = NULL;
 }
 
 SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key) {
@@ -206,23 +204,22 @@ SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key) {
 }
 
 SymbolTableNode* tree_insert(SymbolTableNode* node, SymbolName key, Symbol* symbol) {
-    if (node == NULL) {
-        if ((node = (SymbolTableNode*)malloc(sizeof(SymbolTableNode))) != NULL ) {
-            node->key = key; // novy kluc
-            node->data = symbol; // vlozenie obsahu
-            node->left = NULL;
-            node->right = NULL;
-
-            symbol_table = node;
-        }
+    if (node->key == NULL) {
+        node->key = key; // novy kluc
+        node->data = symbol; // vlozenie obsahu
+        node->left = table_init();
+        node->right = table_init();
     } else { // ak je neprazdni
         int cmp = str_cmp(key, node->key);
 
-        if(cmp > 0) { // je vacsi nez aktualny , vkladame do lava
+        if(cmp > 0) { // GT => insert to right node
             return tree_insert(node->right, key, symbol);
-        } else if (cmp < 0) { // je mensi nez aktualny , vkladame do lava
+        } else if (cmp < 0) { // LT => insert to left node
             return tree_insert(node->left, key, symbol);
-        } else {
+        } else { // equal => replace
+            // editing current node => first remove current symbol
+            symbol_dispose(node->data);
+            // then add new data
             node->data = symbol;
         }
     }
@@ -232,17 +229,13 @@ SymbolTableNode* tree_insert(SymbolTableNode* node, SymbolName key, Symbol* symb
 
 
 void tree_dispose(SymbolTableNode* node) {
-    if (node != NULL) {
-        fprintf(stderr, "node is not NULL\n");
-        tree_dispose(node->right); //dispose pravych uzlov
-        tree_dispose(node->left); //dispose lavych uzlov
-        str_free(node->key);
-        if(node->data->type == ST_STRING) {
-            str_free(node->data->value.s);
-        }
+    if (node->key != NULL) {
+        tree_dispose(node->left); // dispose lavych uzlov
+        tree_dispose(node->right); // dispose pravych uzlov
+        str_dispose(node->key);
+        symbol_dispose(node->data);
         free(node);
-        node = NULL; // povodny stav
     } else {
-        fprintf(stderr, "node is NULL\n");
+        free(node);
     }
 }
