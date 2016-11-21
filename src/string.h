@@ -78,7 +78,7 @@ void str_copy_string(String* s1, String* s2);
  *  Compares two strings
  *
  *  Implementation via strcmp
- *  @return 1 for success; 0 for failure
+ *  @return 0 for equal; value < 0 s1 is less than s2 ; value > 0 s2 is less than s1
  *  @ingroup String
  */
 int str_cmp(String* s1, String* s2);

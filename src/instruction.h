@@ -19,7 +19,13 @@ typedef enum {
     IC_ADD, ///< res=op1+op2
     IC_SUBSTRACT, ///< res=op1-op2
     IC_MUL, ///< res=op1*op2
-    IC_DIV ///< res=op1/op2
+    IC_DIV, ///< res=op1/op2
+    IC_EQUAL, ///< op1 == op2
+    IC_NOTEQUAL, ///< op1 != op2
+    IC_LESSER, ///< op1 < op2
+    IC_GREATER, ///< op1 > op2
+    IC_GREATEREQ, ///< op1 >= op2
+    IC_LESSEREQ, ///< op1 <= op2
 } InstructionCode;
 
 /**
