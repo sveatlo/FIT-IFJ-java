@@ -13,6 +13,7 @@
 #include "instruction.h"
 #include "scanner_token.h"
 #include "scanner.h"
+#include "inbuilt.h"
 
 
 
@@ -20,7 +21,7 @@ void math_ins(Symbol *op1, Symbol *op2, Symbol *res, char c) {
     int a = 0, b = 0;
 
     if ((op1->data.var->type == VT_STRING) && (op2->data.var->type == VT_STRING)) { // a(string) + b(string)
-        res->type = VT_STRING;
+        res->data.var->type = VT_STRING;
         str_copy_string(op1->data.var->value.s, res->data.var->value.s); // hodnota op1 sa nakopyruje do res
         strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
         return;

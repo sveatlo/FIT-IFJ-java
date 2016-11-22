@@ -16,11 +16,12 @@ stats:
 
 
 # Link all the modules together
-interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o expression.o symbol.o context.o interpret.o
+interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o ial.o expression.o symbol.o context.o interpret.o inbuilt.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
 		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)parser.o $(DIST_DIR)instruction.o \
-		$(DIST_DIR)ial.o $(DIST_DIR)expression.o $(DIST_DIR)symbol.o $(DIST_DIR)context.o $(DIST_DIR)interpret.o \
+		$(DIST_DIR)ial.o $(DIST_DIR)expression.o $(DIST_DIR)symbol.o $(DIST_DIR)context.o \
+		$(DIST_DIR)interpret.o $(DIST_DIR)inbuilt.o \
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
@@ -48,6 +49,8 @@ symbol.o: $(SRC_DIR)symbol.c $(SRC_DIR)symbol.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)symbol.c -o $(DIST_DIR)symbol.o
 context.o: $(SRC_DIR)context.c $(SRC_DIR)context.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)context.c -o $(DIST_DIR)context.o
+inbuilt.o: $(SRC_DIR)inbuilt.c $(SRC_DIR)inbuilt.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)inbuilt.c -o $(DIST_DIR)inbuilt.o
 
 zip:
 	zip $(ZIPFILENAME).zip src/*.c src/*.h Makefile Doxyfile
