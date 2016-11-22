@@ -6,12 +6,14 @@
 
 String* str_init_n(int n) {
     String* s = (String*) malloc(sizeof(String));
+    if (s == NULL) {
+        set_error(ERR_ALLOCATION);
+        return NULL;
+    }
     s->str = (char*) malloc(n * STR_INC_SIZE);
-    if(s == NULL || s->str == NULL) {
+    if(s->str == NULL) {
         set_error(ERR_ALLOCATION);
         free(s);
-        free(s->str);
-
         return NULL;
     }
 
@@ -81,4 +83,12 @@ char* str_get_str(String* s) {
 
 int str_length(String* s){
     return s->length;
+}
+
+void int_to_string(String* s, int i) {
+    snprintf(s->str, 100, "%d", i);
+}
+
+void double_to_string(String* s, double i) {
+    snprintf(s->str, 100, "%f", i);
 }
