@@ -44,7 +44,6 @@ void symbol_new_function(Symbol* symbol) {
     symbol->data.fn->context = context_init();
 }
 
-
 void symbol_new_class(Symbol* symbol) {
     symbol->data.fn = (Function*)malloc(sizeof(Function));
     symbol->data.fn->context = context_init();

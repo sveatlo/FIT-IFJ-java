@@ -111,5 +111,7 @@ typedef struct {
 Symbol* symbol_init(SymbolName);
 void symbol_dispose(Symbol*);
 void symbol_new_variable(Symbol*, VariableType);
+void symbol_new_function(Symbol*);
+void symbol_new_class(Symbol*);
 
 #endif
