@@ -1,12 +1,16 @@
 #include <stdio.h>
+#include "context.h"
 #include "error.h"
 #include "expression.h"
+#include "ial.h"
 #include "list.h"
 #include "parser.h"
 #include "scanner_token.h"
 
 List* token_list;
 ScannerToken* current_token;
+Context* main_context;
+Context* current_context;
 
 // sets next token as current_token
 static inline ScannerToken* next_token() {
@@ -33,9 +37,13 @@ static inline ScannerToken* refresh_current_token() {
 }
 
 void parse(List* _token_list) {
+    //prepare
     list_activate_first(_token_list);
     token_list = _token_list;
     current_token = token_list->active->data.token;
+    main_context = context_init();
+    current_context = main_context;
+
 
     //first thing in file should be class (or several)
     class_list_rule();
@@ -43,25 +51,37 @@ void parse(List* _token_list) {
 
 
 void class_list_rule() {
-    switch (current_token->type) {
-        case STT_KEYWORD:
-        {
-            if(current_token->data->keyword_type != KW_CLASS) return set_error(ERR_SYNTAX);
-            next_token();
-            class_rule();
+    while (current_token->type != STT_EOF && !get_error()->type) {
+        switch (current_token->type) {
+            case STT_KEYWORD:
+            {
+                if(current_token->data->keyword_type != KW_CLASS) return set_error(ERR_SYNTAX);
+                next_token();
+                class_rule();
+                next_token();
 
-            break;
-        }
-        default:
-        {
-            set_error(ERR_SYNTAX);
-            break;
+                break;
+            }
+            default:
+            {
+                set_error(ERR_SYNTAX);
+                return;
+                // break;
+            }
         }
     }
 }
 
+//starts @ STT_IDENT
+//finish @ STT_RIGHT_BRACE
 void class_rule() {
     if(current_token->type != STT_IDENT) return set_error(ERR_SYNTAX);
+    // if(table_find_symbol(main_context->symbol_table, current_token->data->id->name) != NULL) {
+    //     set_error(ERR_SEMANTIC);
+    //     return;
+    // }
+    // table_insert_class(main_context->symbol_table, current_token->data->id->name);
+
     if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
     if(next_token()->type != STT_RIGHT_BRACE) {
         // parse inside of the class
@@ -72,16 +92,20 @@ void class_rule() {
     }
 }
 
+//starts @ STT_KEYWORD
+//finish @ STT_RIGHT_BRACE || STT_SEMICOLON
 void class_members_rule() {
-    class_member_rule();
-    if(next_token()->type != STT_RIGHT_BRACE) {
-        class_members_rule();
-    } else {
+    if(current_token->type == STT_RIGHT_BRACE || get_error()->type) {
         prev_token();
+        return;
     }
+    class_member_rule();
+    class_members_rule();
 }
 
 
+//starts @ STT_KEYWORD (static)
+//finish @ STT_RIGHT_BRACE or STT_SEMICOLON
 void class_member_rule() {
     if(current_token->type != STT_KEYWORD || current_token->data->keyword_type != KW_STATIC) return set_error(ERR_SYNTAX);
     if(next_token()->type != STT_KEYWORD_TYPE) return set_error(ERR_SYNTAX);
@@ -89,9 +113,9 @@ void class_member_rule() {
     next_token();
     if(current_token->type == STT_SEMICOLON) {
         //syntax ok
-        return;
     } else if(current_token->type == STT_EQUALS) {
-        // TODO: parse expression
+        next_token();
+        expression_rule();
     } else  if(current_token->type == STT_LEFT_PARENTHESE) {
         next_token();
         params_list_rule();
@@ -101,10 +125,13 @@ void class_member_rule() {
         stat_list_rule();
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
     }
+    next_token();
 }
 
+//starts @ STT_KEYWORD_TYPE || STT_RIGHT_PARENTHESE
+//finish @ STT_RIGHT_BRACE or semicolon
 void params_list_rule() {
-    if(current_token->type == STT_RIGHT_PARENTHESE) {
+    if(current_token->type == STT_RIGHT_PARENTHESE || get_error()->type) {
         prev_token();
         return;
     }
@@ -119,23 +146,28 @@ void params_list_rule() {
     }
 }
 
+//starts @ STT_KEYWORD_TYPE
+//finish @ STT_IDENT
 void definition_rule() {
     if(current_token->type != STT_KEYWORD_TYPE) return set_error(ERR_SYNTAX);
     if(next_token()->type != STT_IDENT) return set_error(ERR_SYNTAX);
 }
 
+
+//starts @ STT_KEYWORD_TYPE || STT_KEYWORD_TYPE || STT_IDENT
+//finish @ STT_RIGHT_BRACE || STT_RIGHT_PARENTHESE || STT_SEMICOLON
 void stat_list_rule() {
     // handles empty stat
     // eg. empty if ("if () {<nothing here>}")
-    if(current_token->type == STT_RIGHT_BRACE) {
+    if(current_token->type == STT_RIGHT_BRACE || get_error()->type) {
         return;
     }
     stat_rule();
     stat_list_rule();
 }
 
-char keywords[128][128] = {"KW_BOOLEAN", "KW_BREAK", "KW_CLASS", "KW_CONTINUE", "KW_DO", "KW_DOUBLE", "KW_ELSE", "KW_FALSE", "KW_FOR", "KW_IF", "KW_INT", "KW_RETURN", "KW_STRING", "KW_STATIC", "KW_TRUE", "KW_VOID", "KW_WHILE"};
-
+//starts @ STT_KEYWORD_TYPE || STT_KEYWORD_TYPE || STT_IDENT
+//finish @ STT_RIGHT_BRACE || STT_RIGHT_PARENTHESE || STT_SEMICOLON
 void stat_rule() {
     // IF
     if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_IF) {
@@ -155,7 +187,7 @@ void stat_rule() {
         stat_list_rule();
         // {
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-    } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) {
+    } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) { // WHILE
         //(
         if(next_token()->type != STT_LEFT_PARENTHESE) return set_error(ERR_SYNTAX);
         //boolean expression in condition
@@ -178,6 +210,7 @@ void stat_rule() {
             next_token();
             params_list_rule();
             if(next_token()->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+            if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
         } else if(current_token->type == STT_EQUALS) {
             next_token();
             expression_rule();
@@ -189,18 +222,15 @@ void stat_rule() {
         definition_rule();
         next_token();
         if(current_token->type == STT_SEMICOLON) {
-            // this was a local variable definition
-            // syntax ok => return
-            return;
-        } else if (current_token->type == STT_EQUALS) {
-            // this is definition as well as assignment
-            // parse expression, which will be assigned
+            // syntax OK
+        } else if(current_token->type == STT_EQUALS) {
             next_token();
             expression_rule();
             if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+        } else {
+            set_error(ERR_SYNTAX);
         }
     } else {
-        printf("else\n");
         return set_error(ERR_SYNTAX);
     }
     next_token();
@@ -210,7 +240,6 @@ void bool_expression_rule() {
     while(current_token->type != STT_RIGHT_PARENTHESE) {
         next_token();
     }
-    printf("%s %s %d\n", token_to_string(current_token), __func__, __LINE__);
 }
 
 void expression_rule() {
