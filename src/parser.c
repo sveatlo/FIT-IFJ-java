@@ -99,7 +99,7 @@ void class_member_rule() {
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         next_token();
         stat_list_rule();
-        if(next_token()->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
+        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
     }
 }
 
@@ -125,38 +125,63 @@ void definition_rule() {
 }
 
 void stat_list_rule() {
-    stat_rule();
-}
-
-void stat_rule() {
+    // handles empty stat
+    // eg. empty if ("if () {<nothing here>}")
     if(current_token->type == STT_RIGHT_BRACE) {
-        prev_token();
         return;
     }
+    stat_rule();
+    stat_list_rule();
+}
 
+char keywords[128][128] = {"KW_BOOLEAN", "KW_BREAK", "KW_CLASS", "KW_CONTINUE", "KW_DO", "KW_DOUBLE", "KW_ELSE", "KW_FALSE", "KW_FOR", "KW_IF", "KW_INT", "KW_RETURN", "KW_STRING", "KW_STATIC", "KW_TRUE", "KW_VOID", "KW_WHILE"};
+
+void stat_rule() {
+    // IF
     if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_IF) {
-        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        next_token();
-        bool_expression_rule();
-        if(next_token()->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-    } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) {
-        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        next_token();
-        bool_expression_rule();
-        if(next_token()->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-
+        //(
         if(next_token()->type != STT_LEFT_PARENTHESE) return set_error(ERR_SYNTAX);
+        //boolean expression in condition
+        next_token();
+        bool_expression_rule();
+        // )
+        if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+
+        // {
+        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
+        //statements inside IF
+        // TODO: no definition inside if
         next_token();
         stat_list_rule();
-        if(next_token()->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+        // {
+        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
+    } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) {
+        //(
+        if(next_token()->type != STT_LEFT_PARENTHESE) return set_error(ERR_SYNTAX);
+        //boolean expression in condition
+        next_token();
+        bool_expression_rule();
+        // )
+        if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+
+        // {
+        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
+        //statements inside IF
+        // TODO: no definition inside while
+        next_token();
+        stat_list_rule();
+        // {
+        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
     } else if(current_token->type == STT_IDENT) {
-        if(next_token()->type == STT_LEFT_BRACE) {
+        next_token();
+        if(current_token->type == STT_LEFT_PARENTHESE) {
             next_token();
             params_list_rule();
-            if(next_token()->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-        } else if(next_token()->type == STT_EQUALS) {
+            if(next_token()->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+        } else if(current_token->type == STT_EQUALS) {
             next_token();
             expression_rule();
+            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
         } else {
             return set_error(ERR_SYNTAX);
         }
@@ -172,19 +197,26 @@ void stat_rule() {
             // parse expression, which will be assigned
             next_token();
             expression_rule();
-            if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
         }
     } else {
-        printf(" stat_rule: %s\n", token_to_string(current_token));
+        printf("else\n");
         return set_error(ERR_SYNTAX);
     }
+    next_token();
 }
 
 void bool_expression_rule() {
-
+    while(current_token->type != STT_RIGHT_PARENTHESE) {
+        next_token();
+    }
+    printf("%s %s %d\n", token_to_string(current_token), __func__, __LINE__);
 }
 
 void expression_rule() {
-    parse_expression_tokens(token_list);
-    refresh_current_token();
+    // parse_expression_tokens(token_list);
+    // refresh_current_token();
+    while(current_token->type != STT_SEMICOLON) {
+        next_token();
+    }
 }

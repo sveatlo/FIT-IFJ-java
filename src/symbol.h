@@ -21,7 +21,6 @@ typedef enum {
     ST_CLASS
 } SymbolType;
 
-
 /**
  *  Union, where the actual variable data will be stored
  *
