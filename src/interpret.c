@@ -17,7 +17,7 @@
 
 
 
-void math_ins(Symbol *op1, Symbol *op2, Symbol *res, char c) {
+void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
     int a = 0, b = 0;
 
     if ((op1->data.var->type == VT_STRING) && (op2->data.var->type == VT_STRING)) { // a(string) + b(string)
@@ -62,7 +62,7 @@ void math_ins(Symbol *op1, Symbol *op2, Symbol *res, char c) {
     if (op2->data.var->type == VT_DOUBLE)
   		b = op2->data.var->value.d;
 	else if ( op2->data.var->type == VT_INTEGER)
-      b = op2->data.var->value.i;
+        b = op2->data.var->value.i;
 
     switch (c) {
         case '+':
@@ -102,11 +102,11 @@ void math_ins(Symbol *op1, Symbol *op2, Symbol *res, char c) {
     }
 }
 
-void compare_ins(InstructionCode code, Symbol *op1, Symbol *op2, Symbol *res) {
+void compare_ins(InstructionCode code, Symbol* op1, Symbol* op2, Symbol* res) {
     double a = 0, b = 0;
     int c = 0;
 
-    res->data.var->type == VT_BOOL;
+    res->data.var->type = VT_BOOL;
 
     switch (op1->data.var->type) {
         case VT_DOUBLE:
@@ -119,6 +119,8 @@ void compare_ins(InstructionCode code, Symbol *op1, Symbol *op2, Symbol *res) {
             a = op1->data.var->value.b;
             break;
         case VT_STRING:
+            break;
+        default:
             break;
     }
 
@@ -133,6 +135,8 @@ void compare_ins(InstructionCode code, Symbol *op1, Symbol *op2, Symbol *res) {
             b = op2->data.var->value.b;
             break;
         case VT_STRING:
+            break;
+        default:
             break;
     }
 
@@ -211,22 +215,22 @@ void compare_ins(InstructionCode code, Symbol *op1, Symbol *op2, Symbol *res) {
                 res->data.var->value.b = false;
             }
             break;
-        case IC_NOP:
+        default:
             break;
     }
 }
 
-void logic_ins(Symbol *op1, Symbol *op2, Symbol *res, char x) {
-    res->data.var->type == VT_BOOL;
+void logic_ins(Symbol* op1, Symbol* op2, Symbol* res, char x) {
+    res->data.var->type = VT_BOOL;
 
     switch (x) {
-        case 'o':
+        case 'o': // or
             res->data.var->value.b = op1->data.var->value.b || op2->data.var->value.b;
             break;
-        case 'a':
+        case 'a': // and
             res->data.var->value.b = op1->data.var->value.b && op2->data.var->value.b;
             break;
-        case 'n':
+        case 'n': //not
             if (op1->data.var->value.b) {
                 res->data.var->value.b = false;
                 break;
@@ -237,6 +241,86 @@ void logic_ins(Symbol *op1, Symbol *op2, Symbol *res, char x) {
     }
 }
 
-void interpret() {
+void mov(Symbol* op1, Symbol* res) {
+    if (op1->data.var->type == VT_INTEGER) {
+        res->data.var->value.i = op1->data.var->value.i;
+        res->data.var->type = VT_INTEGER;
+    }
+    if (op1->data.var->type == VT_DOUBLE)  {
+        res->data.var->value.d = op1->data.var->value.d;
+        res->data.var->type = VT_DOUBLE;
+    }
+    if (op1->data.var->type == VT_STRING) {
+        res->data.var->value.s = op1->data.var->value.s;
+        res->data.var->type = VT_STRING;
+    }
 
+}
+
+void interpret(List* ins_list) {
+    Instruction* current_ins;
+    current_ins = ins_list->active->data.instruction;
+
+
+    while (ins_list->active != NULL) {
+
+        switch (current_ins->code) {
+            case IC_MOV:
+                mov((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+            case IC_NOP:
+                break;
+            case IC_ADD:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '+');
+                break;
+            case IC_SUBSTRACT:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '-');
+                break;
+            case IC_MUL:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '*');
+                break;
+            case IC_DIV:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '/');
+                break;
+            case IC_EQUAL:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_NOTEQUAL:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_GREATER:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_LESSER:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_GREATEREQ:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_LESSEREQ:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_AND:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'a');
+                break;
+            case IC_NOT:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'n');
+                break;
+            case IC_OR:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'o');
+                break;
+            case IC_JMP:
+
+                break;
+            case IC_READ_INT:
+
+                break;
+            case IC_READ_DOUBLE:
+
+                break;
+            case IC_READ_STRING:
+
+                break;
+        }
+    }
 }

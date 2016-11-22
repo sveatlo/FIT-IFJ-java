@@ -26,6 +26,12 @@ typedef enum {
     IC_GREATER, ///< op1 > op2
     IC_GREATEREQ, ///< op1 >= op2
     IC_LESSEREQ, ///< op1 <= op2
+    IC_AND, ///< res = op1 && op2
+    IC_OR, ///< res = op1 || op2
+    IC_NOT, ///< res = !op1
+    IC_READ_INT, ///< read int from stdout
+    IC_READ_DOUBLE, ///< read double from stdout
+    IC_READ_STRING, ///< read string from stdout
 } InstructionCode;
 
 /**
