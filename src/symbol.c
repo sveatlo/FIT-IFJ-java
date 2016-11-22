@@ -3,9 +3,14 @@
 #include "context.h"
 #include "string.h"
 #include "symbol.h"
+#include "error.h"
 
 Symbol* symbol_init(SymbolName name) {
     Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
+    if (symbol == NULL) {
+        set_error(ERR_ALLOCATION);
+        return NULL;
+    }
     symbol->name = name;
     symbol->type = ST_NULL;
 

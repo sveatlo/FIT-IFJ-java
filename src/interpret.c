@@ -19,34 +19,37 @@
 void math_ins(Symbol *op1, Symbol *op2, Symbol *res, char c) {
     int a = 0, b = 0;
 
-    if ((op1->data.var->type == VT_STRING) && (op1->data.var->type == VT_STRING)) { // a(string) + b(string)
+    if ((op1->data.var->type == VT_STRING) && (op2->data.var->type == VT_STRING)) { // a(string) + b(string)
         res->type = VT_STRING;
         str_copy_string(op1->data.var->value.s, res->data.var->value.s); // hodnota op1 sa nakopyruje do res
-        //str_copy_string(op2->data.var->value.s, res->data.var->value.s); // konkatenacia res s op2
-    return;
-    }/*
-  if (res->type == VT_STRING) { // String res;
-    if ((op1->data.var->type == VT_STRING)  && (op1->data.var->type == VT_INTEGER)) { // a(string) + b(int)
-      str_copy_string(op1->data.var->value.s, res->data.var->value.s);
-      strncat(*res->data.var->value.s, op2->data.var->value.i,255);
-      return;
+        strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+        return;
     }
-    else if ((op1->data.var->type == VT_INTEGER) && (op1->data.var->type == VT_STRING)) { // a(int) + b(string)
-      strncpy(res->data.var->value.s, op1->data.var->value.i,255);
-      strncat(res->data.var->value.s, op2->data.var->value.s,255);
-      return;
+    if (res->data.var->type == VT_STRING) { // String res;
+        if ((op1->data.var->type == VT_STRING)  && (op2->data.var->type == VT_INTEGER)) { // a(string) + b(int)
+            String* poms = str_init();
+            int_to_string(poms, op2->data.var->value.i);
+            str_copy_string(op1->data.var->value.s, res->data.var->value.s);
+            strcat(res->data.var->value.s->str, poms->str);
+            str_dispose(poms);
+            return;
+        } else if ((op1->data.var->type == VT_INTEGER) && (op2->data.var->type == VT_STRING)) { // a(int) + b(string)
+            int_to_string(res->data.var->value.s, op1->data.var->value.i);
+            strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+            return;
+        } else if ((op1->data.var->type == VT_STRING)  && (op2->data.var->type == VT_DOUBLE)) { // a(string) + b(double)
+            String* poms = str_init();
+            double_to_string(poms,op2->data.var->value.d);
+            str_copy_string(op1->data.var->value.s, res->data.var->value.s);
+            strcat(res->data.var->value.s->str, poms->str);
+            str_dispose(poms);
+            return;
+        } else if ((op1->data.var->type == VT_DOUBLE)  && (op2->data.var->type == VT_STRING)) { // a(double) + b(string)
+            double_to_string(res->data.var->value.s, op1->data.var->value.d);
+            strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+            return;
+        }
     }
-    else if ((op1->data.var->type == VT_STRING)  && (op1->data.var->type == VT_DOUBLE)) { // a(string) + b(double)
-      strncpy(res->data.var->value.s, op1->data.var->value.s,255);
-      strncat(res->data.var->value.s, op2->data.var->value.d,255);
-      return;
-    }
-    else if ((op1->data.var->type == VT_DOUBLE)  && (op1->data.var->type == VT_STRING)) { // a(double) + b(string)
-      strncpy(res->data.var->value.s, op1->data.var->value.d,255);
-      strncat(res->data.var->value.s, op2->data.var->value.s,255);
-      return;
-    }
-  } */
 
   // TODO error pre zly vstup
 
