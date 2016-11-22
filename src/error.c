@@ -4,15 +4,17 @@
 #include "error.h"
 
 Error last_error;
-char err_strings[255][255] = {
-    "No error",
-    "Unknown error",
+char err_strings[][255] = {
+    [ERR_NONE] = "No error",
+    [ERR_UNKNOWN] = "Unknown error",
 
-    "Bad parameters",
-    "Memory allocation error",
-    "Cannot open input file",
+    [ERR_PARAMS] = "Bad parameters",
+    [ERR_ALLOCATION] = "Memory allocation error",
+    [ERR_CANNOT_OPEN_FILE] = "Cannot open input file",
 
-    "Lexical error"
+    [ERR_LEX] = "Lexical error",
+    [ERR_SYNTAX] = "Syntactical error",
+    [ERR_SEMANTIC] = "Semantical error"
 };
 
 Error* get_error () {

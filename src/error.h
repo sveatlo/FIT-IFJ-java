@@ -23,6 +23,9 @@ extern char* name_of_file;
  *
  *  @ingroup Error
  */
+// -------------- WARNING --------------
+// IF EDITED, PLEASE CHANGE STRINGS ARRAY IN ERROR.C
+// -------------------------------------
 typedef enum {
     //general errors
     ERR_NONE, ///<No error
@@ -37,7 +40,8 @@ typedef enum {
     ERR_LEX, ///< Lexical error
 
     //parser errors
-    ERR_SYNTAX ///< Syntax error
+    ERR_SYNTAX, ///< Syntax error
+    ERR_SEMANTIC
 } ErrorType;
 
 /**
