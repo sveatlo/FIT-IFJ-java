@@ -169,6 +169,20 @@ Symbol *table_insert_string(SymbolTableNode* symbol_table, SymbolName name, Stri
     return table_insert_symbol(symbol_table, symbol);
 }
 
+Symbol* table_insert_class(SymbolTableNode* symbol_table, SymbolName name) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_class(symbol);
+
+    return table_insert_symbol(symbol_table, symbol);
+}
+
+Symbol* table_insert_function(SymbolTableNode* symbol_table, SymbolName name) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_function(symbol);
+
+    return table_insert_symbol(symbol_table, symbol);
+}
+
 SymbolTableNode* table_find_symbol(SymbolTableNode* symbol_table, SymbolName name) {
     if (symbol_table != NULL) {
         SymbolTableNode* node = tree_search(symbol_table, name);

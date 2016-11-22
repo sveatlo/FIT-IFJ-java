@@ -65,44 +65,60 @@ void table_dispose(SymbolTableNode*);
 void table_init_symbol(Symbol*);
 
 /**
- * Insert variable into table
+ * Insert variable to a symbol table
  *
- * @return Inserted variable
+ * @return Inserted symbol
  * @ingroup IAL
  */
 Symbol* table_insert_symbol(SymbolTableNode*, Symbol*);
 
 /**
- * Insert variable into table type of Bool
+ * Insert Bool variable symbol to a symbol table
  *
- * @return Inserted variable
+ * @return Inserted symbol
  * @ingroup IAL
  */
 Symbol* table_insert_bool(SymbolTableNode*, SymbolName, bool);
 
 /**
- * Insert variable into table type of Double
+ * Insert Double variable symbol to a symbol table
  *
- * @return Inserted variable
+ * @return Inserted symbol
  * @ingroup IAL
  */
 Symbol* table_insert_double(SymbolTableNode*, SymbolName, double);
 
 /**
- * Insert variable into table type of Integer
+ * Insert Integer variable symbol to a symbol table
  *
- * @return Inserted variable
+ * @return Inserted symbol
  * @ingroup IAL
  */
 Symbol* table_insert_integer(SymbolTableNode*, SymbolName, int);
 
 /**
- * Insert variable into table type of String
+ * Insert String variable symbol to a symbol table
  *
- * @return Inserted variable
+ * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol *table_insert_string(SymbolTableNode*, SymbolName, String*);
+Symbol* table_insert_string(SymbolTableNode*, SymbolName, String*);
+
+/**
+ * Insert class symbol to a symbol table
+ *
+ * @return Inserted symbol
+ * @ingroup IAL
+ */
+Symbol* table_insert_class(SymbolTableNode*, SymbolName);
+
+/**
+ * Insert function symbol to the table
+ *
+ * @return Inserted symbol
+ * @ingroup IAL
+ */
+Symbol* table_insert_function(SymbolTableNode*, SymbolName);
 
 /**
  * Read variable from table
