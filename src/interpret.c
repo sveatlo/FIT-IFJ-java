@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <string.h>
 
 #include "interpret.h"
 #include "ial.h"
@@ -23,7 +22,7 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
     if ((op1->data.var->type == VT_STRING) && (op2->data.var->type == VT_STRING)) { // a(string) + b(string)
         res->data.var->type = VT_STRING;
         str_copy_string(op1->data.var->value.s, res->data.var->value.s); // hodnota op1 sa nakopyruje do res
-        strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+        str_concat(res->data.var->value.s, op2->data.var->value.s);
         return;
     }
     if (res->data.var->type == VT_STRING) { // String res;
@@ -31,23 +30,23 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
             String* poms = str_init();
             int_to_string(poms, op2->data.var->value.i);
             str_copy_string(op1->data.var->value.s, res->data.var->value.s);
-            strcat(res->data.var->value.s->str, poms->str);
+            str_concat(res->data.var->value.s, poms);
             str_dispose(poms);
             return;
         } else if ((op1->data.var->type == VT_INTEGER) && (op2->data.var->type == VT_STRING)) { // a(int) + b(string)
             int_to_string(res->data.var->value.s, op1->data.var->value.i);
-            strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+            str_concat(res->data.var->value.s, op2->data.var->value.s);
             return;
         } else if ((op1->data.var->type == VT_STRING)  && (op2->data.var->type == VT_DOUBLE)) { // a(string) + b(double)
             String* poms = str_init();
             double_to_string(poms,op2->data.var->value.d);
             str_copy_string(op1->data.var->value.s, res->data.var->value.s);
-            strcat(res->data.var->value.s->str, poms->str);
+            str_concat(res->data.var->value.s, poms);
             str_dispose(poms);
             return;
         } else if ((op1->data.var->type == VT_DOUBLE)  && (op2->data.var->type == VT_STRING)) { // a(double) + b(string)
             double_to_string(res->data.var->value.s, op1->data.var->value.d);
-            strcat(res->data.var->value.s->str, op2->data.var->value.s->str);
+            str_concat(res->data.var->value.s, op2->data.var->value.s);
             return;
         }
     }
@@ -257,6 +256,38 @@ void mov(Symbol* op1, Symbol* res) {
 
 }
 
+void read_int_stdin(Symbol* op1) {
+    op1->data.var->value.i = read_int();
+}
+
+void read_double_stdin(Symbol* op1) {
+    op1->data.var->value.d = read_double();
+}
+
+void read_str_stdin(Symbol* op1) {
+    op1->data.var->value.s = read_str();
+}
+
+void length_str(Symbol* op1, Symbol* res) {
+    res->data.var->value.i = str_length(op1->data.var->value.s);
+}
+
+void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res) {
+    res->data.var->value.s = substr(op1->data.var->value.s, op2->data.var->value.i, op3->data.var->value.i);
+}
+
+void compare_str(Symbol* op1, Symbol* op2, Symbol* res) {
+    res->data.var->value.i = str_cmp(op1->data.var->value.s, op2->data.var->value.s);
+}
+
+void sort_str(Symbol* op1, Symbol* res) {
+    res->data.var->value.s = ial_sort(op1->data.var->value.s);
+}
+
+void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
+    res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
+}
+
 void interpret(List* ins_list) {
     Instruction* current_ins;
     current_ins = ins_list->active->data.instruction;
@@ -313,13 +344,31 @@ void interpret(List* ins_list) {
 
                 break;
             case IC_READ_INT:
-
+                read_int_stdin((Symbol*)current_ins->op1);
                 break;
             case IC_READ_DOUBLE:
-
+                read_double_stdin((Symbol*)current_ins->op1);
                 break;
             case IC_READ_STRING:
+                read_str_stdin((Symbol*)current_ins->op1);
+                break;
+            case IC_PRINT:
 
+                break;
+            case IC_STR_SORT:
+                sort_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+            case IC_STR_FIND:
+                find_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            case IC_STR_LENGTH:
+                length_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+            case IC_STR_SUBSTRING:
+                substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
+                break;
+            case IC_STR_COMP:
+                compare_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
                 break;
         }
     }

@@ -46,6 +46,7 @@ typedef struct ExpressionStruct {
     Symbol* symbol;   ///< pointer to symbol table
     int i;  ///< integer const value
     double d; ///< double const value
+    String* s; ///< string value
 } Expression;
 
 
@@ -97,5 +98,13 @@ bool stack_empty(Stack* zasobnik);
  */
 void parse_expression_tokens(List* token_list);
 
+/**
+ *  Fuction for evaulate expressions
+ *
+ *  @param[in]  exp
+ *
+ *  @ingroup Expression
+ */
+void evaluate_expression(Expression* exp);
 
 #endif

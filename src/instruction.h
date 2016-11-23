@@ -32,6 +32,12 @@ typedef enum {
     IC_READ_INT, ///< read int from stdout
     IC_READ_DOUBLE, ///< read double from stdout
     IC_READ_STRING, ///< read string from stdout
+    IC_PRINT, ///< write to standart output
+    IC_STR_LENGTH, ///< res = length of string
+    IC_STR_SORT, ///< res = sorted strings
+    IC_STR_FIND, ///< res = if find return -1 else 0
+    IC_STR_SUBSTRING, ///< res = return substring between i(begin) to i(finish)
+    IC_STR_COMP, ///< res = return 0 op1 == op2 , return 1 op1 > op2 , else return -1
 } InstructionCode;
 
 /**
@@ -43,6 +49,7 @@ typedef struct {
     InstructionCode code; ///< code/type of instruction. Defines the operation of the instruction
     void* op1; ///< first instruction operand
     void* op2; ///< second instruction operand
+    void* op3; ///< third instruction operand
     void* res; ///< where to put result
 } Instruction;
 

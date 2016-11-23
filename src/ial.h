@@ -16,7 +16,7 @@
  * @return -1 when not found, position when found
  * @ingroup IAL
  */
-int ial_find(String s, String search);
+int ial_find(String* s, String* search);
 
 /**
  * Sorts the String in ascending order
@@ -24,9 +24,9 @@ int ial_find(String s, String search);
  * @return sorted String
  * @ingroup IAL
  */
-String *ial_sort(String *s);
+String* ial_sort(String *s);
 
-void ial_sort_shiftdown(char *s, int last);
+void ial_sort_shiftdown(char* s, int last);
 
 
 /**

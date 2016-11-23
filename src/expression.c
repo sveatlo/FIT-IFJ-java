@@ -89,3 +89,7 @@ void parse_expression_tokens(List* token_list) {
     (void)token_list;
     // TODO: tobedone
 }
+
+void evaluate_expression(Expression* exp) {
+
+}
