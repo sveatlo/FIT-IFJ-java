@@ -86,9 +86,35 @@ int str_length(String* s){
 }
 
 void int_to_string(String* s, int i) {
-    snprintf(s->str, 100, "%d", i);
+    _str_resize_raw(s, 20);
+    snprintf(s->str, 20, "%d", i);
+    s->length = strlen(s->str);
 }
 
-void double_to_string(String* s, double i) {
-    snprintf(s->str, 100, "%f", i);
+void double_to_string(String* s, double d) {
+    _str_resize_raw(s, 20);
+    snprintf(s->str, 20, "%f", d);
+    s->length = strlen(s->str);
+}
+
+void str_concat(String* s1, String* s2) {
+    if ((s1->length + s2->length) > s1->mem_size) {
+        _str_resize_raw(s1, s2->length + s1->length);
+    }
+    strncat(s1->str, s2->str, s1->mem_size);
+    s1->length += s2->length;
+}
+
+String* substr(String* s, int i, int n) {
+    if (i < 0 || n < 0 || n < i || i > s->length) {
+        set_error(ERR_UNKNOWN);
+        return NULL;
+    }
+    int sublen = n - i + 1;
+    String* ret = str_init_n(sublen);
+    for (int j = 0; j <= sublen; j++) {
+        ret->str[j] = s->str[j+i];
+    }
+    ret->length = sublen;
+    return ret;
 }
