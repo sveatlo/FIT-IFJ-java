@@ -68,11 +68,24 @@ void str_clear(String* s);
 void str_append(String* s1, char c);
 
 /**
- *  Copy the content of <tt>s1</tt> to <tt>s2</tt>
- *  @return 1 for success; 0 for failure
+ *  Concatenates 2 Strings
+ *
+ *  @param[in,out] dest = dest + src
+ *  @param[in] string to be appended to src
+ *
  *  @ingroup String
  */
-void str_copy_string(String* s1, String* s2);
+void str_concat(String* dest, String* src);
+
+/**
+ *  Copy the content of `src` to `dest`
+ *
+ *  @param[in,out] dest = src
+ *  @param[in] string to copied to dest
+ *
+ *  @ingroup String
+ */
+void str_copy_string(String* dest, String* src);
 
 /**
  *  Compares two strings

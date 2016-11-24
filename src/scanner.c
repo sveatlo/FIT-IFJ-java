@@ -295,8 +295,8 @@ ScannerToken* get_next_token(FILE *f) {
                                 free(token->data);
                                 return NULL;
                             }
-                            //cut content from token->data->str to token->data->id->class and ignore .
-                            str_copy_string(token->data->id->name, token->data->id->class);
+                            //cut content from token->data->id->name to token->data->id->class and ignore .
+                            str_copy_string(token->data->id->class, token->data->id->name);
                             str_clear(token->data->id->name);
                             current_state = SS_CLASS_AND_FUNCTION_1;
                         } else {

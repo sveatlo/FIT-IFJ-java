@@ -9,10 +9,12 @@
 
 #include "instruction.h"
 #include "scanner_token.h"
+#include "variable.h"
 
-typedef union  {
+typedef union {
     ScannerToken* token;
     Instruction* instruction;
+    VariableType var_type;
 } ListItemData;
 
 /**
@@ -32,7 +34,7 @@ typedef struct ListItemStruct {
  *
  *  @ingroup List
  */
-typedef struct {
+typedef struct ListStruct {
     ListItem* active;
 
     ListItem* first;

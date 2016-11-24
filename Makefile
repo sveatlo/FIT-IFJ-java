@@ -30,7 +30,7 @@ scanner.o: $(SRC_DIR)scanner.c $(SRC_DIR)scanner.h scanner_token.o
 	$(CC) $(CFLAGS) -c $(SRC_DIR)scanner.c -o $(DIST_DIR)scanner.o
 scanner_token.o: $(SRC_DIR)scanner_token.c $(SRC_DIR)scanner_token.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)scanner_token.c -o $(DIST_DIR)scanner_token.o
-list.o: $(SRC_DIR)list.c $(SRC_DIR)list.h
+list.o: $(SRC_DIR)list.c $(SRC_DIR)list.h $(SRC_DIR)variable.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)list.c -o $(DIST_DIR)list.o
 string.o: $(SRC_DIR)string.c $(SRC_DIR)string.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)string.c -o $(DIST_DIR)string.o
@@ -42,7 +42,7 @@ expression.o: $(SRC_DIR)expression.c $(SRC_DIR)expression.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)expression.c -o $(DIST_DIR)expression.o
 ial.o: $(SRC_DIR)ial.c $(SRC_DIR)ial.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)ial.c -o $(DIST_DIR)ial.o
-symbol.o: $(SRC_DIR)symbol.c $(SRC_DIR)symbol.h
+symbol.o: $(SRC_DIR)symbol.c $(SRC_DIR)symbol.h $(SRC_DIR)variable.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)symbol.c -o $(DIST_DIR)symbol.o
 context.o: $(SRC_DIR)context.c $(SRC_DIR)context.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)context.c -o $(DIST_DIR)context.o

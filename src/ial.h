@@ -6,9 +6,12 @@
 #ifndef IAL_H
 #define IAL_H
 
+struct ContextStruct;
+
 #include <stdbool.h>
-#include "symbol.h"
+#include "context.h"
 #include "string.h"
+#include "symbol.h"
 
 /**
  * Searches for substring in a String
@@ -110,7 +113,7 @@ Symbol* table_insert_string(SymbolTableNode*, SymbolName, String*);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_class(SymbolTableNode*, SymbolName);
+Symbol* table_insert_class(SymbolTableNode*, SymbolName, struct ContextStruct*);
 
 /**
  * Insert function symbol to the table
@@ -118,7 +121,7 @@ Symbol* table_insert_class(SymbolTableNode*, SymbolName);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_function(SymbolTableNode*, SymbolName);
+Symbol* table_insert_function(SymbolTableNode*, SymbolName, struct ContextStruct*);
 
 /**
  * Read variable from table

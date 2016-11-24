@@ -1,6 +1,6 @@
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "error.h"
 #include "string.h"
 
@@ -57,14 +57,22 @@ void str_append(String* s1, char c) {
     s1->str[s1->length] = '\0';
 }
 
-void str_copy_string(String* s1, String* s2) {
-    int retlength = s1->length;
-
-    if (retlength >= s2->mem_size) {
-        _str_resize_raw(s2, s1->length + STR_INC_SIZE);
+void str_concat(String* dest, String* src) {
+    if(dest->length + src->length > dest->mem_size) {
+        _str_resize_raw(dest, dest->length + src->length);
     }
-    strcpy(s2->str, s1->str);
-    s2->length = retlength;
+
+    strncat(dest->str, src->str, dest->mem_size);
+}
+
+void str_copy_string(String* dest, String* str) {
+    int retlength = str->length;
+
+    if (retlength >= dest->mem_size) {
+        _str_resize_raw(dest, str->length + STR_INC_SIZE);
+    }
+    strcpy(dest->str, str->str);
+    dest->length = retlength;
 }
 
 int str_cmp(String* s1, String* s2) {

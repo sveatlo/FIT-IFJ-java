@@ -18,17 +18,18 @@ FILE* parse_parameters(int, char**);
  *  @brief entry-point function
  */
 int main(int argc, char** argv) {
+    // (void)argv;
+    // (void)argc;
     set_error(ERR_NONE);
 
     String* str0 = str_init();
     str_append(str0, 'a');
-    str_append(str0, 'b');
-    str_append(str0, 'c');
 
     String* str1 = str_init();
-    str_append(str1, 'd');
-    str_append(str1, 'e');
-    str_append(str1, 'f');
+    str_append(str1, 'b');
+    //
+    // str_concat(str0, str1);
+    // printf("%s\n", str_get_str(str0));
 
     // // printf("%s\n", str_get_str(str0));
     // // str_clear(str0);
@@ -66,12 +67,12 @@ int main(int argc, char** argv) {
 
     // Context* ctx = context_init();
     // context_delete(ctx);
-    // (void)argv;
-    // (void)argc;
-    // SymbolTableNode* table = table_init();
-    // table_insert_bool(table, str0, 0);
-    // table_insert_string(table, str1, str0);
-    // table_dispose(table);
+        (void)argv;
+        (void)argc;
+    SymbolTableNode* table = table_init();
+    table_insert_integer(table, str0, 42);
+    table_insert_integer(table, str1, 69);
+    table_dispose(table);
 
 
     FILE *f = parse_parameters(argc, argv);
@@ -81,7 +82,17 @@ int main(int argc, char** argv) {
 
     // list_activate_first(token_list);
     // while(token_list->active != NULL) {
-    //     printf("%s ", token_to_string(token_list->active->data.token));
+    //     ScannerToken* token = token_list->active->data.token;
+    //     if(token->type == STT_IDENT) {
+    //         if(token->data->id->class != NULL) {
+    //             printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
+    //         } else {
+    //             printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
+    //
+    //         }
+    //     } else {
+    //         printf("%s ", token_to_string(token));
+    //     }
     //     list_activate_next(token_list);
     // }
     // printf("\n");

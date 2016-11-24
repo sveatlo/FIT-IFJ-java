@@ -16,36 +16,36 @@
  */
 typedef enum {
     STT_EMPTY, ///< empty token
+    STT_AND, ///< &&
+    STT_COMMA, ///< ,
     STT_COMMENT, ///< comment (inline or block)
-    STT_IDENT, ///< identificator
-    STT_KEYWORD, ///< one of keywords
-    STT_KEYWORD_TYPE, ///< var type keywords
-    STT_INT,  ///< integer number
-    STT_DOUBLE, ///< double number
-    STT_STRING, ///< string
-    STT_PLUS,   ///< `+`
-    STT_MINUS, ///< `-`
-    STT_MULTIPLY, ///< `*`
     STT_DIVIDE, ///< /
+    STT_DOUBLE, ///< double number
+    STT_EOF, /// end of file
     STT_EQUALS, ///< =
+    STT_GREATER_EQUALS, ///< >=
+    STT_GREATER, ///< >
+    STT_IDENT, ///< identificator
+    STT_INT,  ///< integer number
+    STT_KEYWORD_TYPE, ///< var type keywords
+    STT_KEYWORD, ///< one of keywords
+    STT_LEFT_BRACE, ///< {
+    STT_LEFT_PARENTHESE, ///< (
+    STT_LESS_EQUALS, ///< <=
+    STT_LESS, ///< <
     STT_LOGIC_EQUAL, ///< ==
     STT_LOGIC_NOT_EQUAL, ///< !=
-    STT_LESS, ///< <
-    STT_LESS_EQUALS, ///< <=
-    STT_GREATER, ///< >
-    STT_GREATER_EQUALS, ///< >=
-    STT_AND, ///< &&
-    STT_OR, ///< ||
-    STT_LEFT_PARENTHESE, ///< (
-    STT_RIGHT_PARENTHESE, ///< )
-    STT_LEFT_BRACE, ///< {
-    STT_RIGHT_BRACE, ///< }
-    STT_COMMA, ///< ,
-    STT_SEMICOLON, ///< ;
-    STT_NEGATE, /// !
-    STT_PLUS_EQUAL, /// +=
     STT_MINUS_EQUAL, /// -=
-    STT_EOF /// end of file
+    STT_MINUS, ///< `-`
+    STT_MULTIPLY, ///< `*`
+    STT_NEGATE, /// !
+    STT_OR, ///< ||
+    STT_PLUS_EQUAL, /// +=
+    STT_PLUS,   ///< `+`
+    STT_RIGHT_BRACE, ///< }
+    STT_RIGHT_PARENTHESE, ///< )
+    STT_SEMICOLON, ///< ;
+    STT_STRING, ///< string
     // STT_LEFT_CHEVRON, ///< <
     // STT_RIGHT_CHEVRON, ///< >
 } ScannerTokenType;
@@ -68,8 +68,8 @@ typedef enum {
     KW_IF, ///< if
     KW_INT, ///< int
     KW_RETURN, ///< return
-    KW_STRING, ///< string
     KW_STATIC, ///< static
+    KW_STRING, ///< string
     KW_TRUE, ///< true
     KW_VOID, ///< void
     KW_WHILE ///< while

@@ -97,7 +97,9 @@ void list_delete_last (List* list) {
 }
 
 void list_activate_first (List* list) {
-    list->active = list->first;
+    if(list != NULL && list->first != NULL) {
+        list->active = list->first;
+    }
 }
 
 void list_activate_next (List* list) {

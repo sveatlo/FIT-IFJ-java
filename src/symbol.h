@@ -8,53 +8,19 @@ struct ContextStruct;
 #include "context.h"
 #include "list.h"
 #include "string.h"
+#include "variable.h"
 
 /**
  *  Type of the value of symbol
  *
  *  @ingroup IAL
  */
-typedef enum {
+typedef enum SymbolType {
     ST_NULL,
     ST_VARIABLE,
     ST_FUNCTION,
     ST_CLASS
 } SymbolType;
-
-/**
- *  Union, where the actual variable data will be stored
- *
- *  @ingroup IAL
- */
-typedef union {
-    int i;
-    double d;
-    String* s;
-    bool b;
-} VariableValue;
-
-/**
- *  Variables types
- *
- *  @ingroup IAL
- */
-typedef enum {
-    VT_NULL,    ///< IDK YET
-    VT_BOOL,    ///< bool
-    VT_INTEGER, ///< int
-    VT_DOUBLE,  ///< double
-    VT_STRING   ///< string
-} VariableType;
-
-/**
- *  Structure storing informations about a variable
- *
- *  @ingroup IAL
- */
-typedef struct {
-    VariableType type;  ///< Type of the variable
-    VariableValue value; ///< Union of values of the variable
-} Variable;
 
 /**
  *  Structure storing informations about the function
@@ -63,7 +29,9 @@ typedef struct {
  */
 typedef struct {
     struct ContextStruct* context;   ///< Context of the function
-    List* instructions;
+    List* instructions; ///< List of instructions
+    VariableType return_type;   ///< return type of the function
+    List* params_list; ///< List of parameters - types
 } Function;
 
 /**
@@ -111,7 +79,7 @@ typedef struct {
 Symbol* symbol_init(SymbolName);
 void symbol_dispose(Symbol*);
 void symbol_new_variable(Symbol*, VariableType);
-void symbol_new_function(Symbol*);
-void symbol_new_class(Symbol*);
+void symbol_new_function(Symbol*, struct ContextStruct*);
+void symbol_new_class(Symbol*, struct ContextStruct*);
 
 #endif

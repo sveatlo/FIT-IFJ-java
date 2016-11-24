@@ -11,6 +11,7 @@
 struct SymbolTableNodeStruct;
 
 #include "ial.h"
+#include "symbol.h"
 
 
 /**
@@ -20,9 +21,11 @@ struct SymbolTableNodeStruct;
  */
 typedef struct ContextStruct {
     struct SymbolTableNodeStruct* symbol_table; ///< Symbol table of the current context
+    struct ContextStruct* parent_context;
 } Context;
 
-Context* context_init();
+Context* context_init(Context*);
 void context_delete(Context*);
+Symbol* context_find_symbol(Context* context, SymbolName name);
 
 #endif

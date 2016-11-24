@@ -169,16 +169,16 @@ Symbol *table_insert_string(SymbolTableNode* symbol_table, SymbolName name, Stri
     return table_insert_symbol(symbol_table, symbol);
 }
 
-Symbol* table_insert_class(SymbolTableNode* symbol_table, SymbolName name) {
+Symbol* table_insert_class(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
     Symbol* symbol = symbol_init(name);
-    symbol_new_class(symbol);
+    symbol_new_class(symbol, parent_context);
 
     return table_insert_symbol(symbol_table, symbol);
 }
 
-Symbol* table_insert_function(SymbolTableNode* symbol_table, SymbolName name) {
+Symbol* table_insert_function(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
     Symbol* symbol = symbol_init(name);
-    symbol_new_function(symbol);
+    symbol_new_function(symbol, parent_context);
 
     return table_insert_symbol(symbol_table, symbol);
 }
@@ -203,8 +203,8 @@ void tree_init(SymbolTableNode* node) {
 }
 
 SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key) {
-    if(node != NULL ) {
-        int cmp = str_cmp(node->key, key);
+    if(node->key != NULL ) {
+        int cmp = str_cmp(key, node->key);
 
         if (cmp == 0) {
             return node;
@@ -214,6 +214,7 @@ SymbolTableNode* tree_search(SymbolTableNode* node, SymbolName key) {
             return tree_search(node->left, key);
         }
     }
+
     return NULL;
 }
 
