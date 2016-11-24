@@ -65,6 +65,7 @@ void str_concat(String* dest, String* src) {
     }
 
     strncat(dest->str, src->str, dest->mem_size);
+    dest->length += dest->length;
 }
 
 void str_copy_string(String* dest, String* str) {
@@ -103,14 +104,6 @@ void double_to_string(String* s, double d) {
     _str_resize_raw(s, 20);
     snprintf(s->str, 20, "%f", d);
     s->length = strlen(s->str);
-}
-
-void str_concat(String* s1, String* s2) {
-    if ((s1->length + s2->length) > s1->mem_size) {
-        _str_resize_raw(s1, s2->length + s1->length);
-    }
-    strncat(s1->str, s2->str, s1->mem_size);
-    s1->length += s2->length;
 }
 
 String* substr(String* s, int i, int n) {

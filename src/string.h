@@ -136,13 +136,6 @@ void int_to_string(String* s, int i);
  */
 void double_to_string(String* s, double i);
 
-/**
- *  Function concatenate s2 to s1
- *
- *  @return string
- *  @ingroup String
- */
-void str_concat(String* s1, String* s2);
 
 /**
  *  Function search substring in string

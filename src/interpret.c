@@ -21,7 +21,7 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
 
     if ((op1->data.var->type == VT_STRING) && (op2->data.var->type == VT_STRING)) { // a(string) + b(string)
         res->data.var->type = VT_STRING;
-        str_copy_string(op1->data.var->value.s, res->data.var->value.s); // hodnota op1 sa nakopyruje do res
+        str_copy_string(res->data.var->value.s, op1->data.var->value.s); // hodnota op1 sa nakopyruje do res
         str_concat(res->data.var->value.s, op2->data.var->value.s);
         return;
     }
@@ -29,7 +29,7 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
         if ((op1->data.var->type == VT_STRING)  && (op2->data.var->type == VT_INTEGER)) { // a(string) + b(int)
             String* poms = str_init();
             int_to_string(poms, op2->data.var->value.i);
-            str_copy_string(op1->data.var->value.s, res->data.var->value.s);
+            str_copy_string(res->data.var->value.s, op1->data.var->value.s);
             str_concat(res->data.var->value.s, poms);
             str_dispose(poms);
             return;
@@ -40,7 +40,7 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
         } else if ((op1->data.var->type == VT_STRING)  && (op2->data.var->type == VT_DOUBLE)) { // a(string) + b(double)
             String* poms = str_init();
             double_to_string(poms,op2->data.var->value.d);
-            str_copy_string(op1->data.var->value.s, res->data.var->value.s);
+            str_copy_string(res->data.var->value.s, op1->data.var->value.s);
             str_concat(res->data.var->value.s, poms);
             str_dispose(poms);
             return;
