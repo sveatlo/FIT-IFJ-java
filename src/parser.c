@@ -302,7 +302,7 @@ void params_list_rule(List* params_list) {
 
 //starts @ STT_RIGHT_PARENTHESE || STT_INT || STT_DOUBLE || STT_STRING || STT_KEYWORD (for true,false) || STT_IDENT (for symbol)
 //finish @ STT_RIGHT_PARENTHESE
-void call_params_list_rule(List* fn_params_list) {
+void call_params_list_rule(List *fn_params_list, List *call_params_list) {
     if(current_token->type == STT_RIGHT_PARENTHESE || get_error()->type) {
         return;
     }
@@ -427,7 +427,8 @@ void stat_rule() {
             //list for params types
             list_activate_first(symbol->data.fn->params_list);
             next_token();
-            call_params_list_rule(symbol->data.fn->params_list);
+            List *call_params_list = list_init();
+            call_params_list_rule(symbol->data.fn->params_list, call_params_list);
             if(symbol->data.fn->params_list->active != NULL) {
                 //fn params but call params ended
                 return set_error(ERR_SEMANTIC);
