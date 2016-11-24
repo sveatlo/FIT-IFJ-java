@@ -42,7 +42,7 @@ typedef enum {
     CONST_INTEGER, ///< when operand is an integer constant
     CONST_DOUBLE, ///< when operand is an double constant
     CONST_STRING, ///< when operand is an string constant
-    CONST_BOOL, ///<   when operand is an boolean constant
+    CONST_BOOL, ///< when operand is an boolean constant
     PLUS,
     MINUS,
     MULTIPLY,
