@@ -4,6 +4,7 @@
 #include "expression.h"
 #include "list.h"
 #include "scanner_token.h"
+#include "symbol.h"
 
 /**
  *  Precedence table defines all combinations of top of the stack/input token and priorities between them.
@@ -90,6 +91,224 @@ void parse_expression_tokens(List* token_list) {
     // TODO: tobedone
 }
 
-void evaluate_expression(Expression* exp) {
+const ExpPrecedenceSign precedenceTablePlus[4][4] = {
+    //   i, d,  s,  b
+        {i, d,  s,  n }, //int
+        {d, d,  s,  n }, //double
+        {s, s,  s,  n }, //string
+        {n, n,  n,  n }  //boolean
+};
 
+const ExpPrecedenceSign precedenceTableOthers[4][4] = {
+    //   i, d,  s,  b
+        {i, d,  n,  n }, //int
+        {d, d,  n,  n }, //double
+        {n, n,  n,  n }, //string
+        {n, n,  n,  n }  //boolean
+};
+
+
+Expression *compare_exp(Expression *expr1, Expression *expr2, Expression *expr) {
+    int index1;
+    int index2;
+    Expression *ptr;
+
+    if (expr1->type == VT_INTEGER ) {
+        index1 = 0;
+    } else if (expr1->type == VT_DOUBLE) {
+        index1 = 1;
+    } else if (expr1->type == VT_STRING) {
+        index1 = 2;
+    } else {
+        index1 = 3;
+    }
+
+    if (expr2->type == VT_INTEGER ) {
+        index2 = 0;
+    } else if (expr2->type == VT_DOUBLE) {
+        index2 = 1;
+    } else if (expr2->type == VT_STRING) {
+        index2 = 2;
+    } else {
+        index2 = 3;
+    }
+
+
+    switch (expr->op) {
+        case PLUS:
+            if (precedenceTablePlus[index1][index2] == i) {
+                ptr->i = expr1->i + expr2->i;
+                return ptr;
+            } else if (precedenceTablePlus[index1][index2] == d) {
+                if (expr1->type == VT_INTEGER) {
+                    ptr->d = expr1->i + expr2->d;
+                    return ptr;
+                } else if (expr2->type == VT_DOUBLE) {
+                    ptr->d = expr1->d + expr2->d;
+                    return ptr;
+                } else {
+                    ptr->d = expr1->d + expr->i;
+                    return ptr;
+                }
+            } else if (precedenceTablePlus[index1][index2] == s) {
+                if (expr1->type == VT_INTEGER) {
+                    int_to_string(expr1->s, expr1->i);
+                    str_concat(expr1->s, expr2->s);
+                    return expr1;
+                } else if (expr1->type == VT_DOUBLE) {
+                    double_to_string(expr1->s, expr1->d);
+                    str_concat(expr1->s, expr2->s);
+                    return expr1;
+                } else if (expr2->type == VT_INTEGER) {
+                    int_to_string(expr2->s, expr2->i);
+                    str_concat(expr2->s, expr1->s);
+                    return expr2;
+                } else if (expr2->type == VT_DOUBLE) {
+                    double_to_string(expr2->s, expr2->d);
+                    str_concat(expr2->s, expr1->s);
+                    return expr2;
+                } else {
+                    str_concat(expr1->s, expr2->s);
+                    return expr1;
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+        case MINUS:
+            if (precedenceTablePlus[index1][index2] == i) {
+                ptr->i = expr1->i - expr2->i;
+                return ptr;
+            } else if (precedenceTablePlus[index1][index2] == d) {
+                if (expr1->type == VT_INTEGER) {
+                    ptr->d = expr1->i - expr2->d;
+                    return ptr;
+                } else if (expr2->type == VT_DOUBLE) {
+                    ptr->d = expr1->d - expr2->d;
+                    return ptr;
+                } else {
+                    ptr->d = expr1->d - expr->i;
+                    return ptr;
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+        case MULTIPLY:
+            if (precedenceTablePlus[index1][index2] == i) {
+                ptr->i = expr1->i * expr2->i;
+                return ptr;
+            } else if (precedenceTablePlus[index1][index2] == d) {
+                if (expr1->type == VT_INTEGER) {
+                    ptr->d = expr1->i * expr2->d;
+                    return ptr;
+                } else if (expr2->type == VT_DOUBLE) {
+                    ptr->d = expr1->d * expr2->d;
+                    return ptr;
+                } else {
+                    ptr->d = expr1->d * expr->i;
+                    return ptr;
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+        case DIVIDE:
+            if (precedenceTablePlus[index1][index2] == i) {
+                ptr->i = expr1->i / expr2->i;
+                return ptr;
+            } else if (precedenceTablePlus[index1][index2] == d) {
+                if (expr1->type == VT_INTEGER) {
+                    ptr->d = expr1->i / expr2->d;
+                    return ptr;
+                } else if (expr2->type == VT_DOUBLE) {
+                    ptr->d = expr1->d / expr2->d;
+                    return ptr;
+                } else {
+                    ptr->d = expr1->d / expr->i;
+                    return ptr;
+                }
+            } else {
+//                  set_error(); TODO
+            }
+            break;
+        default:
+            return NULL;
+            break;
+    }
+}
+
+Expression *evaluate_expression(Expression* expr) {
+    switch (expr->op) {
+        case PLUS:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                return compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), expr);
+            }
+            break;
+        case MINUS:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                return compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), expr);
+            }
+            break;
+        case MULTIPLY:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                return compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), expr);
+            }
+            break;
+        case DIVIDE:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                return compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), expr);
+            }
+            break;
+        case SYMBOL:
+            if (expr->symbol != NULL) {
+                switch (expr->symbol->data.var->type) {
+                    case VT_INTEGER:
+                        expr->i = expr->symbol->data.var->value.i;
+                        expr->type = VT_INTEGER;
+                        return expr;
+                        break;
+                    case VT_DOUBLE:
+                        expr->d = expr->symbol->data.var->value.d;
+                        expr->type = VT_DOUBLE;
+                        return expr;
+                        break;
+                    case VT_STRING:
+                        expr->s = expr->symbol->data.var->value.s;
+                        expr->type = VT_STRING;
+                        return expr;
+                        break;
+                    case VT_BOOL:
+                        expr->b = expr->symbol->data.var->value.b;
+                        expr->type = VT_BOOL;
+                        return expr;
+                        break;
+                    default:
+                        return NULL;
+                        break;
+                }
+            } else {
+                // eror TODO
+            }
+            break;
+        case CONST_INTEGER:
+            expr->type = VT_INTEGER;
+            return expr;
+            break;
+        case CONST_DOUBLE:
+            expr->type = VT_DOUBLE;
+            return expr;
+            break;
+        case CONST_BOOL:
+            expr->type = VT_BOOL;
+            return expr;
+            break;
+        case CONST_STRING:
+            expr->type = VT_STRING;
+            return expr;
+            break;
+        default:
+            return NULL;
+            break;
+    }
 }

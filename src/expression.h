@@ -9,6 +9,7 @@
 
 #include "ial.h"
 #include "list.h"
+#include "symbol.h"
 
 /**
  *  Defines priority between tokens on the stack and input token
@@ -23,11 +24,20 @@ typedef enum
     N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
 } TokenPrecedence;
 
+typedef enum
+{
+    n, ///< NOT ALLOWED. Undefined
+    i, ///< Type integer
+    d, ///< Type double
+    s  ///< Type string
+} ExpPrecedenceSign;
+
 typedef enum {
     SYMBOL, ///< when operand is a symbol
     CONST_INTEGER, ///< when operand is an integer constant
     CONST_DOUBLE, ///< when operand is an double constant
-
+    CONST_BOOL, ///<   when operand is an boolean constant
+    CONST_STRING, ///< when operand is an string constant
     PLUS,
     MINUS,
     MULTIPLY,
@@ -47,6 +57,8 @@ typedef struct ExpressionStruct {
     int i;  ///< integer const value
     double d; ///< double const value
     String* s; ///< string value
+    bool b;
+    VariableType type;
 } Expression;
 
 
@@ -99,12 +111,21 @@ bool stack_empty(Stack* zasobnik);
 void parse_expression_tokens(List* token_list);
 
 /**
- *  Fuction for evaulate expressions
+ *  Helper fuction for compare expressions
  *
- *  @param[in]  exp
+ *  @param[in]  expr1,expr2
  *
  *  @ingroup Expression
  */
-void evaluate_expression(Expression* exp);
+Expression *compare_exp(Expression *expr1, Expression *expr2, Expression *expr);
+
+/**
+ *  Fuction for evaulate expressions
+ *
+ *  @param[in]  expr
+ *
+ *  @ingroup Expression
+ */
+Expression *evaluate_expression(Expression* expr);
 
 #endif
