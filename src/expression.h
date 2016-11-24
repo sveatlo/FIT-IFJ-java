@@ -24,20 +24,25 @@ typedef enum
     N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
 } TokenPrecedence;
 
+/**
+ *  Defines type of result after operation (+,-,*,/)
+ *
+ *  @ingroup Expression
+ **/
 typedef enum
 {
-    n, ///< NOT ALLOWED. Undefined
-    i, ///< Type integer
-    d, ///< Type double
-    s  ///< Type string
-} ExpPrecedenceSign;
+    I, ///< Type integer
+    U, ///< NOT ALLOWED. Undefined
+    D, ///< Type double
+    S  ///< Type string
+} ExpressionOperationSign;
 
 typedef enum {
     SYMBOL, ///< when operand is a symbol
     CONST_INTEGER, ///< when operand is an integer constant
     CONST_DOUBLE, ///< when operand is an double constant
-    CONST_BOOL, ///<   when operand is an boolean constant
     CONST_STRING, ///< when operand is an string constant
+    CONST_BOOL, ///<   when operand is an boolean constant
     PLUS,
     MINUS,
     MULTIPLY,
@@ -57,8 +62,7 @@ typedef struct ExpressionStruct {
     int i;  ///< integer const value
     double d; ///< double const value
     String* s; ///< string value
-    bool b;
-    VariableType type;
+    bool b; ///< bool value
 } Expression;
 
 
@@ -117,7 +121,7 @@ void parse_expression_tokens(List* token_list);
  *
  *  @ingroup Expression
  */
-Expression *compare_exp(Expression *expr1, Expression *expr2, Expression *expr);
+Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperation operation);
 
 /**
  *  Fuction for evaulate expressions
@@ -126,6 +130,6 @@ Expression *compare_exp(Expression *expr1, Expression *expr2, Expression *expr);
  *
  *  @ingroup Expression
  */
-Expression *evaluate_expression(Expression* expr);
+Expression *evaluate_expression(Expression *expr);
 
 #endif
