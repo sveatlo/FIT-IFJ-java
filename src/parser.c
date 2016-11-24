@@ -37,7 +37,7 @@ static inline ScannerToken* refresh_current_token() {
     return current_token;
 }
 
-static inline void context_add_variable(Context* context, KeywordType type, String* name) {
+static inline Symbol* context_add_variable(Context* context, KeywordType type, String* name) {
     if(table_find_symbol(context->symbol_table, name) != NULL) {
         fprintf(stderr, "Symbol \"%s\" already defined\n", str_get_str(name));
         set_error(ERR_SEMANTIC);
@@ -46,19 +46,19 @@ static inline void context_add_variable(Context* context, KeywordType type, Stri
 
     switch (type) {
         case KW_INT:
-            table_insert_integer(context->symbol_table, name, 0);
+            return table_insert_integer(context->symbol_table, name, 0);
             break;
         case KW_DOUBLE:
-            table_insert_double(context->symbol_table, name, 0);
+            return table_insert_double(context->symbol_table, name, 0);
             break;
         case KW_BOOLEAN:
-            table_insert_bool(context->symbol_table, name, NULL);
+            return table_insert_bool(context->symbol_table, name, NULL);
             break;
         case KW_STRING:
-            table_insert_string(context->symbol_table, name, NULL);
+            return table_insert_string(context->symbol_table, name, NULL);
             break;
         case KW_VOID:
-            table_insert_function(context->symbol_table, name, context);
+            return table_insert_function(context->symbol_table, name, context);
             break;
         default:
             return set_error(ERR_SYNTAX);
@@ -222,7 +222,7 @@ void class_member_rule() {
         //syntax ok
     } else if(current_token->type == STT_EQUALS) {
         //add variable to context
-        context_add_variable(current_context, current_type, current_ident->data->id->name);
+        Symbol* symbol = context_add_variable(current_context, current_type, current_ident->data->id->name);
         if(get_error()->type) return;
 
         next_token();
@@ -335,7 +335,11 @@ void call_params_list_rule(List* fn_params_list) {
         if(type != VT_BOOL) {
             return set_error(ERR_SEMANTIC);
         }
-    } else {
+    } else if(current_token->type == STT_IDENT) {
+        Symbol* symbol = find_ident_in_context(current_context, current_token->data->id);
+        if(get_error()->type) return;
+        if(type != symbol->data.var->type) return set_error(ERR_SEMANTIC);
+    } else{
         return set_error(ERR_SYNTAX);
     }
 
@@ -423,6 +427,10 @@ void stat_rule() {
             list_activate_first(symbol->data.fn->params_list);
             next_token();
             call_params_list_rule(symbol->data.fn->params_list);
+            if(symbol->data.fn->params_list->active != NULL) {
+                //fn params but call params ended
+                return set_error(ERR_SEMANTIC);
+            }
             if(get_error()->type) return;
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
             if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
