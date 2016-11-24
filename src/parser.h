@@ -84,7 +84,7 @@ void params_list_rule(List* params_list);
  *
  *  @ingroup Parser
  */
-void call_params_list_rule(List* params_list);
+void call_params_list_rule(List *fn_params_list, List *call_params_list);
 
 /**
  *  Parses variables definitions
