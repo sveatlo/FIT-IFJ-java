@@ -7,20 +7,20 @@
 #include "symbol.h"
 #include "string.h"
 
-int ial_find(String s, String search) {
+int ial_find(String* s, String* search) {
     int* fail;
     int result = -1;
 
-    if (search.str[0] == '\0') {
+    if (search->str[0] == '\0') {
         return 0;
     }
 
-    fail = (int*)malloc(str_length(&search)*sizeof(*fail));
+    fail = (int*)malloc(str_length(search)*sizeof(*fail));
     fail[0] = 0;
     int i = 1;
     int j = 0;
-    while (search.str[i] != '\0') {
-        if (search.str[i] == search.str[j]) {
+    while (search->str[i] != '\0') {
+        if (search->str[i] == search->str[j]) {
             fail[i++] = ++j;
         } else {
             if (j == 0) {
@@ -33,10 +33,10 @@ int ial_find(String s, String search) {
 
     int t, p;
     t = p = 0;
-    int slen = str_length(&s);
-    int searchlen = str_length(&search);
+    int slen = str_length(s);
+    int searchlen = str_length(search);
     while (t<slen && p<searchlen) {
-        if (s.str[t] == search.str[p]) {
+        if (s->str[t] == search->str[p]) {
             t++;
             p++;
         } else if (p==0) {

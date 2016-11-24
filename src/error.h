@@ -35,6 +35,7 @@ typedef enum {
     ERR_PARAMS, ///<Bad program parameters
     ERR_ALLOCATION, ///<Cannot allocate memory
     ERR_CANNOT_OPEN_FILE, ///<Cannot open input file,
+    ERR_READ_NUM_FROM_STDIN, ///<Error - 7, char from stdin is not number
 
     //scanner errors
     ERR_LEX, ///< Lexical error

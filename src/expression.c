@@ -4,6 +4,7 @@
 #include "expression.h"
 #include "list.h"
 #include "scanner_token.h"
+#include "symbol.h"
 
 /**
  *  Precedence table defines all combinations of top of the stack/input token and priorities between them.
@@ -88,4 +89,229 @@ bool stack_empty(Stack* stack) {
 void parse_expression_tokens(List* token_list) {
     (void)token_list;
     // TODO: tobedone
+}
+
+const ExpressionOperationSign OperationTablePlus[CONST_BOOL + 1][CONST_BOOL + 1] = {
+                       //   i, d,  s,  b
+        [CONST_INTEGER] =  {
+            [CONST_INTEGER] = I,
+            [CONST_DOUBLE] = D,
+            [CONST_STRING] = S,
+            [CONST_BOOL] = U }, //int
+        [CONST_DOUBLE]  =  {
+            [CONST_INTEGER] = D,
+            [CONST_DOUBLE] = D,
+            [CONST_STRING] = S,
+            [CONST_BOOL] = U }, //double
+        [CONST_STRING]  =  {
+            [CONST_INTEGER] = S,
+            [CONST_DOUBLE] = S,
+            [CONST_STRING] = S,
+            [CONST_BOOL] = U }, //string
+        [CONST_BOOL]    =  {
+            [CONST_INTEGER] = U,
+            [CONST_DOUBLE] = U,
+            [CONST_STRING] = U,
+            [CONST_BOOL] = U }  //boolean
+};
+
+const ExpressionOperationSign OperationTableOthers[CONST_BOOL + 1][CONST_BOOL + 1] = {
+                       //   i, d,  s,  b
+        [CONST_INTEGER] =  {
+            [CONST_INTEGER] = I,
+            [CONST_DOUBLE] = D,
+            [CONST_STRING] = U,
+            [CONST_BOOL] = U }, //int
+        [CONST_DOUBLE]  =  {
+            [CONST_INTEGER] = D,
+            [CONST_DOUBLE] = D,
+            [CONST_STRING] = U,
+            [CONST_BOOL] = U }, //double
+        [CONST_STRING]  =  {
+            [CONST_INTEGER] = U,
+            [CONST_DOUBLE] = U,
+            [CONST_STRING] = U,
+            [CONST_BOOL] = U }, //string
+        [CONST_BOOL]    =  {
+            [CONST_INTEGER] = U,
+            [CONST_DOUBLE] = U,
+            [CONST_STRING] = U,
+            [CONST_BOOL] = U }  //boolean
+};
+
+
+Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
+
+    switch (operation) {
+        case PLUS:
+            if (OperationTablePlus[expr1->op][expr2->op] == I) {
+                expr1->i = expr1->i + expr2->i;
+                return expr1;
+            } else if (OperationTablePlus[expr1->op][expr2->op] == U) {
+                if (expr1->op == CONST_INTEGER) {
+                    expr1->d = expr1->i + expr2->d;
+                    expr1->op = CONST_DOUBLE;
+                } else if (expr2->op == CONST_DOUBLE) {
+                    expr1->d = expr1->d + expr2->d;
+                } else {
+                    expr1->d = expr1->d + expr2->i;
+                }
+            } else if (OperationTablePlus[expr1->op][expr2->op] == S) {
+                if (expr1->op == CONST_INTEGER) {
+                    int_to_string(expr1->s, expr1->i);
+                    expr1->op = CONST_STRING;
+                    str_concat(expr1->s, expr2->s);
+                } else if (expr1->op == CONST_DOUBLE) {
+                    double_to_string(expr1->s, expr1->d);
+                    expr1->op = CONST_STRING;
+                    str_concat(expr1->s, expr2->s);
+                } else if (expr2->op == CONST_INTEGER) {
+                    int_to_string(expr2->s, expr2->i);
+                    str_concat(expr2->s, expr1->s);
+                } else if (expr2->op == CONST_DOUBLE) {
+                    double_to_string(expr2->s, expr2->d);
+                    str_concat(expr2->s, expr1->s);
+                } else {
+                    str_concat(expr1->s, expr2->s);
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+
+        case MINUS:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                expr1->i  = expr1->i - expr2->i;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+                if (expr1->op == CONST_INTEGER) {
+                    expr1->d = expr1->i - expr2->d;
+                    expr1->op = CONST_DOUBLE;
+                } else if (expr2->op == CONST_DOUBLE) {
+                    expr1->d = expr1->d - expr2->d;
+                } else {
+                    expr1->d = expr1->d - expr2->i;
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+
+        case MULTIPLY:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                expr1->i = expr1->i * expr2->i;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+                if (expr1->op == CONST_INTEGER) {
+                    expr1->d = expr1->i * expr2->d;
+                    expr1->op = CONST_DOUBLE;
+                } else if (expr2->op == CONST_DOUBLE) {
+                    expr1->d = expr1->d * expr2->d;
+                } else {
+                    expr1->d = expr1->d * expr2->i;
+                }
+            } else {
+//                set_error(); TODO
+            }
+            break;
+
+        case DIVIDE:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                expr1->i = expr1->i / expr2->i;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+                if (expr1->op == CONST_INTEGER) {
+                    expr1->d  = expr1->i / expr2->d;
+                    expr1->op = CONST_DOUBLE;
+                } else if (expr2->op == CONST_DOUBLE) {
+                    expr1->d = expr1->d / expr2->d;
+                } else {
+                    expr1->d = expr1->d / expr2->i;
+                }
+            } else {
+//                  set_error(); TODO
+            }
+            break;
+
+        default:
+            return NULL;
+            break;
+
+    }
+    //TODO: dispose function Expression
+    return expr1;
+}
+
+Expression *evaluate_expression(Expression *expr) {
+    switch (expr->op) {
+        case PLUS:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), PLUS);
+            }
+            break;
+
+        case MINUS:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), MINUS);
+            }
+            break;
+
+        case MULTIPLY:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), MULTIPLY);
+            }
+            break;
+
+        case DIVIDE:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), DIVIDE);
+            }
+            break;
+
+        case SYMBOL:
+            if (expr->symbol != NULL) {
+                switch (expr->symbol->data.var->type) {
+                    case VT_INTEGER:
+                        expr->i = expr->symbol->data.var->value.i;
+                        expr->op = CONST_INTEGER;
+                        return expr;
+
+                    case VT_DOUBLE:
+                        expr->d = expr->symbol->data.var->value.d;
+                        expr->op = CONST_DOUBLE;
+                        return expr;
+
+                    case VT_STRING:
+                        expr->s = expr->symbol->data.var->value.s;
+                        expr->op = CONST_STRING;
+                        return expr;
+
+                    case VT_BOOL:
+                        expr->b = expr->symbol->data.var->value.b;
+                        expr->op = CONST_BOOL;
+                        return expr;
+
+                    default:
+                        return NULL;
+
+                }
+            } else {
+                // error TODO
+            }
+            break;
+            
+        case CONST_INTEGER:
+            return expr;
+
+        case CONST_DOUBLE:
+            return expr;
+
+        case CONST_BOOL:
+            return expr;
+
+        case CONST_STRING:
+            return expr;
+
+        default:
+            return NULL;
+    }
+    //TODO: dispose function Expression
+    return expr->expr1;
 }
