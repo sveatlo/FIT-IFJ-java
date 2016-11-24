@@ -41,7 +41,7 @@ static inline Symbol* context_add_variable(Context* context, KeywordType type, S
     if(table_find_symbol(context->symbol_table, name) != NULL) {
         fprintf(stderr, "Symbol \"%s\" already defined\n", str_get_str(name));
         set_error(ERR_SEMANTIC);
-        return;
+        return NULL;
     }
 
     switch (type) {
@@ -61,7 +61,8 @@ static inline Symbol* context_add_variable(Context* context, KeywordType type, S
             return table_insert_function(context->symbol_table, name, context);
             break;
         default:
-            return set_error(ERR_SYNTAX);
+            set_error(ERR_SYNTAX);
+            return NULL;
     }
 }
 
