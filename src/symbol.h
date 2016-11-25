@@ -3,6 +3,7 @@
 
 //predefine structure to resolve circular dependency
 struct ContextStruct;
+struct ListStruct;
 
 #include <stdbool.h>
 #include "context.h"
@@ -29,9 +30,9 @@ typedef enum SymbolType {
  */
 typedef struct {
     struct ContextStruct* context;   ///< Context of the function
-    List* instructions; ///< List of instructions
+    struct ListStruct* instructions; ///< List of instructions
     VariableType return_type;   ///< return type of the function
-    List* params_list; ///< List of parameters - types
+    struct ListStruct* params_list; ///< List of parameters - types
 } Function;
 
 /**
@@ -69,7 +70,7 @@ typedef String* SymbolName;
  *
  *  @ingroup IAL
  */
-typedef struct {
+typedef struct SymbolStruct {
     SymbolName name; ///< Name of the symbol (will be used for search)
     SymbolType type; ///< Type of the value stored
     SymbolData data; ///< Data of the symbol

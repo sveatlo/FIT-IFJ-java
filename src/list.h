@@ -7,13 +7,15 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include "expression.h"
 #include "instruction.h"
 #include "scanner_token.h"
 #include "variable.h"
 
 typedef union {
-    ScannerToken* token;
+    struct ExpressionStruct* expression;
     Instruction* instruction;
+    ScannerToken* token;
     VariableType var_type;
 } ListItemData;
 

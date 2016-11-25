@@ -7,8 +7,12 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
+struct SymbolStruct;
+struct ListStruct;
+
 #include "ial.h"
 #include "list.h"
+#include "string.h"
 #include "symbol.h"
 
 /**
@@ -58,7 +62,7 @@ typedef struct ExpressionStruct {
     ExpressionOperation op; ///< operation of the expression
     struct ExpressionStruct* expr1; ///< pointer to child expression (if available)
     struct ExpressionStruct* expr2; ///< pointer to second child expression (if available)
-    Symbol* symbol;   ///< pointer to symbol table
+    struct SymbolStruct* symbol;   ///< pointer to symbol table
     int i;  ///< integer const value
     double d; ///< double const value
     String* s; ///< string value
@@ -72,7 +76,7 @@ typedef struct ExpressionStruct {
  *  @ingroup Expression
  */
 typedef union {
-    Symbol* symbol;
+    struct SymbolStruct* symbol;
     ExpressionOperation* op;
 } StackItemData;
 
@@ -112,7 +116,7 @@ bool stack_empty(Stack* zasobnik);
  *
  *  @ingroup Expression
  */
-void parse_expression_tokens(List* token_list);
+void parse_expression_tokens(struct ListStruct* token_list);
 
 /**
  *  Helper fuction for compare expressions
