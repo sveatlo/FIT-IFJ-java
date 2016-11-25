@@ -32,14 +32,15 @@ Expression *expression_init() {
 void expression_dispose(Expression *expr) {
     if (expr != NULL) {
         if (expr->expr1 != NULL) {
-        expression_dispose(expr->expr1);
-        free(expr->expr1);
-        } else if (expr->expr2 != NULL) {
-            expression_dispose(expr->expr2);
+            free(expr->expr1);
+        }
+        if (expr->expr2 != NULL) {
             free(expr->expr2);
-        } else if (expr->symbol != NULL) {
+        }
+        if (expr->symbol != NULL) {
             symbol_dispose(expr->symbol);
-        } else if (expr->str) {
+        }
+        if (expr->str != NULL) {
             str_dispose(expr->str);
         }
     free(expr);
@@ -47,45 +48,49 @@ void expression_dispose(Expression *expr) {
 }
 
 void expression_print (Expression* expr) {
-    printf("%s(", operations_char[expr->op]);
-    switch (expr->op) {
-        case EO_CONST_INTEGER:
-            printf("%d", expr->i);
-            break;
-        case EO_CONST_DOUBLE:
-            printf("%g", expr->d);
-            break;
-        case EO_CONST_STRING:
-            printf("%s", str_get_str(expr->str));
-            break;
-        case EO_CONST_BOOL:
-            printf("%s", expr->b ? "true" : "false");
-            break;
-        case EO_SYMBOL:
-            symbol_print(expr->symbol);
-            break;
-        case EO_PLUS:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
-        case EO_MINUS:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
-        case EO_MULTIPLY:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
-        case EO_DIVIDE:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
+    if (expr != NULL) {
+        printf("%s(", operations_char[expr->op]);
+        switch (expr->op) {
+            case EO_CONST_INTEGER:
+                printf("%d", expr->i);
+                break;
+            case EO_CONST_DOUBLE:
+                printf("%g", expr->d);
+                break;
+            case EO_CONST_STRING:
+                printf("%s", str_get_str(expr->str));
+                break;
+            case EO_CONST_BOOL:
+                printf("%s", expr->b ? "true" : "false");
+                break;
+            case EO_SYMBOL:
+                symbol_print(expr->symbol);
+                break;
+            case EO_PLUS:
+                expression_print(expr->expr1);
+                printf(", ");
+                expression_print(expr->expr2);
+                break;
+            case EO_MINUS:
+                expression_print(expr->expr1);
+                printf(", ");
+                expression_print(expr->expr2);
+                break;
+            case EO_MULTIPLY:
+                expression_print(expr->expr1);
+                printf(", ");
+                expression_print(expr->expr2);
+                break;
+            case EO_DIVIDE:
+                expression_print(expr->expr1);
+                printf(", ");
+                expression_print(expr->expr2);
+                break;
+        }
+        printf(")");
+    } else {
+        printf("NULL => chyba\n");
     }
-    printf(")");
 }
 
 void parse_expression_tokens(List* token_list) {
@@ -180,7 +185,10 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                 set_error(ERR_OTHER_RUN);
-                // TODO
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
+
             }
             break;
 
@@ -198,7 +206,9 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                 set_error(ERR_OTHER_RUN);
-                //TODO
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
             }
             break;
 
@@ -216,7 +226,9 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                 set_error(ERR_OTHER_RUN);
-                //TODO
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
             }
             break;
 
@@ -234,7 +246,9 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                   set_error(ERR_OTHER_RUN);
-                  //TODO
+                //   expression_dispose(expr1);
+                //   expression_dispose(expr2);
+                //   return NULL;
             }
             break;
 
@@ -243,11 +257,22 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
     }
-    expression_dispose(expr2);
+
     return expr1;
 }
 
 Expression *expression_evaluate(Expression *expr) {
+
+    // if (((expr->expr1 == NULL) && (expr->expr2 != NULL)) || ((expr->expr2 == NULL) && (expr->expr1 != NULL))){
+    //     if ((expr->expr1 == NULL) && (expr->expr2 != NULL)) {
+    //         // expression_dispose(expr->expr2);
+    //     }
+    //     if ((expr->expr2 == NULL) && (expr->expr1 != NULL)) {
+    //         // expression_dispose(expr->expr1);
+    //     }
+    //     return NULL;
+    // }
+
     switch (expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
@@ -302,7 +327,8 @@ Expression *expression_evaluate(Expression *expr) {
                 }
             } else {
                 set_error(ERR_OTHER_RUN);
-                // TODO
+                // expression_dispose(expr);
+                // return NULL;
             }
             break;
 
@@ -321,7 +347,10 @@ Expression *expression_evaluate(Expression *expr) {
         default:
             return NULL;
     }
-
-    expression_dispose(expr->expr2);
+    // if (expr->expr1 == NULL) {
+        // printf("returt\n" );
+        // return NULL;
+    // }
+    // expression_dispose(expr->expr2);
     return expr->expr1;
 }
