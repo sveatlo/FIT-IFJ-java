@@ -657,12 +657,6 @@ void expression_rule() {
     general_expression_rule(STT_SEMICOLON);
 }
 
-
-
-char ops[][255] = {
-[EO_SYMBOL] = "EO_SYMBOL",[EO_SYMBOL_CALL] = "EO_SYMBOL_CALL",[EO_CONST_INTEGER] = "EO_CONST_INTEGER",[EO_CONST_DOUBLE] = "EO_CONST_DOUBLE",[EO_CONST_STRING] = "EO_CONST_STRING",[EO_CONST_BOOL] = "EO_CONST_BOOL",[EO_PLUS] = "EO_PLUS",[EO_MINUS] = "EO_MINUS",[EO_MULTIPLY] = "EO_MULTIPLY",[EO_DIVIDE] = "EO_DIVIDE",[EO_LESS] = "EO_LESS",[EO_GREATER] = "EO_GREATER",[EO_LESS_EQUALS] = "EO_LESS_EQUALS",[EO_GREATER_EQUALS] = "EO_GREATER_EQUALS",[EO_LOGIC_EQUAL] = "EO_LOGIC_EQUAL",[EO_LOGIC_NOT_EQUAL] = "EO_LOGIC_NOT_EQUAL",[EO_AND] = "EO_AND",[EO_OR] = "EO_OR",[EO_NEGATE] = "EO_NEGATE",[EO_LEFT_PARENTHESE] = "EO_LEFT_PARENTHESE",[EO_RIGHT_PARENTHESE] = "EO_RIGHT_PARENTHESE"
-};
-
 Expression* general_expression_rule (ScannerTokenType end_token) {
     Stack* term_stack = stack_init();
     Stack* nonterm_stack = stack_init();
@@ -756,18 +750,40 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
             case STT_RIGHT_PARENTHESE:
                 data.expression->op = EO_RIGHT_PARENTHESE;
                 break;
+            case STT_AND:
+                data.expression->op = EO_AND;
+                break;
+            case STT_OR:
+                data.expression->op = EO_OR;
+                break;
+            case STT_LESS:
+                data.expression->op = EO_LESS;
+                break;
+            case STT_GREATER:
+                data.expression->op = EO_GREATER;
+                break;
+            case STT_LESS_EQUALS:
+                data.expression->op = EO_LESS_EQUALS;
+                break;
+            case STT_GREATER_EQUALS:
+                data.expression->op = EO_GREATER_EQUALS;
+                break;
+            case STT_LOGIC_EQUAL:
+                data.expression->op = EO_LOGIC_EQUAL;
+                break;
+            case STT_LOGIC_NOT_EQUAL:
+                data.expression->op = EO_LOGIC_NOT_EQUAL;
+                break;
             default:
                 set_error(ERR_SYNTAX);
                 break;
         }
 
         if(is_term) {
-            printf("pushing term: %s\n", token_to_string(current_token));
             stack_push(term_stack, data);
         } else {
             StackItemData* top = stack_top(nonterm_stack);
             if(data.expression->op == EO_RIGHT_PARENTHESE) {
-                printf("nonterm ) => push all the way to (\n");
                 //treat "(" and ")"
                 // TODO: expression_dispose data.expression
                 while(top != NULL && top->expression->op != EO_LEFT_PARENTHESE) {
@@ -786,7 +802,6 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
                         set_error(ERR_SYNTAX);
                         return NULL;
                     }
-                    printf("poping nonterm %s %d\n", ops[stack_top(nonterm_stack)->expression->op], __LINE__);
                     stack_pop(term_stack);
 
                     //set terms for current top
@@ -795,7 +810,6 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
 
                     //push the top to term
                     stack_push(term_stack, *top);
-                    printf("poping nonterm %s %d\n", ops[stack_top(nonterm_stack)->expression->op], __LINE__);
                     //pop it from nonterm
                     stack_pop(nonterm_stack);
 
@@ -841,7 +855,6 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
 
                     //push the top to term
                     stack_push(term_stack, *top);
-                    printf("poping nonterm %s %d\n", ops[stack_top(nonterm_stack)->expression->op], __LINE__);
                     //pop it from nonterm
                     stack_pop(nonterm_stack);
 
@@ -850,7 +863,6 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
                     top = stack_top(nonterm_stack);
                 }
 
-                printf("pushing nonterm %s\n", token_to_string(current_token));
                 stack_push(nonterm_stack, data);
             }
         }
@@ -886,7 +898,6 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
 
         //push the top to term
         stack_push(term_stack, *top);
-        printf("poping nonterm %s %d\n", ops[stack_top(nonterm_stack)->expression->op], __LINE__);
         //pop it from nonterm
         stack_pop(nonterm_stack);
 
@@ -902,7 +913,5 @@ Expression* general_expression_rule (ScannerTokenType end_token) {
         return NULL;
     }
 
-    expression_print(res->data.expression);
-    printf("\n");
     return res->data.expression;
 }

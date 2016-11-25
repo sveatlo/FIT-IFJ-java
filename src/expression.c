@@ -10,6 +10,7 @@
 
 char operations_char[][255] = {
     [EO_SYMBOL] = "EO_SYMBOL",
+    [EO_SYMBOL_CALL] = "EO_SYMBOL_CALL",
     [EO_CONST_INTEGER] = "EO_CONST_INTEGER",
     [EO_CONST_DOUBLE] = "EO_CONST_DOUBLE",
     [EO_CONST_STRING] = "EO_CONST_STRING",
@@ -17,7 +18,18 @@ char operations_char[][255] = {
     [EO_PLUS] = "EO_PLUS",
     [EO_MINUS] = "EO_MINUS",
     [EO_MULTIPLY] = "EO_MULTIPLY",
-    [EO_DIVIDE] = "EO_DIVIDE"
+    [EO_DIVIDE] = "EO_DIVIDE",
+    [EO_LESS] = "EO_LESS",
+    [EO_GREATER] = "EO_GREATER",
+    [EO_LESS_EQUALS] = "EO_LESS_EQUALS",
+    [EO_GREATER_EQUALS] = "EO_GREATER_EQUALS",
+    [EO_LOGIC_EQUAL] = "EO_LOGIC_EQUAL",
+    [EO_LOGIC_NOT_EQUAL] = "EO_LOGIC_NOT_EQUAL",
+    [EO_AND] = "EO_AND",
+    [EO_OR] = "EO_OR",
+    [EO_NEGATE] = "EO_NEGATE",
+    [EO_LEFT_PARENTHESE] = "EO_LEFT_PARENTHESE",
+    [EO_RIGHT_PARENTHESE] = "EO_RIGHT_PARENTHESE"
 };
 
 
@@ -62,6 +74,61 @@ void expression_print (Expression* expr) {
             expression_print(expr->expr2);
             break;
         case EO_DIVIDE:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LESS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_GREATER:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LESS_EQUALS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_GREATER_EQUALS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_EQUAL:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_NOT_EQUAL:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_AND:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_OR:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_NEGATE:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LEFT_PARENTHESE:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_RIGHT_PARENTHESE:
             expression_print(expr->expr1);
             printf(", ");
             expression_print(expr->expr2);
