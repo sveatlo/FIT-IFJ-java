@@ -29,6 +29,7 @@ typedef enum SymbolType {
  */
 typedef struct {
     struct ContextStruct* context;   ///< Context of the function
+    struct ContextStruct* context_call;   ///< Context of the call function
     List* instructions; ///< List of instructions
     VariableType return_type;   ///< return type of the function
     List* params_list; ///< List of parameters - types

@@ -12,6 +12,7 @@
 #include "variable.h"
 
 typedef union {
+    //TODO Expression *expression;
     ScannerToken* token;
     Instruction* instruction;
     VariableType var_type;

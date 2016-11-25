@@ -296,7 +296,7 @@ Expression *evaluate_expression(Expression *expr) {
                 // error TODO
             }
             break;
-            
+
         case CONST_INTEGER:
             return expr;
 

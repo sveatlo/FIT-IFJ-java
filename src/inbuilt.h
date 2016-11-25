@@ -2,6 +2,7 @@
 #define INBUILT_H
 
 #include "string.h"
+#include "expression.h"
 
 /**
  *  states after read char by char
@@ -37,5 +38,12 @@ double read_double();
  *  @ingroup inbuilt
  */
 String* read_str();
+
+/**
+ *  Function write to STDIN
+ *
+ *  @ingroup inbuilt
+ */
+void print_to_stdin(Expression *expr);
 
 #endif
