@@ -123,8 +123,7 @@ const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_B
 };
 
 
-Expression *expession_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
-
+Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
     switch (operation) {
         case EO_PLUS:
             if (OperationTablePlus[expr1->op][expr2->op] == I) {
@@ -226,25 +225,25 @@ Expression *expression_evaluate(Expression *expr) {
     switch (expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_PLUS);
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_PLUS);
             }
             break;
 
         case EO_MINUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MINUS);
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MINUS);
             }
             break;
 
         case EO_MULTIPLY:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MULTIPLY);
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MULTIPLY);
             }
             break;
 
         case EO_DIVIDE:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_DIVIDE);
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_DIVIDE);
             }
             break;
 
