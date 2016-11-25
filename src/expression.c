@@ -257,7 +257,6 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
     }
-
     return expr1;
 }
 

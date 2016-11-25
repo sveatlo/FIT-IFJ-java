@@ -304,10 +304,14 @@ void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
     res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
 }
 
-/*void jump(Symbol *op1, ListItem *res) {
-    if(op1->expressions->b == true) {
+void jump(Expression *op1, List *op2, Symbol *res) {
+    if (op1->b == true) {
+        op2->active = (ListItem*)res;
     }
-}*/
+    if (op1->b == false) {
+        op2->active = (ListItem*)res;
+    }
+}
 
 void interpret(List* ins_list) {
     Instruction* current_ins;
@@ -377,7 +381,7 @@ void interpret(List* ins_list) {
                 break;
 
             case IC_JMP:
-
+                jump((Expression*)current_ins->op1, (List*)current_ins->op2, (Symbol*)current_ins->res);
                 break;
 
             case IC_READ_INT:

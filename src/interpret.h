@@ -145,6 +145,17 @@ void sort_str(Symbol* op1, Symbol* res);
 void find_str(Symbol* op1, Symbol* op2, Symbol* res);
 
 /**
+ * Wrapper Function for jump
+ *
+ * @param	op1	operand1
+ * @param	op2	operand2
+ * @param	res	result
+ *
+ * @ingroup Interpret
+ */
+void jump(Expression *op1, List *op2, Symbol *res);
+
+/**
  * Main function of Interpret
  *
  * @ingroup Interpret
