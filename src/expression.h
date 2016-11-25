@@ -76,6 +76,8 @@ typedef struct ExpressionStruct {
  */
 Expression* expression_init();
 
+void expression_print(Expression* expr);
+
 
 /**
  *  Parses tokens, which should be expression
@@ -93,7 +95,7 @@ void parse_expression_tokens(struct ListStruct* token_list);
  *
  *  @ingroup Expression
  */
-Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperation operation);
+Expression *expession_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation);
 
 /**
  *  Fuction for evaulate expressions
@@ -102,6 +104,6 @@ Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperatio
  *
  *  @ingroup Expression
  */
-Expression *evaluate_expression(Expression *expr);
+Expression *expression_evaluate(Expression *expr);
 
 #endif
