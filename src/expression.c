@@ -130,7 +130,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             if (OperationTablePlus[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i + expr2->i;
                 return expr1;
-            } else if (OperationTablePlus[expr1->op][expr2->op] == U) {
+            } else if (OperationTablePlus[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i + expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -158,14 +158,15 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(expr1->str, expr2->str);
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                // TODO
             }
             break;
 
         case EO_MINUS:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i  = expr1->i - expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i - expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -175,14 +176,15 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d - expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                //TODO
             }
             break;
 
         case EO_MULTIPLY:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i * expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i * expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -192,14 +194,15 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d * expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                //TODO
             }
             break;
 
         case EO_DIVIDE:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i / expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d  = expr1->i / expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -209,7 +212,8 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d / expr2->i;
                 }
             } else {
-//                  set_error(); TODO
+                  set_error(ERR_OTHER_RUN);
+                  //TODO
             }
             break;
 
@@ -276,7 +280,8 @@ Expression *expression_evaluate(Expression *expr) {
 
                 }
             } else {
-                // error TODO
+                set_error(ERR_OTHER_RUN);
+                // TODO
             }
             break;
 

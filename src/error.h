@@ -30,6 +30,7 @@ typedef enum {
     //general errors
     ERR_NONE, ///<No error
     ERR_UNKNOWN, ///<Unknown error
+    ERR_OTHER_RUN, ///< Others run errors Error - 10
 
     //interpret start errors
     ERR_PARAMS, ///<Bad program parameters
