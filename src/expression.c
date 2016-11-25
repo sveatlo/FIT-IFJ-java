@@ -20,10 +20,32 @@ char operations_char[][255] = {
 };
 
 
-Expression* expression_init() {
+Expression *expression_init() {
     Expression* expr = (Expression*)malloc(sizeof(Expression));
+    expr->expr1 = NULL;
+    expr->expr2 = NULL;
+    expr->symbol = NULL;
+    expr->str = NULL;
     return expr;
 }
+
+void expression_dispose(Expression *expr) {
+    if (expr != NULL) {
+        if (expr->expr1 != NULL) {
+        expression_dispose(expr->expr1);
+        free(expr->expr1);
+        } else if (expr->expr2 != NULL) {
+            expression_dispose(expr->expr2);
+            free(expr->expr2);
+        } else if (expr->symbol != NULL) {
+            symbol_dispose(expr->symbol);
+        } else if (expr->str) {
+            str_dispose(expr->str);
+        }
+    free(expr);
+    }
+}
+
 void expression_print (Expression* expr) {
     printf("%s(", operations_char[expr->op]);
     switch (expr->op) {
@@ -129,8 +151,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
         case EO_PLUS:
             if (OperationTablePlus[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i + expr2->i;
-                return expr1;
-            } else if (OperationTablePlus[expr1->op][expr2->op] == U) {
+            } else if (OperationTablePlus[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i + expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -165,7 +186,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
         case EO_MINUS:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i  = expr1->i - expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i - expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -182,7 +203,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
         case EO_MULTIPLY:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i * expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i * expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -199,7 +220,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
         case EO_DIVIDE:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i / expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d  = expr1->i / expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -218,7 +239,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
     }
-    //TODO: dispose function Expression
+    expression_dispose(expr2);
     return expr1;
 }
 
@@ -295,6 +316,7 @@ Expression *expression_evaluate(Expression *expr) {
         default:
             return NULL;
     }
-    //TODO: dispose function Expression
+
+    expression_dispose(expr->expr2);
     return expr->expr1;
 }
