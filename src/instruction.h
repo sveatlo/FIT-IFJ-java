@@ -49,7 +49,6 @@ typedef struct {
     InstructionCode code; ///< code/type of instruction. Defines the operation of the instruction
     void* op1; ///< first instruction operand
     void* op2; ///< second instruction operand
-    void* op3; ///< third instruction operand
     void* res; ///< where to put result
 } Instruction;
 

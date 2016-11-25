@@ -179,7 +179,8 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(expr1->str, expr2->str);
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                // TODO
             }
             break;
 
@@ -196,7 +197,8 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d - expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                //TODO
             }
             break;
 
@@ -213,7 +215,8 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d * expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_OTHER_RUN);
+                //TODO
             }
             break;
 
@@ -230,7 +233,8 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d / expr2->i;
                 }
             } else {
-//                  set_error(); TODO
+                  set_error(ERR_OTHER_RUN);
+                  //TODO
             }
             break;
 
@@ -297,7 +301,8 @@ Expression *expression_evaluate(Expression *expr) {
 
                 }
             } else {
-                // error TODO
+                set_error(ERR_OTHER_RUN);
+                // TODO
             }
             break;
 

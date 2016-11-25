@@ -14,7 +14,9 @@ char err_strings[][255] = {
 
     [ERR_LEX] = "Lexical error",
     [ERR_SYNTAX] = "Syntactical error",
-    [ERR_SEMANTIC] = "Semantical error"
+    [ERR_SEMANTIC] = "Semantical error",
+
+    [ERR_OTHER_RUN] = "Others run error"
 };
 
 Error* get_error () {
