@@ -15,7 +15,7 @@
  *  This structure should be always used for any string operation
  *  @ingroup String
  */
-typedef struct {
+typedef struct StringStruct {
     char* str;  ///< Actual pointer to the chars
     int length; ///< Real string length
     int mem_size; ///< Memory allocated for the string

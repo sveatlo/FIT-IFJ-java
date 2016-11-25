@@ -5,6 +5,7 @@
 #include "inbuilt.h"
 #include "error.h"
 #include "string.h"
+#include "expression.h"
 
 
 int read_int() {
@@ -174,6 +175,9 @@ String* read_str(String* a) {
     return a;
 }
 
-void print_to_stdin() {
-    //TODO make function voidprint()
+void print_to_stdin(Expression *expr) {
+    //TODO: Bug: voidprint("" + 2 + 3) ... bad concatenate
+    evaluate_expression(expr);
+    printf("%s",str_get_str(expr->str));
+    //TODO deallocate expr
 }
