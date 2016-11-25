@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
     //
     // expression_print(expr);
     // printf("\n");
-    // expression_print(expression_evaluate(expr));
+    // expression_print(evaluate_expression(expr));
     // printf("\n");
 
 

@@ -32,14 +32,15 @@ Expression *expression_init() {
 void expression_dispose(Expression *expr) {
     if (expr != NULL) {
         if (expr->expr1 != NULL) {
-        expression_dispose(expr->expr1);
-        free(expr->expr1);
-        } else if (expr->expr2 != NULL) {
-            expression_dispose(expr->expr2);
+            free(expr->expr1);
+        }
+        if (expr->expr2 != NULL) {
             free(expr->expr2);
-        } else if (expr->symbol != NULL) {
+        }
+        if (expr->symbol != NULL) {
             symbol_dispose(expr->symbol);
-        } else if (expr->str) {
+        }
+        if (expr->str) {
             str_dispose(expr->str);
         }
     free(expr);
@@ -243,7 +244,6 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
     }
-    expression_dispose(expr2);
     return expr1;
 }
 
