@@ -315,7 +315,10 @@ void call_params_list_rule(List* fn_params_list) {
     VariableType type = fn_params_list->active->data.var_type;
     if(current_token->type == STT_INT) {
         // is curren param in fn_params_list VT_INTEGER?
-        if(type != VT_INTEGER) {
+        if(type == VT_DOUBLE) {
+            //ok, convert
+            //d = (double)i
+        } else if(type != VT_INTEGER) {
             return set_error(ERR_SEMANTIC);
         }
     } else if(current_token->type == STT_STRING) {
@@ -344,9 +347,9 @@ void call_params_list_rule(List* fn_params_list) {
         return set_error(ERR_SYNTAX);
     }
 
+    list_activate_next(fn_params_list);
     if(next_token()->type == STT_COMMA) {
         next_token();
-        list_activate_next(fn_params_list);
         call_params_list_rule(fn_params_list);
     }
 }
@@ -429,6 +432,7 @@ void stat_rule() {
             next_token();
             call_params_list_rule(symbol->data.fn->params_list);
             if(symbol->data.fn->params_list->active != NULL) {
+                printf("%d\n", symbol->data.fn->params_list->active->data.var_type);
                 //fn params but call params ended
                 return set_error(ERR_SEMANTIC);
             }
