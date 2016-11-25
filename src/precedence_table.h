@@ -1,6 +1,9 @@
 #ifndef PRECEDENCE_TABLE_H
 #define PRECEDENCE_TABLE_H
 
+#include "scanner_token.h"
+
+
 /**
  *  Defines priority between tokens on the stack and input token
  *
@@ -20,6 +23,7 @@ typedef enum
  *
  *  @ingroup Expression
  **/
+extern const TokenPrecedence precedence_table[][STT_STRING];
 
 
 #endif
