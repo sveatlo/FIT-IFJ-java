@@ -42,15 +42,15 @@ typedef enum
 } ExpressionOperationSign;
 
 typedef enum {
-    SYMBOL, ///< when operand is a symbol
-    CONST_INTEGER, ///< when operand is an integer constant
-    CONST_DOUBLE, ///< when operand is an double constant
-    CONST_STRING, ///< when operand is an string constant
-    CONST_BOOL, ///< when operand is an boolean constant
-    PLUS,
-    MINUS,
-    MULTIPLY,
-    DIVIDE
+    EO_SYMBOL, ///< when operand is a symbol
+    EO_CONST_INTEGER, ///< when operand is an integer constant
+    EO_CONST_DOUBLE, ///< when operand is an double constant
+    EO_CONST_STRING, ///< when operand is an string constant
+    EO_CONST_BOOL, ///< when operand is an boolean constant
+    EO_PLUS,
+    EO_MINUS,
+    EO_MULTIPLY,
+    EO_DIVIDE
 } ExpressionOperation;
 
 /**
@@ -65,48 +65,16 @@ typedef struct ExpressionStruct {
     struct SymbolStruct* symbol;   ///< pointer to symbol table
     int i;  ///< integer const value
     double d; ///< double const value
-    String* s; ///< string value
+    String* str; ///< string value
     bool b; ///< bool value
 } Expression;
 
-
 /**
- *  Data for stack item
+ *  initiaizes new Expression
  *
  *  @ingroup Expression
  */
-typedef union {
-    struct SymbolStruct* symbol;
-    ExpressionOperation* op;
-} StackItemData;
-
-
-/**
- *  Item in stack - will be used in expression creation
- *
- *  @ingroup Expression
- */
-typedef struct StackItemStruct {
-    struct StackItemStruct* next;
-    StackItemData data;
-} StackItem;
-
-/**
- *  Stack used for creating expressions
- *
- *  @ingroup Expression
- */
-typedef struct {
-    StackItem* top;
-} Stack;
-
-
-void stack_init(Stack* stack);
-void stack_push(Stack* stack, StackItemData item);
-void stack_pop(Stack* stack);
-void stack_top(Stack* stack, StackItemData* item);
-void stack_top_and_pop(Stack* stack, StackItemData* item);
-bool stack_empty(Stack* zasobnik);
+Expression* expression_init();
 
 
 /**

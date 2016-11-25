@@ -312,20 +312,31 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
         return set_error(ERR_SEMANTIC);
     }
 
+    Expression* expr = expression_init();
+
     VariableType type = fn_params_list->active->data.var_type;
-    if(current_token->type == STT_INT) {
+    if (current_token->type == STT_INT) {
         // is curren param in fn_params_list VT_INTEGER?
-        if(type != VT_INTEGER) {
-            return set_error(ERR_SEMANTIC);
-        }
+        expr->op = EO_CONST_INTEGER;
+        if (type == VT_DOUBLE) {
+            expr->i = (int)current_token->data->d;
+        } else if (type == VT_INTEGER) {
+            expr->i = (int)current_token->data->i;
+       } else {
+           return set_error(ERR_SEMANTIC);
+       }
     } else if(current_token->type == STT_STRING) {
         // is curren param in fn_params_list VT_STRING?
         if(type != VT_STRING) {
+            expr->op = EO_CONST_STRING;
+            expr->str = current_token->data->str;
             return set_error(ERR_SEMANTIC);
         }
     } else if(current_token->type == STT_DOUBLE) {
         // is curren param in fn_params_list VT_DOUBLE?
         if(type != VT_DOUBLE) {
+            expr->op = EO_CONST_DOUBLE;
+            expr->d = current_token->data->d;
             return set_error(ERR_SEMANTIC);
         }
     } else if(current_token->type == STT_KEYWORD && (
@@ -333,21 +344,26 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
         current_token->data->keyword_type == KW_FALSE
     )) {
         // is curren param in fn_params_list VT_BOOL?
-        if(type != VT_BOOL) {
+        if(type == VT_BOOL) {
+            expr->op = EO_CONST_BOOL;
+            expr->b = current_token->data->keyword_type == KW_TRUE ? true : false;
+        } else {
             return set_error(ERR_SEMANTIC);
         }
     } else if(current_token->type == STT_IDENT) {
         Symbol* symbol = find_ident_in_context(current_context, current_token->data->id);
         if(get_error()->type) return;
         if(type != symbol->data.var->type) return set_error(ERR_SEMANTIC);
+        expr->op = EO_SYMBOL;
+        expr->symbol = symbol;
     } else{
         return set_error(ERR_SYNTAX);
     }
 
+    list_activate_next(fn_params_list);
     if(next_token()->type == STT_COMMA) {
         next_token();
-        list_activate_next(fn_params_list);
-        call_params_list_rule(fn_params_list);
+        call_params_list_rule(fn_params_list, call_params_list);
     }
 }
 

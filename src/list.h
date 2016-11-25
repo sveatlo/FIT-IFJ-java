@@ -14,8 +14,8 @@
 
 typedef union {
     struct ExpressionStruct* expression;
-    Instruction* instruction;
     ScannerToken* token;
+    Instruction* instruction;
     VariableType var_type;
 } ListItemData;
 
