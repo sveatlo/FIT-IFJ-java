@@ -9,6 +9,7 @@
 
 #include "list.h"
 
+
 /**
  *  Main parser function
  *
@@ -120,19 +121,7 @@ void stat_list_rule();
 void stat_rule();
 
 /**
- *  Parses boolean expressions
- *
- *  Parses <bool_expr> rules<br>
- *  <bool_expr> -> "(" <bool_expr> ")"<br>
- *  <bool_expr> -> true<br>
- *  <bool_expr> -> false<br>
- *  <bool_expr> -> INT<br>
- *  <bool_expr> -> ID<br>
- *  <bool_expr> -> ID "(" <params_list> ")"<br>
- *  <bool_expr> -> <bool_expr> "&&" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "||" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "!=" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "==" <bool_expr><br>
+ *  Parses expression in conditions
  *
  *  @param[in] is_static_class_member Should the ID be added to main context's symbol table as "`current_class`.`id`"?
  *
@@ -143,9 +132,25 @@ void definition_rule();
 void bool_expression_rule();
 
 /**
- *  Parses expressions
+ *  Parses expressions in assignments
  *
- *  Parses <expr> rules<br>
+ *  @ingroup Parser
+ */
+void expression_rule();
+
+/**
+ * Abstraction of expression rules
+ *
+ *  <bool_expr> -> "(" <bool_expr> ")"<br>
+ *  <bool_expr> -> true<br>
+ *  <bool_expr> -> false<br>
+ *  <bool_expr> -> INT or DOUBLE or STRING literal <br>
+ *  <bool_expr> -> ID<br>
+ *  <bool_expr> -> ID "(" <params_list> ")"<br>
+ *  <bool_expr> -> <bool_expr> "&&" <bool_expr><br>
+ *  <bool_expr> -> <bool_expr> "||" <bool_expr><br>
+ *  <bool_expr> -> <bool_expr> "!=" <bool_expr><br>
+ *  <bool_expr> -> <bool_expr> "==" <bool_expr><br>
  *  <expr> -> "(" <expr> ")"<br>
  *  <expr> -> <bool_expr><br>
  *  <expr> -> <expr> "+" <expr><br>
@@ -153,8 +158,7 @@ void bool_expression_rule();
  *  <expr> -> <expr> "*" <expr><br>
  *  <expr> -> <expr> "/" <expr><br>
  *
- *  @ingroup Parser
  */
-void expression_rule();
+Expression* general_expression_rule (ScannerTokenType end_token);
 
 #endif

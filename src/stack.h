@@ -9,7 +9,7 @@
  *  @ingroup Stack
  */
 typedef union {
-    Expression* op;
+    Expression* expression;
 } StackItemData;
 
 
@@ -34,10 +34,10 @@ typedef struct {
 
 
 Stack* stack_init();
+void stack_dispose(Stack* stack);
 void stack_push(Stack* stack, StackItemData item);
 StackItem* stack_pop(Stack* stack);
-void stack_top(Stack* stack, StackItemData* item);
-StackItem* stack_top_and_pop(Stack* stack, StackItemData* item);
+StackItemData* stack_top(Stack* stack);
 bool stack_empty(Stack* zasobnik);
 
 #endif

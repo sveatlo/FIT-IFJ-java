@@ -5,6 +5,7 @@
 #include "list.h"
 #include "scanner_token.h"
 #include "symbol.h"
+#include "stack.h"
 #include "precedence_table.h"
 
 char operations_char[][255] = {
@@ -42,6 +43,9 @@ void expression_print (Expression* expr) {
         case EO_SYMBOL:
             symbol_print(expr->symbol);
             break;
+        case EO_SYMBOL_CALL:
+            symbol_print(expr->symbol);
+            break;
         case EO_PLUS:
             expression_print(expr->expr1);
             printf(", ");
@@ -64,11 +68,6 @@ void expression_print (Expression* expr) {
             break;
     }
     printf(")");
-}
-
-void parse_expression_tokens(List* token_list) {
-    (void)token_list;
-    // TODO: tobedone
 }
 
 const ExpressionOperationSign OperationTablePlus[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {

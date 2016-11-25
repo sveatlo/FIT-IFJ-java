@@ -10,6 +10,10 @@ Stack* stack_init() {
     return stack;
 }
 
+void stack_dispose(Stack* stack) {
+    free(stack);
+}
+
 //vlozime prvek na &stack
 void stack_push(Stack* stack, StackItemData item) {
     StackItem* pom;
@@ -41,18 +45,12 @@ StackItem* stack_pop(Stack* stack) {
 }
 
 //precteme z topu &stacku
-void stack_top(Stack* stack, StackItemData* item) {
-    *item = stack->top->data;
-}
-
-//kombinace toppop
-StackItem* stack_top_and_pop(Stack* stack, StackItemData* item) {
-    if (!(stack_empty(stack))) {
-        stack_top(stack, item);
-        return stack_pop(stack);
+StackItemData* stack_top(Stack* stack) {
+    if(stack->top == NULL) {
+        return NULL;
     }
 
-    return NULL;
+    return &(stack->top->data);
 }
 
 //kontrola zda neni prazdny
