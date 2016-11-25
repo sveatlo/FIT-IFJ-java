@@ -1,14 +1,15 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include "expression.h"
+
 /**
  *  Data for stack item
  *
  *  @ingroup Stack
  */
 typedef union {
-    struct SymbolStruct* symbol;
-    ExpressionOperation* op;
+    Expression* op;
 } StackItemData;
 
 
@@ -32,7 +33,7 @@ typedef struct {
 } Stack;
 
 
-Stack* stack_init() stack_init(Stack* stack);
+Stack* stack_init();
 void stack_push(Stack* stack, StackItemData item);
 StackItem* stack_pop(Stack* stack);
 void stack_top(Stack* stack, StackItemData* item);

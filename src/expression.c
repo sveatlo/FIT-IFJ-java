@@ -5,39 +5,65 @@
 #include "list.h"
 #include "scanner_token.h"
 #include "symbol.h"
+#include "precedence_table.h"
 
-/**
- *  Precedence table defines all combinations of top of the stack/input token and priorities between them.
- *  Rows mean top of the stack and columns mean input token.
- *
- *  @ingroup Expression
- **/
-const TokenPrecedence precedenceTable[19][19] = {
-//   +  -  *  /  .  <  >  <= >= == != && || !  (  )  func ,  var
-    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// +
-    {H, H, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// -
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// *
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// /
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// .
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// <=
-    {L, L, L, L, L, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// >=
-    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// ==
-    {L, L, L, L, L, L, L, L, L, H, H, H, H, L, L, H, L,   H, L},// !=
-    {L, L, L, L, L, L, L, L, L, L, L, H, H, L, L, H, L,   H, L},// &&
-    {L, L, L, L, L, L, L, L, L, L, L, L, H, L, L, H, L,   H, L},// ||
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, L, L, H, L,   H, L},// !
-    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// (
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, H, N, H, N,   H, N},// )
-    {N, N, N, N, N, N, N, N, N, N, N, N, N, N, E, N, N,   N, N},// func
-    {L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, E, L,   E, L},// ,
-    {H, H, H, H, H, H, H, H, H, H, H, H, H, N, N, H, N,   H, N} // var
+char operations_char[][255] = {
+    [EO_SYMBOL] = "EO_SYMBOL",
+    [EO_CONST_INTEGER] = "EO_CONST_INTEGER",
+    [EO_CONST_DOUBLE] = "EO_CONST_DOUBLE",
+    [EO_CONST_STRING] = "EO_CONST_STRING",
+    [EO_CONST_BOOL] = "EO_CONST_BOOL",
+    [EO_PLUS] = "EO_PLUS",
+    [EO_MINUS] = "EO_MINUS",
+    [EO_MULTIPLY] = "EO_MULTIPLY",
+    [EO_DIVIDE] = "EO_DIVIDE"
 };
+
 
 Expression* expression_init() {
     Expression* expr = (Expression*)malloc(sizeof(Expression));
     return expr;
+}
+void expression_print (Expression* expr) {
+    printf("%s(", operations_char[expr->op]);
+    switch (expr->op) {
+        case EO_CONST_INTEGER:
+            printf("%d", expr->i);
+            break;
+        case EO_CONST_DOUBLE:
+            printf("%g", expr->d);
+            break;
+        case EO_CONST_STRING:
+            printf("%s", str_get_str(expr->str));
+            break;
+        case EO_CONST_BOOL:
+            printf("%s", expr->b ? "true" : "false");
+            break;
+        case EO_SYMBOL:
+            symbol_print(expr->symbol);
+            break;
+        case EO_PLUS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_MINUS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_MULTIPLY:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_DIVIDE:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+    }
+    printf(")");
 }
 
 void parse_expression_tokens(List* token_list) {
@@ -70,31 +96,34 @@ const ExpressionOperationSign OperationTablePlus[EO_CONST_BOOL + 1][EO_CONST_BOO
 };
 
 const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {
-                       //   i, d,  s,  b
         [EO_CONST_INTEGER] =  {
             [EO_CONST_INTEGER] = I,
             [EO_CONST_DOUBLE] = D,
             [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = U }, //int
-        [EO_CONST_DOUBLE]  =  {
+            [EO_CONST_BOOL] = U
+        }, //int
+        [EO_CONST_DOUBLE] =  {
             [EO_CONST_INTEGER] = D,
             [EO_CONST_DOUBLE] = D,
             [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = U }, //double
-        [EO_CONST_STRING]  =  {
+            [EO_CONST_BOOL] = U
+        }, //double
+        [EO_CONST_STRING] =  {
             [EO_CONST_INTEGER] = U,
             [EO_CONST_DOUBLE] = U,
             [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = U }, //string
-        [EO_CONST_BOOL]    =  {
+            [EO_CONST_BOOL] = U
+        }, //string
+        [EO_CONST_BOOL] =  {
             [EO_CONST_INTEGER] = U,
             [EO_CONST_DOUBLE] = U,
             [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = U }  //boolean
+            [EO_CONST_BOOL] = U
+        }  //boolean
 };
 
 
-Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
+Expression *expession_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
 
     switch (operation) {
         case EO_PLUS:
@@ -193,29 +222,29 @@ Expression *compare_exp(Expression *expr1, Expression *expr2, ExpressionOperatio
     return expr1;
 }
 
-Expression *evaluate_expression(Expression *expr) {
+Expression *expression_evaluate(Expression *expr) {
     switch (expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), EO_PLUS);
+                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_PLUS);
             }
             break;
 
         case EO_MINUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), EO_MINUS);
+                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MINUS);
             }
             break;
 
         case EO_MULTIPLY:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), EO_MULTIPLY);
+                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_MULTIPLY);
             }
             break;
 
         case EO_DIVIDE:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                expr->expr1 = compare_exp(evaluate_expression(expr->expr1), evaluate_expression(expr->expr2), EO_DIVIDE);
+                expr->expr1 = expession_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_DIVIDE);
             }
             break;
 

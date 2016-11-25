@@ -16,6 +16,7 @@
  */
 typedef enum {
     STT_EMPTY, ///< empty token
+
     STT_AND, ///< &&
     STT_COMMA, ///< ,
     STT_COMMENT, ///< comment (inline or block)

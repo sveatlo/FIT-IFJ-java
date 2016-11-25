@@ -82,5 +82,6 @@ void symbol_dispose(Symbol*);
 void symbol_new_variable(Symbol*, VariableType);
 void symbol_new_function(Symbol*, struct ContextStruct*);
 void symbol_new_class(Symbol*, struct ContextStruct*);
+void symbol_print(Symbol*);
 
 #endif
