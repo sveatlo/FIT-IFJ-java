@@ -15,9 +15,13 @@
  *
  *  Starts analysis, controls the whole process of parsing
  *
+ *  @param[in] _token_list List of tokens to parse
+ *  @param[out] _context Main context - will be used by interpret
+ *  @param[out] _instructions List of Main instructions. Used to initialize class member variables and call Main.run
+ *
  *  @ingroup Parser
  */
-void parse(List*);
+void parse(List* _token_list, Context* _context, List* _instructions);
 
 /**
  *  Starts the actual parsing
@@ -95,7 +99,7 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list);
  *
  *  @ingroup Parser
  */
-void definition_rule();
+Symbol* definition_rule();
 
 /**
  *  Parses statements
@@ -105,7 +109,7 @@ void definition_rule();
  *
  *  @ingroup Parser
  */
-void stat_list_rule();
+void stat_list_rule(bool is_void, bool can_define);
 
 /**
  *  Parses statements
@@ -118,7 +122,7 @@ void stat_list_rule();
  *
  *  @ingroup Parser
  */
-void stat_rule();
+void stat_rule(bool is_void, bool can_define);
 
 /**
  *  Parses expression in conditions
@@ -127,16 +131,14 @@ void stat_rule();
  *
  *  @ingroup Parser
  */
-void definition_rule();
-
-void bool_expression_rule();
+Expression* bool_expression_rule();
 
 /**
  *  Parses expressions in assignments
  *
  *  @ingroup Parser
  */
-void expression_rule();
+Expression* expression_rule();
 
 /**
  * Abstraction of expression rules

@@ -7,6 +7,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+struct InstructionStruct;
+
 #include "expression.h"
 #include "instruction.h"
 #include "scanner_token.h"
@@ -15,7 +17,7 @@
 typedef union {
     struct ExpressionStruct* expression;
     ScannerToken* token;
-    Instruction* instruction;
+    struct InstructionStruct* instruction;
     VariableType var_type;
 } ListItemData;
 
@@ -62,14 +64,14 @@ void list_dispose (List*);
  *
  *  @ingroup List
  */
-void list_insert_first (List*, ListItemData);
+ListItem *list_insert_first (List*, ListItemData);
 
 /**
  *  Insert item as the last item of the List
  *
  *  @ingroup List
  */
-void list_insert_last (List*, ListItemData);
+ListItem *list_insert_last (List*, ListItemData);
 
 /**
  *  Deletes first item in List
