@@ -50,7 +50,15 @@ typedef enum {
     EO_PLUS, ///< when operation is +
     EO_MINUS, ///< when operation is -
     EO_MULTIPLY, ///< when operation is *
-    EO_DIVIDE ///< when operation is /
+    EO_DIVIDE, ///< when operation is /
+    EO_LOGIC_EQUAL, ///< when operation is ==
+    EO_LOGIC_NOT_EQUAL, ///< when operation is !=
+    EO_LOGIC_AND, ///< when operation is &&
+    EO_LOGIC_OR, ///< when operation is ||
+    EO_LOGIC_LESS, ///< when operation is <
+    EO_LOGIC_LESS_EQUAL, ///< when operation is <=
+    EO_LOGIC_GREATER, ///< when operation is >
+    EO_LOGIC_GREATER_EQUAL ///< when operation is =>
 } ExpressionOperation;
 
 /**
