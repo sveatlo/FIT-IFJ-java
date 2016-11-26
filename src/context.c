@@ -12,7 +12,7 @@ Context* context_init(Context* parent_context) {
     return new_context;
 }
 
-void context_delete(Context* context) {
+void context_dispose(Context* context) {
     if (context != NULL) {
         table_dispose(context->symbol_table);
         free(context);

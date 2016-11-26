@@ -25,7 +25,7 @@ typedef struct ContextStruct {
 } Context;
 
 Context* context_init(Context*);
-void context_delete(Context*);
+void context_dispose(Context*);
 Symbol* context_find_symbol(Context* context, SymbolName name);
 
 #endif

@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
     //     list_activate_next(token_list);
     // }
 
-    // Context* ctx = context_init();
+    Context* ctx = context_init();
     // context_delete(ctx);
         (void)argv;
         (void)argc;
@@ -76,30 +76,32 @@ int main(int argc, char** argv) {
     // table_dispose(table);
 
 
-    // FILE *f = parse_parameters(argc, argv);
-    // List *token_list = list_init();
+    FILE *f = parse_parameters(argc, argv);
+    List *token_list = list_init();
+
+    token_list = scan_file(f, token_list);
+
+    // list_activate_first(token_list);
+    // while(token_list->active != NULL) {
+    //     ScannerToken* token = token_list->active->data.token;
+    //     if(token->type == STT_IDENT) {
+    //         if(token->data->id->class != NULL) {
+    //             printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
+    //         } else {
+    //             printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
     //
-    // token_list = scan_file(f, token_list);
-    //
-    // // list_activate_first(token_list);
-    // // while(token_list->active != NULL) {
-    // //     ScannerToken* token = token_list->active->data.token;
-    // //     if(token->type == STT_IDENT) {
-    // //         if(token->data->id->class != NULL) {
-    // //             printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
-    // //         } else {
-    // //             printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
-    // //
-    // //         }
-    // //     } else {
-    // //         printf("%s ", token_to_string(token));
-    // //     }
-    // //     list_activate_next(token_list);
-    // // }
-    // // printf("\n");
-    //
-    // // list_dispose(token_list);
-    //
+    //         }
+    //     } else {
+    //         printf("%s ", token_to_string(token));
+    //     }
+    //     list_activate_next(token_list);
+    // }
+    // printf("\n");
+
+    // list_dispose(token_list);
+
+    parse_expression(token_list, );
+
     // if(get_error()->type) {
     //     //lex error => exit
     //     print_error();
@@ -113,9 +115,9 @@ int main(int argc, char** argv) {
     //     print_error();
     //     return -1;
     // }
-    //
-    //
-    // fclose(f);
+
+
+    fclose(f);
 
     // Expression* expr1 = expression_init();
     // expr1->op = EO_CONST_INTEGER;
