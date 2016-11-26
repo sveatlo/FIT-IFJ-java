@@ -161,5 +161,68 @@ SymbolTableNode* tree_insert(SymbolTableNode*, SymbolName, Symbol*);
  */
 void tree_dispose(SymbolTableNode*);
 
+/**
+ * Insert variable to a symbol table for copy
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_symbol_copy(SymbolTableNode* symbol_table, Symbol* symbol);
+
+/**
+ * Insert Bool variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_bool_copy(SymbolTableNode* symbol_table, SymbolName name, bool data);
+
+/**
+ * Insert Integer variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_integer_copy(SymbolTableNode* symbol_table, SymbolName name, int data);
+
+/**
+ * Insert Double variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_double_copy(SymbolTableNode* symbol_table, SymbolName name, double data);
+
+/**
+ * Insert String variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode *table_insert_string_copy(SymbolTableNode* symbol_table, SymbolName name, String* str);
+
+/**
+ * Insert Class variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_class_copy(SymbolTableNode* symbol_table, SymbolName name, struct ContextStruct*);
+
+/**
+ * Insert Function variable symbol to a symbol table for copy tree
+ *
+ * @return Inserted SymbolTableNode
+ * @ingroup IAL
+ */
+SymbolTableNode* table_insert_function_copy(SymbolTableNode* symbol_table, SymbolName name, struct ContextStruct*);
+
+/**
+ * Function for copy tree
+ *
+ * @return Copied tree
+ * @ingroup IAL
+ */
+SymbolTableNode* copy_tree(SymbolTableNode* root);
 
 #endif

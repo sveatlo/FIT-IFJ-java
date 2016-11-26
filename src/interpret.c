@@ -288,9 +288,9 @@ void length_str(Symbol* op1, Symbol* res) {
     res->data.var->value.i = str_length(op1->data.var->value.s);
 }
 
-void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res) {
+/*void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res) {
     res->data.var->value.s = substr(op1->data.var->value.s, op2->data.var->value.i, op3->data.var->value.i);
-}
+}*/
 
 void compare_str(Symbol* op1, Symbol* op2, Symbol* res) {
     res->data.var->value.i = str_cmp(op1->data.var->value.s, op2->data.var->value.s);
@@ -302,6 +302,15 @@ void sort_str(Symbol* op1, Symbol* res) {
 
 void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
     res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
+}
+
+void jump(Expression *op1, List *op2, Symbol *res) {
+    if (op1->b == true) {
+        op2->active = (ListItem*)res;
+    }
+    if (op1->b == false) {
+        op2->active = (ListItem*)res;
+    }
 }
 
 void interpret(List* ins_list) {
@@ -372,8 +381,9 @@ void interpret(List* ins_list) {
                 break;
 
             case IC_JMP:
-
+                jump((Expression*)current_ins->op1, (List*)current_ins->op2, (Symbol*)current_ins->res);
                 break;
+
             case IC_READ_INT:
                 read_int_stdin((Symbol*)current_ins->op1);
                 break;
@@ -403,7 +413,7 @@ void interpret(List* ins_list) {
                 break;
 
             case IC_STR_SUBSTRING:
-                substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
+                //substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
                 break;
 
             case IC_STR_COMP:

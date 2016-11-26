@@ -9,6 +9,7 @@
 #include "scanner_token.h"
 #include "scanner.h"
 #include "string.h"
+#include "interpret.h"
 
 /**
  *  @brief parses parameters
@@ -22,14 +23,25 @@ int main(int argc, char** argv) {
     // (void)argv;
     // (void)argc;
     set_error(ERR_NONE);
-
     // String* str0 = str_init();
     // str_append(str0, 'a');
     //
     // String* str1 = str_init();
     // str_append(str1, 'b');
     //
-    // str_concat(str0, str1);
+    // String* str2 = str_init();
+    // str_append(str2, 'c');
+    //
+    // String* str3 = str_init();
+    // str_append(str3, 'x');
+    //
+    // String* str4 = str_init();
+    // str_append(str4, 'z');
+    //
+    // String* str5 = str_init();
+    // str_append(str5, 'y');
+    //str_concat(str0, str1);
+    // printf("%s\n", str0->str);
     // printf("%s\n", str_get_str(str0));
 
     // // printf("%s\n", str_get_str(str0));
@@ -74,6 +86,32 @@ int main(int argc, char** argv) {
     // table_insert_integer(table, str0, 42);
     // table_insert_integer(table, str1, 69);
     // table_dispose(table);
+
+    //  SymbolTableNode* table = table_init();
+    //  table_insert_integer(table, str0, 42);
+    //  table_insert_bool(table, str1, false);
+    // //  //symbol_print(table->data);
+    //  SymbolTableNode *table1 = copy_tree(table);
+    //  printf("%d vs %d\n", table, table1);
+    //  SymbolTableNode* symbol1 = table_find_symbol(table, str1);
+    //  if(symbol1 == NULL) {
+    //     printf("symbol not found in table\n");
+    //     return -1;
+    // }
+    //  SymbolTableNode* symbol2 = table_find_symbol(table1, str1);
+    //  if(symbol2 == NULL) {
+    //     printf("symbol not found in table1\n");
+    //     return -1;
+    //  }
+    //  printf("table1 str1 pre change: %d\n", symbol2->data->data.var->value.i);
+    // table_insert_integer(table1, str1, 43);
+    //  printf("table1 str1 post change: %d\n", symbol2->data->data.var->value.b);
+    //  printf("table str4 post change: %d\n", symbol1->data->data.var->value.b);
+    // symbol_print(copy->data);
+    //  //str_dispose(str0);
+     //
+    //  table_dispose(table);
+    //  table_dispose(table1);
 
 
     // FILE *f = parse_parameters(argc, argv);
@@ -144,22 +182,52 @@ int main(int argc, char** argv) {
     // expression_print(evaluate_expression(expr));
     // printf("\n");
 
+//     Expression* expr1 = expression_init();
+//     expr1->op = EO_CONST_BOOL;
+//     expr1->b = true;
+//
+//     Expression* expr2 = expression_init();
+//     expr2->op = EO_CONST_DOUBLE;
+//     expr2->d = 35.1;
+//
+//     Expression* expr3 = expression_init();
+//     expr3->op = EO_CONST_INTEGER;
+//     expr3->i = 35;
+//
+//     Expression* expr23 = expression_init();
+//     expr23->op = EO_LOGIC_EQUAL;
+//     expr23->expr1 = expr2;
+//     expr23->expr2 = expr3;
+//
+//     Expression* expr = expression_init();
+//     expr->op = EO_LOGIC_AND;
+//     expr->expr1 = expr1;
+//     expr->expr2 = expr23;
+//
+//     expression_print(expr);
+//     printf("\n");
+//     expression_print(expression_evaluate(expr));
+//     printf("\n");
+//
+//
+//
+
 
 
     return 0;
 }
 
-FILE* parse_parameters(int argc, char** argv) {
-    if(argc != 2 || argc > 3) {
-        set_error(ERR_PARAMS);
-        return NULL;
-    }
-
-    FILE *f = fopen(argv[1], "r");
-    if(f == NULL) {
-        set_error(ERR_CANNOT_OPEN_FILE);
-        return NULL;
-    }
-
-    return f;
-}
+// FILE* parse_parameters(int argc, char** argv) {
+//     if(argc != 2 || argc > 3) {
+//         set_error(ERR_PARAMS);
+//         return NULL;
+//     }
+//
+//     FILE *f = fopen(argv[1], "r");
+//     if(f == NULL) {
+//         set_error(ERR_CANNOT_OPEN_FILE);
+//         return NULL;
+//     }
+//
+//     return f;
+// }
