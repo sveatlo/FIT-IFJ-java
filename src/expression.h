@@ -47,10 +47,18 @@ typedef enum {
     EO_CONST_DOUBLE, ///< when operand is an double constant
     EO_CONST_STRING, ///< when operand is an string constant
     EO_CONST_BOOL, ///< when operand is an boolean constant
-    EO_PLUS,
-    EO_MINUS,
-    EO_MULTIPLY,
-    EO_DIVIDE
+    EO_PLUS, ///< when operation is +
+    EO_MINUS, ///< when operation is -
+    EO_MULTIPLY, ///< when operation is *
+    EO_DIVIDE, ///< when operation is /
+    EO_LOGIC_EQUAL, ///< when operation is ==
+    EO_LOGIC_NOT_EQUAL, ///< when operation is !=
+    EO_LOGIC_AND, ///< when operation is &&
+    EO_LOGIC_OR, ///< when operation is ||
+    EO_LOGIC_LESS, ///< when operation is <
+    EO_LOGIC_LESS_EQUAL, ///< when operation is <=
+    EO_LOGIC_GREATER, ///< when operation is >
+    EO_LOGIC_GREATER_EQUAL ///< when operation is =>
 } ExpressionOperation;
 
 /**
@@ -76,6 +84,11 @@ typedef struct ExpressionStruct {
  */
 Expression* expression_init();
 
+/**
+ *  print Expression
+ *
+ *  @ingroup Expression
+ */
 void expression_print(Expression* expr);
 
 

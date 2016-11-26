@@ -167,32 +167,37 @@ int main(int argc, char** argv) {
     //
     // fclose(f);
 
-    // Expression* expr1 = expression_init();
-    // expr1->op = EO_CONST_INTEGER;
-    // expr1->i = 5;
-    //
-    // Expression* expr2 = expression_init();
-    // expr2->op = EO_CONST_DOUBLE;
-    // expr2->d = 3.0;
-    //
-    // Expression* expr3 = expression_init();
-    // expr3->op = EO_CONST_INTEGER;
-    // expr3->i = 2;
-    //
-    // Expression* expr23 = expression_init();
-    // expr23->op = EO_MULTIPLY;
-    // expr23->expr1 = expr2;
-    // expr23->expr2 = expr3;
-    //
-    // Expression* expr = expression_init();
-    // expr->op = EO_PLUS;
-    // expr->expr1 = expr1;
-    // expr->expr2 = expr23;
-    //
-    // expression_print(expr);
-    // printf("\n");
-    // expression_print(evaluate_expression(expr));
-    // printf("\n");
+//     Expression* expr1 = expression_init();
+//     expr1->op = EO_CONST_BOOL;
+//     expr1->b = true;
+//
+//     Expression* expr2 = expression_init();
+//     expr2->op = EO_CONST_DOUBLE;
+//     expr2->d = 35.1;
+//
+//     Expression* expr3 = expression_init();
+//     expr3->op = EO_CONST_INTEGER;
+//     expr3->i = 35;
+//
+//     Expression* expr23 = expression_init();
+//     expr23->op = EO_LOGIC_EQUAL;
+//     expr23->expr1 = expr2;
+//     expr23->expr2 = expr3;
+//
+//     Expression* expr = expression_init();
+//     expr->op = EO_LOGIC_AND;
+//     expr->expr1 = expr1;
+//     expr->expr2 = expr23;
+//
+//     expression_print(expr);
+//     printf("\n");
+//     expression_print(expression_evaluate(expr));
+//     printf("\n");
+//
+//
+//
+//     return 0;
+// }
 
 
 
