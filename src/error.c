@@ -5,18 +5,22 @@
 
 Error last_error;
 char err_strings[][255] = {
-    [ERR_NONE] = "No error",
-    [ERR_UNKNOWN] = "Unknown error",
+    [ERR_NONE] = { "No error" },
 
-    [ERR_PARAMS] = "Bad parameters",
-    [ERR_ALLOCATION] = "Memory allocation error",
-    [ERR_CANNOT_OPEN_FILE] = "Cannot open input file",
+    [ERR_LEX] = { "Lexical error" }, ///< Lexical analysis error (wrong actual lexem)
 
-    [ERR_LEX] = "Lexical error",
-    [ERR_SYNTAX] = "Syntactical error",
-    [ERR_SEMANTIC] = "Semantical error",
+    [ERR_SYNTAX] = { "Syntactical error" }, ///< Syntactical analysis error (wrong syntax)
 
-    [ERR_OTHER_RUN] = "Others run error"
+    [ERR_SEMANTIC] = { "Semantic error - undefined clas,function or variable" }, ///< Semantic error ,Undefined class,function,variable and try redefinition class,function and variable
+    [ERR_SEM_PARAMS] = { "Semantic error - wrong compability" }, ///< Semantic error type compability in arithmetic,chain and relational expression. Or wrong type of parameter and function
+    [ERR_OTHER_SEMANTIC] = { "Other semantic error" }, ///< Other semantic errors
+
+    [ERR_READ_NUM_FROM_STDIN] = { "Run error - read from stout" }, ///< Run error for num from stdin
+    [ERR_RUN_NON_INIT_VAR] = { "Run error - no-incialized variable" }, ///< Run error with work with no-incialized  variable
+    [ERR_RUN_DIV_NULL] = { "Run error - divide by zero" }, ///< Run error divide by zero
+    [ERR_OTHER_RUN] = { "Other run error" }, ///< Other run problems
+
+    [ERR_INTERPRET] = { "Interpret error" } ///< Internal interpret error unafected by entry program (bad parameters from stdin)
 };
 
 Error* get_error () {

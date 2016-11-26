@@ -349,7 +349,7 @@ SymbolTableNode* copy_tree(SymbolTableNode* root) {
                 }
             break;
         case ST_NULL:
-            // TODO set_error();
+            set_error(ERR_SEMANTIC);
             break;
     }
 

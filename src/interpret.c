@@ -91,7 +91,7 @@ void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
 
         case '/':
             if ((b == 0.0) || (b == 0)) {
-                printf("Delenie nulou\n");
+                set_error(ERR_RUN_DIV_NULL);
             }
             if ((a == VT_DOUBLE) && (b == VT_DOUBLE)) {
                 res->data.var->type = VT_DOUBLE;
