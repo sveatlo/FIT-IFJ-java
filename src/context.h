@@ -12,6 +12,7 @@ struct SymbolTableNodeStruct;
 
 #include "ial.h"
 #include "symbol.h"
+#include "scanner_token.h"
 
 
 /**
@@ -27,5 +28,8 @@ typedef struct ContextStruct {
 Context* context_init(Context*);
 void context_dispose(Context*);
 Symbol* context_find_symbol(Context* context, SymbolName name);
+Symbol* context_find_ident(Context* context, Context* root_context, Ident* token_ident);
+Symbol* context_add_variable(Context* context, KeywordType type, String* name);
+Symbol* context_add_function(Context* context, KeywordType type, String* name);
 
 #endif

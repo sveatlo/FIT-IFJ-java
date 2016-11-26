@@ -9,14 +9,19 @@
 
 #include "list.h"
 
+
 /**
  *  Main parser function
  *
  *  Starts analysis, controls the whole process of parsing
  *
+ *  @param[in] _token_list List of tokens to parse
+ *  @param[out] _context Main context - will be used by interpret
+ *  @param[out] _instructions List of Main instructions. Used to initialize class member variables and call Main.run
+ *
  *  @ingroup Parser
  */
-void parse(List*);
+void parse(List* _token_list, Context* _context, List* _instructions);
 
 /**
  *  Starts the actual parsing
@@ -94,7 +99,7 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list);
  *
  *  @ingroup Parser
  */
-void definition_rule();
+Symbol* definition_rule();
 
 /**
  *  Parses statements
@@ -104,7 +109,7 @@ void definition_rule();
  *
  *  @ingroup Parser
  */
-void stat_list_rule();
+void stat_list_rule(bool is_void, bool can_define);
 
 /**
  *  Parses statements
@@ -117,35 +122,37 @@ void stat_list_rule();
  *
  *  @ingroup Parser
  */
-void stat_rule();
+void stat_rule(bool is_void, bool can_define);
 
 /**
- *  Parses boolean expressions
+ *  Parses expression in conditions
  *
- *  Parses <bool_expr> rules<br>
+ *  @param[in] is_static_class_member Should the ID be added to main context's symbol table as "`current_class`.`id`"?
+ *
+ *  @ingroup Parser
+ */
+Expression* bool_expression_rule();
+
+/**
+ *  Parses expressions in assignments
+ *
+ *  @ingroup Parser
+ */
+Expression* expression_rule();
+
+/**
+ * Abstraction of expression rules
+ *
  *  <bool_expr> -> "(" <bool_expr> ")"<br>
  *  <bool_expr> -> true<br>
  *  <bool_expr> -> false<br>
- *  <bool_expr> -> INT<br>
+ *  <bool_expr> -> INT or DOUBLE or STRING literal <br>
  *  <bool_expr> -> ID<br>
  *  <bool_expr> -> ID "(" <params_list> ")"<br>
  *  <bool_expr> -> <bool_expr> "&&" <bool_expr><br>
  *  <bool_expr> -> <bool_expr> "||" <bool_expr><br>
  *  <bool_expr> -> <bool_expr> "!=" <bool_expr><br>
  *  <bool_expr> -> <bool_expr> "==" <bool_expr><br>
- *
- *  @param[in] is_static_class_member Should the ID be added to main context's symbol table as "`current_class`.`id`"?
- *
- *  @ingroup Parser
- */
-void definition_rule();
-
-void bool_expression_rule();
-
-/**
- *  Parses expressions
- *
- *  Parses <expr> rules<br>
  *  <expr> -> "(" <expr> ")"<br>
  *  <expr> -> <bool_expr><br>
  *  <expr> -> <expr> "+" <expr><br>
@@ -153,8 +160,7 @@ void bool_expression_rule();
  *  <expr> -> <expr> "*" <expr><br>
  *  <expr> -> <expr> "/" <expr><br>
  *
- *  @ingroup Parser
  */
-void expression_rule();
+Expression* general_expression_rule (ScannerTokenType end_token);
 
 #endif

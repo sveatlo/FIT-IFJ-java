@@ -9,24 +9,14 @@
 
 struct SymbolStruct;
 struct ListStruct;
+struct ContextStruct;
 
+#include "context.h"
 #include "ial.h"
 #include "list.h"
+#include "scanner_token.h"
 #include "string.h"
 #include "symbol.h"
-
-/**
- *  Defines priority between tokens on the stack and input token
- *
- *  @ingroup Expression
- **/
-typedef enum
-{
-    L, ///< LOW. Token on the top of the stack has Ler priority than input token
-    H, ///< HIGH. Token on the top of the stack has Her priority than input token
-    E, ///< EQUAL. Token on the top of the stack has same priority as input token
-    N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
-} TokenPrecedence;
 
 /**
  *  Defines type of result after operation (+,-,*,/)
@@ -43,14 +33,30 @@ typedef enum
 
 typedef enum {
     EO_SYMBOL, ///< when operand is a symbol
+    // NOTE: possibly redundant data - if EO_SYMBOL and symbol->type === FN => EO_SYMBOL_CALL
+    //  con: redundancy
+    //  pro: structure has different set of members set => simple to use
+    EO_SYMBOL_CALL, ///< when operand is a symbol, but also a function
     EO_CONST_INTEGER, ///< when operand is an integer constant
-    EO_CONST_DOUBLE, ///< when operand is an double constant
-    EO_CONST_STRING, ///< when operand is an string constant
-    EO_CONST_BOOL, ///< when operand is an boolean constant
+    EO_CONST_DOUBLE, ///< when operand is a double constant
+    EO_CONST_STRING, ///< when operand is a string constant
+    EO_CONST_BOOL, ///< when operand is a boolean constant
+
     EO_PLUS,
     EO_MINUS,
     EO_MULTIPLY,
-    EO_DIVIDE
+    EO_DIVIDE,
+    EO_LESS,
+    EO_GREATER,
+    EO_LESS_EQUALS,
+    EO_GREATER_EQUALS,
+    EO_LOGIC_EQUAL,
+    EO_LOGIC_NOT_EQUAL,
+    EO_AND,
+    EO_OR,
+    EO_NEGATE,
+    EO_LEFT_PARENTHESE,
+    EO_RIGHT_PARENTHESE
 } ExpressionOperation;
 
 /**
@@ -63,6 +69,7 @@ typedef struct ExpressionStruct {
     struct ExpressionStruct* expr1; ///< pointer to child expression (if available)
     struct ExpressionStruct* expr2; ///< pointer to second child expression (if available)
     struct SymbolStruct* symbol;   ///< pointer to symbol table
+    struct ListStruct* call_params; ///< pointer to a list of parameters of the function
     int i;  ///< integer const value
     double d; ///< double const value
     String* str; ///< string value
@@ -76,8 +83,13 @@ typedef struct ExpressionStruct {
  */
 Expression* expression_init();
 
-void expression_print(Expression* expr);
 
+/**
+ *  Prints expression to STDOUT
+ *
+ *  @ingroup Expression
+ */
+void expression_print(Expression* expr);
 
 /**
  *  Parses tokens, which should be expression

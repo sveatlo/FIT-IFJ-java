@@ -177,7 +177,7 @@ String* read_str(String* a) {
 
 void print_to_stdin(Expression *expr) {
     //TODO: Bug: voidprint("" + 2 + 3) ... bad concatenate
-    evaluate_expression(expr);
+    expression_evaluate(expr);
     printf("%s",str_get_str(expr->str));
     //TODO deallocate expr
 }

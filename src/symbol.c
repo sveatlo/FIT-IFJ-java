@@ -66,13 +66,13 @@ void symbol_print(Symbol* symbol) {
     switch (symbol->type) {
         case ST_VARIABLE:
             if(symbol->data.var->type == VT_INTEGER) {
-                printf("%d\n", symbol->data.var->value.i);
+                printf("%s:%d", str_get_str(symbol->name), symbol->data.var->value.i);
             } else if (symbol->data.var->type == VT_DOUBLE) {
-                printf("%g\n", symbol->data.var->value.d);
+                printf("%s:%g", str_get_str(symbol->name), symbol->data.var->value.d);
             } else if(symbol->data.var->type == VT_STRING) {
-                printf("%s\n", str_get_str(symbol->data.var->value.s));
+                printf("%s:%s", str_get_str(symbol->name), str_get_str(symbol->data.var->value.s));
             } else if(symbol->data.var->type == VT_BOOL) {
-                printf("%s\n", symbol->data.var->value.b ? "true" : "false");
+                printf("%s:%s", str_get_str(symbol->name), symbol->data.var->value.b ? "true" : "false");
             }
             break;
         case ST_FUNCTION:

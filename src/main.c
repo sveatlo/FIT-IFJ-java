@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
     //     list_activate_next(token_list);
     // }
 
-    Context* ctx = context_init();
+    // Context* ctx = context_init(NULL);
     // context_delete(ctx);
         (void)argv;
         (void)argc;
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 
     token_list = scan_file(f, token_list);
 
-    // list_activate_first(token_list);
+    list_activate_first(token_list);
     // while(token_list->active != NULL) {
     //     ScannerToken* token = token_list->active->data.token;
     //     if(token->type == STT_IDENT) {
@@ -100,8 +100,6 @@ int main(int argc, char** argv) {
 
     // list_dispose(token_list);
 
-    parse_expression(token_list, );
-
     // if(get_error()->type) {
     //     //lex error => exit
     //     print_error();
@@ -115,6 +113,22 @@ int main(int argc, char** argv) {
     //     print_error();
     //     return -1;
     // }
+
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return -1;
+    }
+
+    Context* context;
+    List* instructions;
+    parse(token_list, context, instructions);
+
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return -1;
+    }
 
 
     fclose(f);
