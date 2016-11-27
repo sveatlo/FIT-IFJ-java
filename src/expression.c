@@ -143,6 +143,8 @@ void expression_print (Expression* expr) {
                 expression_print(expr->expr2);
                 break;
 
+            default:
+                break;
         }
         printf(")");
     } else {
@@ -701,6 +703,19 @@ Expression *expression_evaluate(Expression *expr) {
         case EO_LOGIC_OR:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
                 expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_OR);
+            }
+            break;
+
+        case EO_JUMP_TRUE:
+            if (expr->b == true) {
+                // TODO : jump to address
+
+            }
+            break;
+
+        case EO_JUMP_FALSE:
+            if (expr->b == false) {
+                // TODO : jump to adrees
             }
             break;
 
