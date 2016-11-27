@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "instruction.h"
 
@@ -33,4 +34,41 @@ ListItem *instruction_insert_to_list(struct ListStruct* instructions, Instructio
     };
 
     return list_insert_last(instructions, item_data);
+}
+
+void instruction_print(Instruction* instruction) {
+    char instructions[][255] = {
+        [IC_NOP] = "IC_NOP",
+        [IC_EVAL] = "IC_EVAL",
+        [IC_RETURN] = "IC_RETURN",
+        [IC_JMP] = "IC_JMP",
+        [IC_JMPFALSE] = "IC_JMPFALSE",
+        [IC_JMPTRUE] = "IC_JMPTRUE",
+        [IC_CALL] = "IC_CALL",
+        [IC_MOV] = "IC_MOV",
+        [IC_ADD] = "IC_ADD",
+        [IC_SUBSTRACT] = "IC_SUBSTRACT",
+        [IC_MUL] = "IC_MUL",
+        [IC_DIV] = "IC_DIV",
+        [IC_EQUAL] = "IC_EQUAL",
+        [IC_NOTEQUAL] = "IC_NOTEQUAL",
+        [IC_LESSER] = "IC_LESSER",
+        [IC_GREATER] = "IC_GREATER",
+        [IC_GREATEREQ] = "IC_GREATEREQ",
+        [IC_LESSEREQ] = "IC_LESSEREQ",
+        [IC_AND] = "IC_AND",
+        [IC_OR] = "IC_OR",
+        [IC_NOT] = "IC_NOT",
+        [IC_READ_INT] = "IC_READ_INT",
+        [IC_READ_DOUBLE] = "IC_READ_DOUBLE",
+        [IC_READ_STRING] = "IC_READ_STRING",
+        [IC_PRINT] = "IC_PRINT",
+        [IC_STR_LENGTH] = "IC_STR_LENGTH",
+        [IC_STR_SORT] = "IC_STR_SORT",
+        [IC_STR_FIND] = "IC_STR_FIND",
+        [IC_STR_SUBSTRING] = "IC_STR_SUBSTRING",
+        [IC_STR_COMP] = "IC_STR_COMP"
+    };
+
+    printf("%s\n", instructions[instruction->code]);
 }

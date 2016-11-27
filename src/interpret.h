@@ -10,6 +10,13 @@
 #include "instruction.h"
 
 /**
+ * Main function of Interpret
+ *
+ * @ingroup Interpret
+ */
+void interpret();
+
+/**
  * Function for mathematical instruction
  *
  * @param	op1	operand1
@@ -143,12 +150,5 @@ void sort_str(Symbol* op1, Symbol* res);
  * @ingroup Interpret
  */
 void find_str(Symbol* op1, Symbol* op2, Symbol* res);
-
-/**
- * Main function of Interpret
- *
- * @ingroup Interpret
- */
-void interpret();
 
 #endif

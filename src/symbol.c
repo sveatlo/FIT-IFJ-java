@@ -53,6 +53,7 @@ void symbol_new_function(Symbol* symbol, Context* parent_context) {
     symbol->data.fn = (Function*)malloc(sizeof(Function));
     symbol->data.fn->context = context_init(parent_context);
     symbol->data.fn->params_list = list_init();
+    symbol->data.fn->instructions = list_init();
 }
 
 void symbol_new_class(Symbol* symbol, Context* parent_context) {

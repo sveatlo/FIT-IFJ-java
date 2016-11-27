@@ -25,20 +25,20 @@ typedef enum {
     IC_JMPFALSE, ///< Evaluates Expression (op1) and jump (set as active in list) to Instruction (res) if op1 == false
     IC_JMPTRUE, ///< Evaluates Expression (op1) and jump (set as active in list) to Instruction (res) if op1 == true
     IC_CALL,
-    // IC_MOV, ///< assign some value to `res`
-    // IC_ADD, ///< res=op1+op2
-    // IC_SUBSTRACT, ///< res=op1-op2
-    // IC_MUL, ///< res=op1*op2
-    // IC_DIV, ///< res=op1/op2
-    // IC_EQUAL, ///< op1 == op2
-    // IC_NOTEQUAL, ///< op1 != op2
-    // IC_LESSER, ///< op1 < op2
-    // IC_GREATER, ///< op1 > op2
-    // IC_GREATEREQ, ///< op1 >= op2
-    // IC_LESSEREQ, ///< op1 <= op2
-    // IC_AND, ///< res = op1 && op2
-    // IC_OR, ///< res = op1 || op2
-    // IC_NOT, ///< res = !op1
+    IC_MOV, ///< assign some value to `res`
+    IC_ADD, ///< res=op1+op2
+    IC_SUBSTRACT, ///< res=op1-op2
+    IC_MUL, ///< res=op1*op2
+    IC_DIV, ///< res=op1/op2
+    IC_EQUAL, ///< op1 == op2
+    IC_NOTEQUAL, ///< op1 != op2
+    IC_LESSER, ///< op1 < op2
+    IC_GREATER, ///< op1 > op2
+    IC_GREATEREQ, ///< op1 >= op2
+    IC_LESSEREQ, ///< op1 <= op2
+    IC_AND, ///< res = op1 && op2
+    IC_OR, ///< res = op1 || op2
+    IC_NOT, ///< res = !op1
     IC_READ_INT, ///< read int from stdout
     IC_READ_DOUBLE, ///< read double from stdout
     IC_READ_STRING, ///< read string from stdout
@@ -90,5 +90,7 @@ Instruction* instruction_generate(InstructionCode code, void* op1, void* op2, vo
  *  @ingroup Instruction
  */
 struct ListItemStruct *instruction_insert_to_list(struct ListStruct* instructions, Instruction* instruction);
+
+void instruction_print(Instruction* instruction);
 
 #endif

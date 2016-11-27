@@ -44,7 +44,7 @@ static inline ScannerToken* refresh_current_token() {
 }
 
 
-void parse(List* _token_list, Context* _context, List* _instructions) {
+void parse(List* _token_list, Context** _context, List** _instructions) {
     //prepare
     list_activate_first(_token_list);
     token_list = _token_list;
@@ -60,8 +60,8 @@ void parse(List* _token_list, Context* _context, List* _instructions) {
     // first thing in file should be class (or several)
     class_list_rule();
 
-    _context = main_context;
-    _instructions = main_instructions;
+    *_context = main_context;
+    *_instructions = main_instructions;
 }
 
 
@@ -358,6 +358,7 @@ void stat_rule(bool is_void, bool can_define) {
         jmp_to_else->res = item;
 
         // ELSE
+        next_token();
         if(current_token->type != STT_KEYWORD || current_token->data->keyword_type != KW_ELSE) return set_error(ERR_SYNTAX);
         // {
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
@@ -384,8 +385,7 @@ void stat_rule(bool is_void, bool can_define) {
         instruction_insert_to_list(current_instructions, jmp_after_while);
 
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        //statements inside IF
-        // TODO: no definition inside while
+        //statements inside WHILE
         next_token();
         stat_list_rule(is_void, false);
         instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
@@ -405,7 +405,7 @@ void stat_rule(bool is_void, bool can_define) {
                 //this really is a built-in function => remove error
                 set_error(ERR_NONE);
 
-                //
+                // TODO: add builtin fn support
             } else {
                 return;
             }
@@ -475,7 +475,7 @@ Expression* expression_rule() {
     return general_expression_rule(STT_SEMICOLON);
 }
 
-Expression* general_expression_rule (ScannerTokenType end_token) {
+Expression* general_expression_rule(ScannerTokenType end_token) {
     Stack* term_stack = stack_init();
     Stack* nonterm_stack = stack_init();
 

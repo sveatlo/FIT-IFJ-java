@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
 #include "interpret.h"
 #include "ial.h"
 #include "string.h"
@@ -14,6 +13,114 @@
 #include "scanner.h"
 #include "inbuilt.h"
 
+void interpret(List* ins_list) {
+    Instruction* current_ins;
+    current_ins = ins_list->active->data.instruction;
+
+    while (ins_list->active != NULL) {
+        switch (current_ins->code) {
+            case IC_MOV:
+                mov((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+
+            case IC_NOP:
+                break;
+
+            case IC_ADD:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '+');
+                break;
+
+            case IC_SUBSTRACT:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '-');
+                break;
+
+            case IC_MUL:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '*');
+                break;
+
+            case IC_DIV:
+                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '/');
+                break;
+
+            case IC_EQUAL:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_NOTEQUAL:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_GREATER:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_LESSER:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_GREATEREQ:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_LESSEREQ:
+                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_AND:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'a');
+                break;
+
+            case IC_NOT:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'n');
+                break;
+
+            case IC_OR:
+                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'o');
+                break;
+
+            case IC_JMP:
+                break;
+
+            case IC_READ_INT:
+                read_int_stdin((Symbol*)current_ins->op1);
+                break;
+
+            case IC_READ_DOUBLE:
+                read_double_stdin((Symbol*)current_ins->op1);
+                break;
+
+            case IC_READ_STRING:
+                read_str_stdin((Symbol*)current_ins->op1);
+                break;
+
+            case IC_PRINT:
+                break;
+
+            case IC_STR_SORT:
+                sort_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+
+            case IC_STR_FIND:
+                find_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+
+            case IC_STR_LENGTH:
+                length_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
+                break;
+
+            case IC_STR_SUBSTRING:
+                substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
+                break;
+
+            case IC_STR_COMP:
+                compare_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
+                break;
+            default:
+                set_error(ERR_UNKNOWN);
+                break;
+        }
+    }
+}
 
 
 void math_ins(Symbol* op1, Symbol* op2, Symbol* res, char c) {
@@ -302,114 +409,4 @@ void sort_str(Symbol* op1, Symbol* res) {
 
 void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
     res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
-}
-
-void interpret(List* ins_list) {
-    Instruction* current_ins;
-    current_ins = ins_list->active->data.instruction;
-
-
-    while (ins_list->active != NULL) {
-
-        switch (current_ins->code) {
-            case IC_MOV:
-                mov((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
-
-            case IC_NOP:
-                break;
-
-            case IC_ADD:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '+');
-                break;
-
-            case IC_SUBSTRACT:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '-');
-                break;
-
-            case IC_MUL:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '*');
-                break;
-
-            case IC_DIV:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '/');
-                break;
-
-            case IC_EQUAL:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_NOTEQUAL:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_GREATER:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_LESSER:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_GREATEREQ:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_LESSEREQ:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_AND:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'a');
-                break;
-
-            case IC_NOT:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'n');
-                break;
-
-            case IC_OR:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'o');
-                break;
-
-            case IC_JMP:
-
-                break;
-            case IC_READ_INT:
-                read_int_stdin((Symbol*)current_ins->op1);
-                break;
-
-            case IC_READ_DOUBLE:
-                read_double_stdin((Symbol*)current_ins->op1);
-                break;
-
-            case IC_READ_STRING:
-                read_str_stdin((Symbol*)current_ins->op1);
-                break;
-
-            case IC_PRINT:
-
-                break;
-
-            case IC_STR_SORT:
-                sort_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
-
-            case IC_STR_FIND:
-                find_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-            case IC_STR_LENGTH:
-                length_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
-
-            case IC_STR_SUBSTRING:
-                substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
-                break;
-
-            case IC_STR_COMP:
-                compare_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-
-        }
-    }
 }

@@ -21,7 +21,7 @@
  *
  *  @ingroup Parser
  */
-void parse(List* _token_list, Context* _context, List* _instructions);
+void parse(List* _token_list, Context** _context, List** _instructions);
 
 /**
  *  Starts the actual parsing

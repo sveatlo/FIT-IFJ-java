@@ -76,6 +76,35 @@ int main(int argc, char** argv) {
     // table_dispose(table);
 
 
+    // Expression* expr1 = expression_init();
+    // expr1->op = EO_CONST_INTEGER;
+    // expr1->i = 5;
+    //
+    // Expression* expr2 = expression_init();
+    // expr2->op = EO_CONST_DOUBLE;
+    // expr2->d = 3.0;
+    //
+    // Expression* expr3 = expression_init();
+    // expr3->op = EO_CONST_INTEGER;
+    // expr3->i = 2;
+    //
+    // Expression* expr23 = expression_init();
+    // expr23->op = EO_MULTIPLY;
+    // expr23->expr1 = expr2;
+    // expr23->expr2 = expr3;
+    //
+    // Expression* expr = expression_init();
+    // expr->op = EO_PLUS;
+    // expr->expr1 = expr1;
+    // expr->expr2 = expr23;
+    //
+    // expression_print(expr);
+    // printf("\n");
+    // expression_print(evaluate_expression(expr));
+    // printf("\n");
+
+
+
     FILE *f = parse_parameters(argc, argv);
     List *token_list = list_init();
 
@@ -120,9 +149,9 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    Context* context;
-    List* instructions;
-    parse(token_list, context, instructions);
+    Context* context = NULL;
+    List* instructions = NULL;
+    parse(token_list, &context, &instructions);
 
     if(get_error()->type) {
         //lex error => exit
@@ -130,36 +159,17 @@ int main(int argc, char** argv) {
         return -1;
     }
 
+    // list_activate_first(instructions);
+    // while(instructions->active != NULL) {
+    //     printf("main.c: ");
+    //     instruction_print(instructions->active->data.instruction);
+    //     list_activate_next(instructions);
+    // }
+    // printf("\n");
+
+
 
     fclose(f);
-
-    // Expression* expr1 = expression_init();
-    // expr1->op = EO_CONST_INTEGER;
-    // expr1->i = 5;
-    //
-    // Expression* expr2 = expression_init();
-    // expr2->op = EO_CONST_DOUBLE;
-    // expr2->d = 3.0;
-    //
-    // Expression* expr3 = expression_init();
-    // expr3->op = EO_CONST_INTEGER;
-    // expr3->i = 2;
-    //
-    // Expression* expr23 = expression_init();
-    // expr23->op = EO_MULTIPLY;
-    // expr23->expr1 = expr2;
-    // expr23->expr2 = expr3;
-    //
-    // Expression* expr = expression_init();
-    // expr->op = EO_PLUS;
-    // expr->expr1 = expr1;
-    // expr->expr2 = expr23;
-    //
-    // expression_print(expr);
-    // printf("\n");
-    // expression_print(evaluate_expression(expr));
-    // printf("\n");
-
 
 
     return 0;
