@@ -316,6 +316,8 @@ void jump(Expression *op1, List *op2, Symbol *res) {
 void interpret(List* ins_list) {
     Instruction* current_ins;
     current_ins = ins_list->active->data.instruction;
+    Expression *help = expression_init();
+    Expression* node = expression_init();
 
 
     while (ins_list->active != NULL) {
@@ -329,61 +331,59 @@ void interpret(List* ins_list) {
                 break;
 
             case IC_EVAL:
-                expression_evaluate((Expression*)current_ins->op1);
-                Expression* node;
-                node = (Expression*)current_ins->op1;
+                node = expression_evaluate((Expression*)current_ins->op1);
                 Symbol* tmp;
                 tmp = (Symbol*)current_ins->res;
                     switch (tmp->data.var->type) {
                         case VT_INTEGER:
-                            if (node->symbol->data.var->type == VT_INTEGER) {
+                            if (node->op == EO_CONST_INTEGER) {
                                 tmp->data.var->value.i = node->i;
                             }
-                            if (node->symbol->data.var->type == VT_DOUBLE) {
+                            if (node->op == EO_CONST_DOUBLE) {
                                 tmp->data.var->value.i = node->d;
                             }
-                            if (node->symbol->data.var->type == VT_BOOL) {
+                            if (node->op == EO_CONST_BOOL) {
                                 tmp->data.var->value.i = node->b;
                             }
-                            if (node->symbol->data.var->type == VT_STRING) {
+                            if (node->op == EO_CONST_STRING) {
                                 // tmp->data.var->value.i = node->str;
-                                // TODO set_error alebo opravit
+                                set_error(ERR_SEM_PARAMS);
                             }
                             break;
 
                         case VT_DOUBLE:
-                            if (node->symbol->data.var->type == VT_DOUBLE ) {
+                            if (node->op == EO_CONST_DOUBLE ) {
                                 tmp->data.var->value.d = node->d;
                             }
-                            if (tmp->data.var->type == VT_INTEGER) {
+                            if (node->op == EO_CONST_INTEGER) {
                                 tmp->data.var->value.d = node->i;
                             }
-                            if (node->symbol->data.var->type == VT_BOOL) {
+                            if (node->op == EO_CONST_BOOL) {
                                 tmp->data.var->value.d = node->b;
                             }else {
-                                // TODO set_error // string nejde konvertovat do do double
+                                set_error(ERR_SEM_PARAMS); // string nejde konvertovat do do double
                             }
                             break;
 
                         case VT_STRING:
-                            if (node->symbol->data.var->type == VT_STRING) {
+                            if (node->op == EO_CONST_STRING) {
                                 tmp->data.var->value.s = node->str;
                             } else {
-                                //TODO set_error // int ,double,boll nejdu konvertovat do stringu
+                                set_error(ERR_SEM_PARAMS); // int ,double,boll nejdu konvertovat do stringu
                             }
                             break;
 
                         case VT_BOOL:
-                            if (node->symbol->data.var->type == VT_BOOL) {
+                            if (node->op == EO_CONST_BOOL) {
                                 tmp->data.var->value.b = node->b;
                             }
-                            if (node->symbol->data.var->type == VT_INTEGER) {
+                            if (node->op == EO_CONST_INTEGER) {
                                 tmp->data.var->value.b = node->i;
                             }
-                            if (node->symbol->data.var->type == VT_DOUBLE) {
+                            if (node->op == EO_CONST_DOUBLE) {
                                 tmp->data.var->value.b = node->d;
                             }
-                            if (node->symbol->data.var->type == VT_STRING) {
+                            if (node->op == EO_CONST_STRING) {
                                 tmp->data.var->value.b = node->str;
                             }
                             break;
@@ -392,15 +392,45 @@ void interpret(List* ins_list) {
                             break;
                     }
                 break;
-            case IC_TRUE_JUMP:
-                if (expression_evaluate((Expression*)current_ins->op1)->b == true) {
-                    // TODO
+            case IC_JUMP_TRUE:
+                help = expression_evaluate((Expression*)current_ins->op1);
+                if (help->op == EO_CONST_BOOL) {
+                    if (help->b == true) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_INTEGER) {
+                    if (help->i == true) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_DOUBLE) {
+                    if (help->d == true) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_STRING) {
+                    // if (help->str == true) {
+                    //     // TODO
+                    // }
                 }
                 break;
 
-            case IC_FALSE_JUMP:
-                if (expression_evaluate((Expression*)current_ins->op1)->b == false) {
-                    // TODO
+            case IC_JUMP_FALSE:
+                help = expression_evaluate((Expression*)current_ins->op1);
+                if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_BOOL) {
+                    if (help->b == false) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_INTEGER) {
+                    if (help->i == false) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_DOUBLE) {
+                    if (help->d == false) {
+                        // TODO
+                    }
+                } else if (expression_evaluate((Expression*)current_ins->op1)->op == EO_CONST_STRING) {
+                    if (help->str == false) {
+                        // TODO
+                    }
                 }
                 break;
 

@@ -58,9 +58,7 @@ typedef enum {
     EO_LOGIC_LESS, ///< when operation is <
     EO_LOGIC_LESS_EQUAL, ///< when operation is <=
     EO_LOGIC_GREATER, ///< when operation is >
-    EO_LOGIC_GREATER_EQUAL, ///< when operation is =>
-    EO_JUMP_TRUE, ///< when it is true jump
-    EO_JUMP_FALSE ///< when it is false
+    EO_LOGIC_GREATER_EQUAL ///< when operation is =>
 } ExpressionOperation;
 
 /**

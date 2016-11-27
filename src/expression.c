@@ -618,9 +618,7 @@ Expression *expression_evaluate(Expression *expr) {
 
         case EO_SYMBOL:
             if (expr->symbol != NULL) {
-                printf("svatova podmienka\n" );
                 if (expr->symbol->data.var->initialized) {
-                    printf("koniec svatovej podmienky\n" );
                     switch (expr->symbol->data.var->type) {
                         case VT_INTEGER:
                             expr->i = expr->symbol->data.var->value.i;
