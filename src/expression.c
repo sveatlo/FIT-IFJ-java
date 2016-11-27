@@ -143,8 +143,6 @@ void expression_print (Expression* expr) {
                 expression_print(expr->expr2);
                 break;
 
-            default:
-                break;
         }
         printf(")");
     } else {
@@ -249,7 +247,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(expr1->str, expr2->str);
                 }
             } else {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -270,7 +268,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d - expr2->i;
                 }
             } else {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -290,7 +288,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d * expr2->i;
                 }
             } else {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -310,7 +308,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d / expr2->i;
                 }
             } else {
-                  set_error(ERR_SEM_PARAMS);
+                  set_error(ERR_OTHER_RUN);
                 //   expression_dispose(expr1);
                 //   expression_dispose(expr2);
                 //   return NULL;
@@ -325,7 +323,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->b = false;
                 }
             } else {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -337,7 +335,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->b = false;
                 }
             } else {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -373,7 +371,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -409,7 +407,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -445,7 +443,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -481,7 +479,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_OTHER_RUN);
             }
             break;
 
@@ -524,7 +522,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                         expr1->b = false;
                     }
                 } else {
-                    set_error(ERR_SEM_PARAMS);
+                    set_error(ERR_OTHER_RUN);
                 }
             }
             break;
@@ -568,7 +566,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                         expr1->b = false;
                     }
                 } else {
-                    set_error(ERR_SEM_PARAMS);
+                    set_error(ERR_OTHER_RUN);
                 }
             }
             break;
@@ -620,33 +618,41 @@ Expression *expression_evaluate(Expression *expr) {
 
         case EO_SYMBOL:
             if (expr->symbol != NULL) {
-                switch (expr->symbol->data.var->type) {
-                    case VT_INTEGER:
-                        expr->i = expr->symbol->data.var->value.i;
-                        expr->op = EO_CONST_INTEGER;
-                        return expr;
+                printf("svatova podmienka\n" );
+                if (expr->symbol->data.var->initialized) {
+                    printf("koniec svatovej podmienky\n" );
+                    switch (expr->symbol->data.var->type) {
+                        case VT_INTEGER:
+                            expr->i = expr->symbol->data.var->value.i;
+                            expr->op = EO_CONST_INTEGER;
+                            return expr;
 
-                    case VT_DOUBLE:
-                        expr->d = expr->symbol->data.var->value.d;
-                        expr->op = EO_CONST_DOUBLE;
-                        return expr;
+                        case VT_DOUBLE:
+                            expr->d = expr->symbol->data.var->value.d;
+                            expr->op = EO_CONST_DOUBLE;
+                            return expr;
 
-                    case VT_STRING:
-                        expr->str = expr->symbol->data.var->value.s;
-                        expr->op = EO_CONST_STRING;
-                        return expr;
+                        case VT_STRING:
+                            expr->str = expr->symbol->data.var->value.s;
+                            expr->op = EO_CONST_STRING;
+                            return expr;
 
-                    case VT_BOOL:
-                        expr->b = expr->symbol->data.var->value.b;
-                        expr->op = EO_CONST_BOOL;
-                        return expr;
+                        case VT_BOOL:
+                            expr->b = expr->symbol->data.var->value.b;
+                            expr->op = EO_CONST_BOOL;
+                            return expr;
 
-                    default:
-                        return NULL;
+                        default:
+                            return NULL;
 
+                    }
+                } else {
+                    set_error(ERR_OTHER_RUN);
+                    // expression_dispose(expr);
+                    // return NULL;
                 }
             } else {
-                set_error(ERR_SEMANTIC);
+                set_error(ERR_OTHER_RUN);
                 // expression_dispose(expr);
                 // return NULL;
             }
