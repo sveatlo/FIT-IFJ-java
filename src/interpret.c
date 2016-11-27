@@ -328,6 +328,82 @@ void interpret(List* ins_list) {
             case IC_NOP:
                 break;
 
+            case IC_EVAL:
+                expression_evaluate((Expression*)current_ins->op1);
+                Expression* node;
+                node = (Expression*)current_ins->op1;
+                Symbol* tmp;
+                tmp = (Symbol*)current_ins->res;
+                    switch (tmp->data.var->type) {
+                        case VT_INTEGER:
+                            if (node->symbol->data.var->type == VT_INTEGER) {
+                                tmp->data.var->value.i = node->i;
+                            }
+                            if (node->symbol->data.var->type == VT_DOUBLE) {
+                                tmp->data.var->value.i = node->d;
+                            }
+                            if (node->symbol->data.var->type == VT_BOOL) {
+                                tmp->data.var->value.i = node->b;
+                            }
+                            if (node->symbol->data.var->type == VT_STRING) {
+                                // tmp->data.var->value.i = node->str;
+                                // TODO set_error alebo opravit
+                            }
+                            break;
+
+                        case VT_DOUBLE:
+                            if (node->symbol->data.var->type == VT_DOUBLE ) {
+                                tmp->data.var->value.d = node->d;
+                            }
+                            if (tmp->data.var->type == VT_INTEGER) {
+                                tmp->data.var->value.d = node->i;
+                            }
+                            if (node->symbol->data.var->type == VT_BOOL) {
+                                tmp->data.var->value.d = node->b;
+                            }else {
+                                // TODO set_error // string nejde konvertovat do do double
+                            }
+                            break;
+
+                        case VT_STRING:
+                            if (node->symbol->data.var->type == VT_STRING) {
+                                tmp->data.var->value.s = node->str;
+                            } else {
+                                //TODO set_error // int ,double,boll nejdu konvertovat do stringu
+                            }
+                            break;
+
+                        case VT_BOOL:
+                            if (node->symbol->data.var->type == VT_BOOL) {
+                                tmp->data.var->value.b = node->b;
+                            }
+                            if (node->symbol->data.var->type == VT_INTEGER) {
+                                tmp->data.var->value.b = node->i;
+                            }
+                            if (node->symbol->data.var->type == VT_DOUBLE) {
+                                tmp->data.var->value.b = node->d;
+                            }
+                            if (node->symbol->data.var->type == VT_STRING) {
+                                tmp->data.var->value.b = node->str;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                break;
+            case IC_TRUE_JUMP:
+                if (expression_evaluate((Expression*)current_ins->op1)->b == true) {
+                    // TODO
+                }
+                break;
+
+            case IC_FALSE_JUMP:
+                if (expression_evaluate((Expression*)current_ins->op1)->b == false) {
+                    // TODO
+                }
+                break;
+
             case IC_ADD:
                 math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '+');
                 break;

@@ -706,19 +706,6 @@ Expression *expression_evaluate(Expression *expr) {
             }
             break;
 
-        case EO_JUMP_TRUE:
-            if (expr->b == true) {
-                // TODO : jump to address
-
-            }
-            break;
-
-        case EO_JUMP_FALSE:
-            if (expr->b == false) {
-                // TODO : jump to adrees
-            }
-            break;
-
         default:
             return NULL;
     }
