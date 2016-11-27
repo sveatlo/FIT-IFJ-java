@@ -60,12 +60,12 @@ void str_append(String* s1, char c) {
 }
 
 void str_concat(String* dest, String* src) {
-    if(dest->length + src->length > dest->mem_size) {
-        _str_resize_raw(dest, dest->length + src->length);
+    if(dest->length + src->length >= dest->mem_size) {
+        _str_resize_raw(dest, (dest->length + src->length));
     }
 
     strncat(dest->str, src->str, dest->mem_size);
-    dest->length += dest->length;
+    dest->length += src->length;
 }
 
 void str_copy_string(String* dest, String* str) {

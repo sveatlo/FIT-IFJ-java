@@ -224,19 +224,25 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else if (OperationTablePlus[expr1->op][expr2->op] == S) {
                 if (expr1->op == EO_CONST_INTEGER) {
+                    expr1->str = str_init();
                     int_to_string(expr1->str, expr1->i);
                     expr1->op = EO_CONST_STRING;
                     str_concat(expr1->str, expr2->str);
                 } else if (expr1->op == EO_CONST_DOUBLE) {
+                    expr1->str = str_init();
                     double_to_string(expr1->str, expr1->d);
                     expr1->op = EO_CONST_STRING;
                     str_concat(expr1->str, expr2->str);
                 } else if (expr2->op == EO_CONST_INTEGER) {
+                    expr2->str = str_init();
                     int_to_string(expr2->str, expr2->i);
-                    str_concat(expr2->str, expr1->str);
+                    str_concat(expr1->str, expr2->str);
+                    str_dispose(expr2->str);
                 } else if (expr2->op == EO_CONST_DOUBLE) {
+                    expr2->str = str_init();
                     double_to_string(expr2->str, expr2->d);
-                    str_concat(expr2->str, expr1->str);
+                    str_concat(expr1->str, expr2->str);
+                    str_dispose(expr2->str);
                 } else {
                     str_concat(expr1->str, expr2->str);
                 }

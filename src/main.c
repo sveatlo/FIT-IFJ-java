@@ -22,21 +22,21 @@ FILE* parse_parameters(int, char**);
 int main(int argc, char** argv) {
     // (void)argv;
     // (void)argc;
-    set_error(ERR_NONE);
-    String* str0 = str_init();
-    str_append(str0, 'a');
-
-    String* str1 = str_init();
-    str_append(str1, 'b');
-
-    String* str2 = str_init();
-    str_append(str2, 'c');
-
-    String* str3 = str_init();
-    str_append(str3, 'x');
-
-    String* str4 = str_init();
-    str_append(str4, 'z');
+    // set_error(ERR_NONE);
+    // String* str0 = str_init();
+    // str_append(str0, 'a');
+    //
+    // String* str1 = str_init();
+    // str_append(str1, 'b');
+    //
+    // String* str2 = str_init();
+    // str_append(str2, 'c');
+    //
+    // String* str3 = str_init();
+    // str_append(str3, 'x');
+    //
+    // String* str4 = str_init();
+    // str_append(str4, 'z');
     //
     // String* str5 = str_init();
     // str_append(str5, 'y');
@@ -168,41 +168,34 @@ int main(int argc, char** argv) {
     // fclose(f);
 
 //     Expression* expr1 = expression_init();
-//     expr1->op = EO_CONST_BOOL;
-//     expr1->b = true;
+//     expr1->op = EO_CONST_STRING;
+//     expr1->str = str_init();
+//     //str_append(expr1->str,'a');
 //
 //     Expression* expr2 = expression_init();
-//     expr2->op = EO_CONST_DOUBLE;
-//     expr2->d = 35.1;
+//     expr2->op = EO_CONST_INTEGER;
+//     expr2->i = 35;
 //
 //     Expression* expr3 = expression_init();
 //     expr3->op = EO_CONST_INTEGER;
-//     expr3->i = 35;
+//     expr3->i = 2;
 //
 //     Expression* expr23 = expression_init();
-//     expr23->op = EO_LOGIC_EQUAL;
+//     expr23->op = EO_PLUS;
 //     expr23->expr1 = expr2;
 //     expr23->expr2 = expr3;
 //
 //     Expression* expr = expression_init();
-//     expr->op = EO_LOGIC_AND;
+//     expr->op = EO_PLUS;
 //     expr->expr1 = expr1;
 //     expr->expr2 = expr23;
 //
 //     expression_print(expr);
-//     printf("\n");
 //     expression_print(expression_evaluate(expr));
-//     printf("\n");
-//
 //
 //
 //     return 0;
 // }
-
-
-
-    return 0;
-}
 
 // FILE* parse_parameters(int argc, char** argv) {
 //     if(argc != 2 || argc > 3) {
