@@ -316,8 +316,8 @@ void jump(Expression *op1, List *op2, Symbol *res) {
 void interpret(List* ins_list) {
     Instruction* current_ins;
     current_ins = ins_list->active->data.instruction;
-    Expression *help = expression_init();
-    Expression* node = expression_init();
+    Expression *help;
+    Expression* node;
 
 
     while (ins_list->active != NULL) {
