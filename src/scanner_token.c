@@ -5,7 +5,7 @@
 ScannerToken* token_init () {
     ScannerToken *token = (ScannerToken *) malloc(sizeof(ScannerToken));
     if (token == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
     token->type = STT_EMPTY;

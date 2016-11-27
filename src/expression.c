@@ -143,6 +143,8 @@ void expression_print (Expression* expr) {
                 expression_print(expr->expr2);
                 break;
 
+            default:
+                break;
         }
         printf(")");
     } else {
@@ -247,7 +249,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(expr1->str, expr2->str);
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -268,7 +270,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d - expr2->i;
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -288,7 +290,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d * expr2->i;
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
                 // expression_dispose(expr1);
                 // expression_dispose(expr2);
                 // return NULL;
@@ -308,7 +310,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d / expr2->i;
                 }
             } else {
-                  set_error(ERR_OTHER_RUN);
+                  set_error(ERR_SEM_PARAMS);
                 //   expression_dispose(expr1);
                 //   expression_dispose(expr2);
                 //   return NULL;
@@ -323,7 +325,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->b = false;
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -335,7 +337,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->b = false;
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -371,7 +373,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -407,7 +409,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -443,7 +445,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -479,7 +481,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->op = EO_CONST_BOOL;
                 }
             } else  {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEM_PARAMS);
             }
             break;
 
@@ -522,7 +524,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                         expr1->b = false;
                     }
                 } else {
-                    set_error(ERR_OTHER_RUN);
+                    set_error(ERR_SEM_PARAMS);
                 }
             }
             break;
@@ -566,7 +568,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                         expr1->b = false;
                     }
                 } else {
-                    set_error(ERR_OTHER_RUN);
+                    set_error(ERR_SEM_PARAMS);
                 }
             }
             break;
@@ -644,7 +646,7 @@ Expression *expression_evaluate(Expression *expr) {
 
                 }
             } else {
-                set_error(ERR_OTHER_RUN);
+                set_error(ERR_SEMANTIC);
                 // expression_dispose(expr);
                 // return NULL;
             }

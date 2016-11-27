@@ -38,6 +38,9 @@ typedef enum {
     IC_STR_FIND, ///< res = if find return -1 else 0
     IC_STR_SUBSTRING, ///< res = return substring between i(begin) to i(finish)
     IC_STR_COMP, ///< res = return 0 op1 == op2 , return 1 op1 > op2 , else return -1
+    IC_EVAL,
+    IC_TRUE_JUMP,
+    IC_FALSE_JUMP,
 } InstructionCode;
 
 /**
