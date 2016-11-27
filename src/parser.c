@@ -60,6 +60,15 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     // first thing in file should be class (or several)
     class_list_rule();
 
+    Ident id = {
+        .class = str_init_const("Main"),
+        .name = str_init_const("run")
+    };
+
+    Symbol* main_run_fn = context_find_ident(main_context, main_context, &id);
+    if(get_error()->type) return;
+    instruction_insert_to_list(main_instructions, instruction_generate(IC_CALL, main_run_fn, NULL, NULL));
+
     *_context = main_context;
     *_instructions = main_instructions;
 }

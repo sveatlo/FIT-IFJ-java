@@ -2,6 +2,7 @@
 #define STACK_H
 
 #include "expression.h"
+#include "callscope.h"
 
 /**
  *  Data for stack item
@@ -10,6 +11,7 @@
  */
 typedef union {
     Expression* expression;
+    Callscope* scope;
 } StackItemData;
 
 

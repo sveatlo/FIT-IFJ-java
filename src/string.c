@@ -28,6 +28,14 @@ String* str_init() {
     return str_init_n(1);
 }
 
+String* str_init_const(char* src) {
+    int l = strlen(src);
+    String* str = str_init_n(l);
+    str_concat_const(str, src);
+
+    return str;
+}
+
 void _str_resize_raw(String* s, int size) {
     s->str = (char*) realloc(s->str, size);
     if (!s->str) {
@@ -65,7 +73,17 @@ void str_concat(String* dest, String* src) {
     }
 
     strncat(dest->str, src->str, dest->mem_size);
-    dest->length += dest->length;
+    dest->length += src->length;
+}
+
+void str_concat_const(String* dest, char* src) {
+    int l = strlen(src);
+    if(dest->length + l > dest->mem_size) {
+        _str_resize_raw(dest, dest->length + l);
+    }
+
+    strncat(dest->str, src, dest->mem_size);
+    dest->length += l;
 }
 
 void str_copy_string(String* dest, String* str) {

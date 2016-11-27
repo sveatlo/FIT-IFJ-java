@@ -17,12 +17,13 @@ stats:
 
 # Link all the modules together
 interpret: $(SRC_DIR)main.c error.o scanner.o scanner_token.o list.o string.o parser.o instruction.o \
-			ial.o expression.o symbol.o context.o interpret.o inbuilt.o stack.o precedence_table.o
+			ial.o expression.o symbol.o context.o interpret.o inbuilt.o stack.o precedence_table.o callscope.o
 	$(CC) $(CFLAGS) \
 		$(SRC_DIR)main.c $(DIST_DIR)error.o $(DIST_DIR)scanner.o $(DIST_DIR)scanner_token.o \
 		$(DIST_DIR)list.o $(DIST_DIR)string.o $(DIST_DIR)parser.o $(DIST_DIR)instruction.o \
 		$(DIST_DIR)ial.o $(DIST_DIR)expression.o $(DIST_DIR)symbol.o $(DIST_DIR)context.o \
 		$(DIST_DIR)interpret.o $(DIST_DIR)inbuilt.o $(DIST_DIR)stack.o  $(DIST_DIR)precedence_table.o \
+		$(DIST_DIR)callscope.o \
 	-o $(DIST_DIR)ifj16
 
 # Make modules independently
@@ -56,6 +57,8 @@ stack.o: $(SRC_DIR)stack.c $(SRC_DIR)stack.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)stack.c -o $(DIST_DIR)stack.o
 precedence_table.o: $(SRC_DIR)precedence_table.c $(SRC_DIR)precedence_table.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)precedence_table.c -o $(DIST_DIR)precedence_table.o
+callscope.o: $(SRC_DIR)callscope.c $(SRC_DIR)callscope.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)callscope.c -o $(DIST_DIR)callscope.o
 
 zip:
 	zip $(ZIPFILENAME).zip src/*.c src/*.h Makefile Doxyfile

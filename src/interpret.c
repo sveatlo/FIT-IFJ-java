@@ -1,124 +1,170 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
-#include "interpret.h"
-#include "ial.h"
-#include "string.h"
-#include "list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "callscope.h"
 #include "error.h"
 #include "expression.h"
-#include "parser.h"
+#include "ial.h"
+#include "inbuilt.h"
 #include "instruction.h"
+#include "interpret.h"
+#include "list.h"
 #include "scanner_token.h"
 #include "scanner.h"
-#include "inbuilt.h"
+#include "stack.h"
+#include "string.h"
 
-void interpret(List* ins_list) {
-    Instruction* current_ins;
-    current_ins = ins_list->active->data.instruction;
+static Callscope* current_scope;
+static Stack* callstack;
 
-    while (ins_list->active != NULL) {
-        switch (current_ins->code) {
-            case IC_MOV:
-                mov((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
+//prepares data for parsing
+void interpret(Context* main_context, List* instructions) {
+    callstack = stack_init();
 
-            case IC_NOP:
-                break;
+    current_scope = callscope_init(main_context, instructions);
+    StackItemData item = {
+        .scope = current_scope
+    };
+    stack_push(callstack, item);
 
-            case IC_ADD:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '+');
-                break;
+    list_activate_first(current_scope->instructions);
 
-            case IC_SUBSTRACT:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '-');
-                break;
+    interpretation_loop();
+}
 
-            case IC_MUL:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '*');
-                break;
+//this is where the actual parsing happens
+void interpretation_loop() {
+    Instruction* current_instruction;
 
-            case IC_DIV:
-                math_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, '/');
-                break;
+    while(!stack_empty(callstack)) {
+        current_scope = stack_top(callstack)->scope;
+        while (current_scope->instructions->active != NULL) {
+            current_instruction = current_scope->instructions->active->data.instruction;
+            printf("instruction %d in scope %d\n", current_instruction, current_scope);
+            switch (current_instruction->code) {
+                case IC_MOV:
+                    mov((Symbol*)current_instruction->op1, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_EQUAL:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_NOP:
+                    break;
 
-            case IC_NOTEQUAL:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_CALL:
+                {
+                    Symbol* fn = (Symbol*)current_instruction->op1;
+                    current_scope = callscope_init(fn->data.fn->context, fn->data.fn->instructions);
+                    StackItemData item = {
+                        .scope = current_scope
+                    };
+                    stack_push(callstack, item);
+                    break;
+                }
+                case IC_JMP:
+                    current_scope->instructions->active = (ListItem*)current_instruction->res;
+                    break;
 
-            case IC_GREATER:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_EVAL:
+                {
+                    expression_print((Expression*)current_instruction->op1);
+                    Expression* res = expression_evaluate((Expression*)current_instruction->op1);
+                    expression_print(res);
+                    break;
+                }
+                case IC_ADD:
+                    math_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, '+');
+                    break;
 
-            case IC_LESSER:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_SUBSTRACT:
+                    math_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, '-');
+                    break;
 
-            case IC_GREATEREQ:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_MUL:
+                    math_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, '*');
+                    break;
 
-            case IC_LESSEREQ:
-                compare_ins(current_ins->code, (Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_DIV:
+                    math_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, '/');
+                    break;
 
-            case IC_AND:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'a');
-                break;
+                case IC_EQUAL:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_NOT:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'n');
-                break;
+                case IC_NOTEQUAL:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_OR:
-                logic_ins((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res, 'o');
-                break;
+                case IC_GREATER:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_JMP:
-                break;
+                case IC_LESSER:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_READ_INT:
-                read_int_stdin((Symbol*)current_ins->op1);
-                break;
+                case IC_GREATEREQ:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_READ_DOUBLE:
-                read_double_stdin((Symbol*)current_ins->op1);
-                break;
+                case IC_LESSEREQ:
+                    compare_ins(current_instruction->code, (Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
 
-            case IC_READ_STRING:
-                read_str_stdin((Symbol*)current_ins->op1);
-                break;
+                case IC_AND:
+                    logic_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, 'a');
+                    break;
 
-            case IC_PRINT:
-                break;
+                case IC_NOT:
+                    logic_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, 'n');
+                    break;
 
-            case IC_STR_SORT:
-                sort_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
+                case IC_OR:
+                    logic_ins((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res, 'o');
+                    break;
 
-            case IC_STR_FIND:
-                find_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
+                case IC_READ_INT:
+                    read_int_stdin((Symbol*)current_instruction->op1);
+                    break;
 
-            case IC_STR_LENGTH:
-                length_str((Symbol*)current_ins->op1, (Symbol*)current_ins->res);
-                break;
+                case IC_READ_DOUBLE:
+                    read_double_stdin((Symbol*)current_instruction->op1);
+                    break;
 
-            case IC_STR_SUBSTRING:
-                substring((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->op3, (Symbol*)current_ins->res);
-                break;
+                case IC_READ_STRING:
+                    read_str_stdin((Symbol*)current_instruction->op1);
+                    break;
 
-            case IC_STR_COMP:
-                compare_str((Symbol*)current_ins->op1, (Symbol*)current_ins->op2, (Symbol*)current_ins->res);
-                break;
-            default:
-                set_error(ERR_UNKNOWN);
-                break;
+                case IC_PRINT:
+                    break;
+
+                case IC_STR_SORT:
+                    sort_str((Symbol*)current_instruction->op1, (Symbol*)current_instruction->res);
+                    break;
+
+                case IC_STR_FIND:
+                    find_str((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
+
+                case IC_STR_LENGTH:
+                    length_str((Symbol*)current_instruction->op1, (Symbol*)current_instruction->res);
+                    break;
+
+                case IC_STR_SUBSTRING:
+                    substring((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->op3, (Symbol*)current_instruction->res);
+                    break;
+
+                case IC_STR_COMP:
+                    compare_str((Symbol*)current_instruction->op1, (Symbol*)current_instruction->op2, (Symbol*)current_instruction->res);
+                    break;
+                default:
+                    set_error(ERR_UNKNOWN);
+                    break;
+
+            }
+            list_activate_next(current_scope->instructions);
         }
+
+        stack_pop(callstack);
     }
 }
 

@@ -8,6 +8,7 @@
 #define CONTEXT_H
 
 //predefine structure to resolve circular dependency
+struct SymbolStruct;
 struct SymbolTableNodeStruct;
 
 #include "ial.h"
@@ -27,9 +28,9 @@ typedef struct ContextStruct {
 
 Context* context_init(Context*);
 void context_dispose(Context*);
-Symbol* context_find_symbol(Context* context, SymbolName name);
-Symbol* context_find_ident(Context* context, Context* root_context, Ident* token_ident);
-Symbol* context_add_variable(Context* context, KeywordType type, String* name);
-Symbol* context_add_function(Context* context, KeywordType type, String* name);
+struct SymbolStruct* context_find_symbol(Context* context, String* name);
+struct SymbolStruct* context_find_ident(Context* context, Context* root_context, Ident* token_ident);
+struct SymbolStruct* context_add_variable(Context* context, KeywordType type, String* name);
+struct SymbolStruct* context_add_function(Context* context, KeywordType type, String* name);
 
 #endif

@@ -7,6 +7,7 @@
 #define IAL_H
 
 struct ContextStruct;
+struct SymbolStruct;
 
 #include <stdbool.h>
 #include "context.h"
@@ -38,8 +39,8 @@ void ial_sort_shiftdown(char* s, int last);
  *  @ingroup IAL
  */
 typedef struct SymbolTableNodeStruct {
-    SymbolName key; ///< Name of the symbol
-    Symbol* data; ///< Pointer to the symbol itself
+    String* key; ///< Name of the symbol
+    struct SymbolStruct* data; ///< Pointer to the symbol itself
     struct SymbolTableNodeStruct* left; ///< Pointer to the left node
     struct SymbolTableNodeStruct* right; ///< Pointer to the right node
 } SymbolTableNode;
@@ -65,7 +66,7 @@ void table_dispose(SymbolTableNode*);
  *
  * @ingroup IAL
  */
-void table_init_symbol(Symbol*);
+void table_init_symbol(struct SymbolStruct*);
 
 /**
  * Insert variable to a symbol table
@@ -73,7 +74,7 @@ void table_init_symbol(Symbol*);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_symbol(SymbolTableNode*, Symbol*);
+struct SymbolStruct* table_insert_symbol(SymbolTableNode*, struct SymbolStruct*);
 
 /**
  * Insert Bool variable symbol to a symbol table
@@ -81,7 +82,7 @@ Symbol* table_insert_symbol(SymbolTableNode*, Symbol*);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_bool(SymbolTableNode*, SymbolName, bool);
+struct SymbolStruct* table_insert_bool(SymbolTableNode*, String*, bool);
 
 /**
  * Insert Double variable symbol to a symbol table
@@ -89,7 +90,7 @@ Symbol* table_insert_bool(SymbolTableNode*, SymbolName, bool);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_double(SymbolTableNode*, SymbolName, double);
+struct SymbolStruct* table_insert_double(SymbolTableNode*, String*, double);
 
 /**
  * Insert Integer variable symbol to a symbol table
@@ -97,7 +98,7 @@ Symbol* table_insert_double(SymbolTableNode*, SymbolName, double);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_integer(SymbolTableNode*, SymbolName, int);
+struct SymbolStruct* table_insert_integer(SymbolTableNode*, String*, int);
 
 /**
  * Insert String variable symbol to a symbol table
@@ -105,7 +106,7 @@ Symbol* table_insert_integer(SymbolTableNode*, SymbolName, int);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_string(SymbolTableNode*, SymbolName, String*);
+struct SymbolStruct* table_insert_string(SymbolTableNode*, String*, String*);
 
 /**
  * Insert class symbol to a symbol table
@@ -113,7 +114,7 @@ Symbol* table_insert_string(SymbolTableNode*, SymbolName, String*);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_class(SymbolTableNode*, SymbolName, struct ContextStruct*);
+struct SymbolStruct* table_insert_class(SymbolTableNode*, String*, struct ContextStruct*);
 
 /**
  * Insert function symbol to the table
@@ -121,7 +122,7 @@ Symbol* table_insert_class(SymbolTableNode*, SymbolName, struct ContextStruct*);
  * @return Inserted symbol
  * @ingroup IAL
  */
-Symbol* table_insert_function(SymbolTableNode*, SymbolName, struct ContextStruct*);
+struct SymbolStruct* table_insert_function(SymbolTableNode*, String*, struct ContextStruct*);
 
 /**
  * Read variable from table
@@ -129,7 +130,7 @@ Symbol* table_insert_function(SymbolTableNode*, SymbolName, struct ContextStruct
  * @return Loaded variable from table
  * @ingroup IAL
  */
-SymbolTableNode* table_find_symbol(SymbolTableNode*, SymbolName);
+SymbolTableNode* table_find_symbol(SymbolTableNode*, String*);
 
 /**
  * Inicializing Binary Tree
@@ -144,7 +145,7 @@ void tree_init(SymbolTableNode*);
  * @return node When finding word is equal to key
  * @ingroup IAL
  */
-SymbolTableNode* tree_search(SymbolTableNode*, SymbolName);
+SymbolTableNode* tree_search(SymbolTableNode*, String*);
 
 /**
  * Function for insert into tree ussing key and content for insert
@@ -152,7 +153,7 @@ SymbolTableNode* tree_search(SymbolTableNode*, SymbolName);
  * @return node with inserted
  * @ingroup IAL
  */
-SymbolTableNode* tree_insert(SymbolTableNode*, SymbolName, Symbol*);
+SymbolTableNode* tree_insert(SymbolTableNode*, String*, struct SymbolStruct*);
 
 /**
  * Function for Deleting everything in tree

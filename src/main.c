@@ -4,6 +4,7 @@
 #include "error.h"
 #include "expression.h"
 #include "ial.h"
+#include "interpret.h"
 #include "list.h"
 #include "parser.h"
 #include "scanner_token.h"
@@ -166,6 +167,7 @@ int main(int argc, char** argv) {
     //     list_activate_next(instructions);
     // }
     // printf("\n");
+    interpret(context, instructions);
 
 
 

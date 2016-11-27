@@ -14,7 +14,8 @@
  *
  * @ingroup Interpret
  */
-void interpret();
+void interpret(Context* main_context, List* instructions);
+void interpretation_loop();
 
 /**
  * Function for mathematical instruction
