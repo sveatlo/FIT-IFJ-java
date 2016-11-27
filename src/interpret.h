@@ -116,7 +116,7 @@ void length_str(Symbol* op1, Symbol* res);
  * @return Return substring
  * @ingroup Interpret
  */
-void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res);
+//void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res);
 
 /**
  * Wrapper Function for sompare  strings

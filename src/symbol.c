@@ -10,7 +10,7 @@
 Symbol* symbol_init(SymbolName name) {
     Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
     if (symbol == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
     symbol->name = name;

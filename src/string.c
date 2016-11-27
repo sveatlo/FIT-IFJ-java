@@ -7,12 +7,12 @@
 String* str_init_n(int n) {
     String* s = (String*) malloc(sizeof(String));
     if (s == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
     s->str = (char*) malloc(n * STR_INC_SIZE);
     if(s->str == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         free(s);
         return NULL;
     }
@@ -39,7 +39,7 @@ String* str_init_const(char* src) {
 void _str_resize_raw(String* s, int size) {
     s->str = (char*) realloc(s->str, size);
     if (!s->str) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return;
     }
     s->mem_size = size;
@@ -126,7 +126,7 @@ void double_to_string(String* s, double d) {
 
 String* substr(String* s, int i, int n) {
     if (i < 0 || n < 0 || n < i || i > s->length) {
-        set_error(ERR_UNKNOWN);
+        set_error(ERR_OTHER_RUN);
         return NULL;
     }
     int sublen = n - i + 1;

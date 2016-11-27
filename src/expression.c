@@ -33,10 +33,33 @@ char operations_char[][255] = {
 };
 
 
-Expression* expression_init() {
+Expression *expression_init() {
     Expression* expr = (Expression*)malloc(sizeof(Expression));
+    expr->expr1 = NULL;
+    expr->expr2 = NULL;
+    expr->symbol = NULL;
+    expr->str = NULL;
     return expr;
 }
+
+void expression_dispose(Expression *expr) {
+    if (expr != NULL) {
+        if (expr->expr1 != NULL) {
+            free(expr->expr1);
+        }
+        if (expr->expr2 != NULL) {
+            free(expr->expr2);
+        }
+        if (expr->symbol != NULL) {
+            symbol_dispose(expr->symbol);
+        }
+        if (expr->str != NULL) {
+            str_dispose(expr->str);
+        }
+    free(expr);
+    }
+}
+
 void expression_print (Expression* expr) {
     printf("%s(", operations_char[expr->op]);
     switch (expr->op) {
@@ -108,6 +131,36 @@ void expression_print (Expression* expr) {
             printf(", ");
             expression_print(expr->expr2);
             break;
+        case EO_LOGIC_AND:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_OR:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_LESS:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_LESS_EQUAL:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_GREATER:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
+        case EO_LOGIC_GREATER_EQUAL:
+            expression_print(expr->expr1);
+            printf(", ");
+            expression_print(expr->expr2);
+            break;
         case EO_AND:
             expression_print(expr->expr1);
             printf(", ");
@@ -124,14 +177,10 @@ void expression_print (Expression* expr) {
             expression_print(expr->expr2);
             break;
         case EO_LEFT_PARENTHESE:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
+            printf("(");
             break;
         case EO_RIGHT_PARENTHESE:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
+            printf(")");
             break;
     }
     printf(")");
@@ -194,8 +243,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
         case EO_PLUS:
             if (OperationTablePlus[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i + expr2->i;
-                return expr1;
-            } else if (OperationTablePlus[expr1->op][expr2->op] == U) {
+            } else if (OperationTablePlus[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i + expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -223,14 +271,18 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(expr1->str, expr2->str);
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_SEM_PARAMS);
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
+
             }
             break;
 
         case EO_MINUS:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i  = expr1->i - expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i - expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -240,14 +292,17 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d - expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_SEM_PARAMS);
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
             }
             break;
 
         case EO_MULTIPLY:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i * expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d = expr1->i * expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -257,14 +312,17 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d * expr2->i;
                 }
             } else {
-//                set_error(); TODO
+                set_error(ERR_SEM_PARAMS);
+                // expression_dispose(expr1);
+                // expression_dispose(expr2);
+                // return NULL;
             }
             break;
 
         case EO_DIVIDE:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
                 expr1->i = expr1->i / expr2->i;
-            } else if (OperationTableOthers[expr1->op][expr2->op] == U) {
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 if (expr1->op == EO_CONST_INTEGER) {
                     expr1->d  = expr1->i / expr2->d;
                     expr1->op = EO_CONST_DOUBLE;
@@ -274,7 +332,266 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     expr1->d = expr1->d / expr2->i;
                 }
             } else {
-//                  set_error(); TODO
+                  set_error(ERR_SEM_PARAMS);
+                //   expression_dispose(expr1);
+                //   expression_dispose(expr2);
+                //   return NULL;
+            }
+            break;
+
+        case EO_LOGIC_OR:
+            if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
+                if ((expr1->b == true) || (expr2->b == true)) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+            } else {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_AND:
+            if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
+                if ((expr1->b == true) && (expr2->b == true)) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+            } else {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_GREATER:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i > expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i > expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d > expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d > expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_GREATER_EQUAL:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i >= expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i >= expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d >= expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d >= expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_LESS_EQUAL:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i <= expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i <= expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d <= expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d <= expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_LESS:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i < expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i < expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d < expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d < expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                set_error(ERR_SEM_PARAMS);
+            }
+            break;
+
+        case EO_LOGIC_EQUAL:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i == expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i == expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d == expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d == expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
+                    if (expr1->b == expr2->b) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                } else {
+                    set_error(ERR_SEM_PARAMS);
+                }
+            }
+            break;
+
+        case EO_LOGIC_NOT_EQUAL:
+            if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if (expr1->i != expr2->i) {
+                    expr1->b = true;
+                } else {
+                    expr1->b = false;
+                }
+                expr1->op = EO_CONST_BOOL;
+            } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
+                if (expr1->op == EO_CONST_INTEGER) {
+                    if (expr1->i != expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else if (expr2->op == EO_CONST_INTEGER){
+                    if (expr1->d != expr2->i) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                } else {
+                    if (expr1->d != expr2->d) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                    expr1->op = EO_CONST_BOOL;
+                }
+            } else  {
+                if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
+                    if (expr1->b != expr2->b) {
+                        expr1->b = true;
+                    } else {
+                        expr1->b = false;
+                    }
+                } else {
+                    set_error(ERR_SEM_PARAMS);
+                }
             }
             break;
 
@@ -283,11 +600,21 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
     }
-    //TODO: dispose function Expression
     return expr1;
 }
 
 Expression *expression_evaluate(Expression *expr) {
+
+    // if (((expr->expr1 == NULL) && (expr->expr2 != NULL)) || ((expr->expr2 == NULL) && (expr->expr1 != NULL))){
+    //     if ((expr->expr1 == NULL) && (expr->expr2 != NULL)) {
+    //         // expression_dispose(expr->expr2);
+    //     }
+    //     if ((expr->expr2 == NULL) && (expr->expr1 != NULL)) {
+    //         // expression_dispose(expr->expr1);
+    //     }
+    //     return NULL;
+    // }
+
     switch (expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
@@ -341,7 +668,9 @@ Expression *expression_evaluate(Expression *expr) {
 
                 }
             } else {
-                // error TODO
+                set_error(ERR_SEMANTIC);
+                // expression_dispose(expr);
+                // return NULL;
             }
             break;
 
@@ -357,9 +686,61 @@ Expression *expression_evaluate(Expression *expr) {
         case EO_CONST_STRING:
             return expr;
 
+        case EO_LOGIC_EQUAL:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_EQUAL);
+            }
+            break;
+
+        case EO_LOGIC_NOT_EQUAL:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_NOT_EQUAL);
+            }
+            break;
+
+        case EO_LOGIC_GREATER:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_GREATER);
+            }
+            break;
+
+        case EO_LOGIC_GREATER_EQUAL:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_GREATER_EQUAL);
+            }
+            break;
+
+        case EO_LOGIC_LESS:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_LESS);
+            }
+            break;
+
+        case EO_LOGIC_LESS_EQUAL:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 =expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_LESS_EQUAL);
+            }
+            break;
+
+        case EO_LOGIC_AND:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_AND);
+            }
+            break;
+
+        case EO_LOGIC_OR:
+            if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
+                expr->expr1 = expression_compare(expression_evaluate(expr->expr1), expression_evaluate(expr->expr2), EO_LOGIC_OR);
+            }
+            break;
+
         default:
             return NULL;
     }
-    //TODO: dispose function Expression
+    // if (expr->expr1 == NULL) {
+        // printf("returt\n" );
+        // return NULL;
+    // }
+    // expression_dispose(expr->expr2);
     return expr->expr1;
 }

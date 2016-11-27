@@ -21,7 +21,7 @@ void stack_push(Stack* stack, StackItemData item) {
     // alokujeme element
     pom = (StackItem*)malloc(sizeof(StackItem));
     if (pom == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return;
     }
 
