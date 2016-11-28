@@ -199,7 +199,7 @@ int main(int argc, char** argv) {
 
 FILE* parse_parameters(int argc, char** argv) {
     if(argc != 2 || argc > 3) {
-        set_error(ERR_SEM_PARAMS);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
 
