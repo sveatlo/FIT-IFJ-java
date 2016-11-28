@@ -74,10 +74,7 @@ int main(int argc, char** argv) {
         return get_error()->type;
     }
 
-
-
     fclose(f);
-
 
     return 0;
 }

@@ -459,47 +459,48 @@ void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
     res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
 }
 
-
 void assign_value_to_variable(Symbol* symbol, Expression* expr) {
     if(get_error()->type) return;
     if(symbol->type != ST_VARIABLE) return set_error(ERR_INTERPRET);
     switch(symbol->data.var->type) {
-    case VT_INTEGER:
-        if(expr->op == EO_CONST_INTEGER) {
-            symbol->data.var->value.i = expr->i;
-        } else {
+        case VT_INTEGER:
+            if(expr->op == EO_CONST_INTEGER) {
+                symbol->data.var->value.i = expr->i;
+            } else {
+                return set_error(ERR_INTERPRET);
+            }
+            break;
+        case VT_DOUBLE:
+            if(expr->op == EO_CONST_DOUBLE) {
+                symbol->data.var->value.d = expr->d;
+            } else if(expr->op == EO_CONST_INTEGER) {
+                symbol->data.var->value.d = (double)expr->i;
+            } else {
+                return set_error(ERR_INTERPRET);
+            }
+            break;
+        case VT_BOOL:
+            if(expr->op == EO_CONST_BOOL) {
+                symbol->data.var->value.b = expr->b;
+            } else if(expr->op == EO_CONST_INTEGER) {
+                symbol->data.var->value.b = (bool)expr->i;
+            } else if(expr->op == EO_CONST_DOUBLE) {
+                symbol->data.var->value.b = (bool)expr->d;
+            } else {
+                return set_error(ERR_INTERPRET);
+            }
+            break;
+        case VT_STRING:
+            if(expr->op == EO_CONST_STRING) {
+                symbol->data.var->value.s = expr->str;
+            } else {
+                return set_error(ERR_INTERPRET);
+            }
+            break;
+        default:
             return set_error(ERR_INTERPRET);
-        }
-        break;
-    case VT_DOUBLE:
-        if(expr->op == EO_CONST_DOUBLE) {
-            symbol->data.var->value.d = expr->d;
-        } else if(expr->op == EO_CONST_INTEGER) {
-            symbol->data.var->value.d = (double)expr->i;
-        } else {
-            return set_error(ERR_INTERPRET);
-        }
-        break;
-    case VT_BOOL:
-        if(expr->op == EO_CONST_BOOL) {
-            symbol->data.var->value.b = expr->b;
-        } else if(expr->op == EO_CONST_INTEGER) {
-            symbol->data.var->value.b = (bool)expr->i;
-        } else if(expr->op == EO_CONST_DOUBLE) {
-            symbol->data.var->value.b = (bool)expr->d;
-        } else {
-            return set_error(ERR_INTERPRET);
-        }
-        break;
-    case VT_STRING:
-        if(expr->op == EO_CONST_STRING) {
-            symbol->data.var->value.s = expr->str;
-        } else {
-            return set_error(ERR_INTERPRET);
-        }
-        break;
-    default:
-        return set_error(ERR_INTERPRET);
-        break;
+            break;
     }
+
+    expr->symbol->data.var->initialized = true;
 }
