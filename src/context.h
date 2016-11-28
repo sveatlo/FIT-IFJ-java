@@ -30,7 +30,7 @@ Context* context_init(Context*);
 void context_dispose(Context*);
 struct SymbolStruct* context_find_symbol(Context* context, String* name);
 struct SymbolStruct* context_find_ident(Context* context, Context* root_context, Ident* token_ident);
-struct SymbolStruct* context_add_variable(Context* context, KeywordType type, String* name);
-struct SymbolStruct* context_add_function(Context* context, KeywordType type, String* name);
+struct SymbolStruct* context_add_variable(Context* context, KeywordType type, Ident* id);
+struct SymbolStruct* context_add_function(Context* context, KeywordType type, Ident* id);
 
 #endif

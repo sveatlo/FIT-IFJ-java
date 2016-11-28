@@ -222,8 +222,7 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER;
                 } else if (c == '=') {
-                    token->type = STT_EQUALS;
-                    return token;
+                    current_state = SS_EQUAL;
                 } else if (c == ',') {
                     token->type = STT_COMMA;
                     return token;

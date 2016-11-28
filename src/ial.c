@@ -254,3 +254,119 @@ void tree_dispose(SymbolTableNode* node) {
         free(node);
     }
 }
+
+SymbolTableNode* table_insert_symbol_copy(SymbolTableNode* symbol_table, Symbol* symbol) {
+    // node = new node inserted into symbol_table
+    SymbolTableNode* node = tree_insert(symbol_table, symbol->name, symbol);
+
+    if (node != NULL) {
+        return node;
+    }
+
+    return NULL;
+}
+
+SymbolTableNode* table_insert_bool_copy(SymbolTableNode* symbol_table, SymbolName name, bool data) {
+
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_BOOL);
+    symbol->data.var->value.b = data;
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+SymbolTableNode* table_insert_integer_copy(SymbolTableNode* symbol_table, SymbolName name, int data) {
+
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_INTEGER);
+    symbol->data.var->value.i = data;
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+
+SymbolTableNode* table_insert_double_copy(SymbolTableNode* symbol_table, SymbolName name, double data) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_DOUBLE);
+    symbol->data.var->value.d = data;
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+SymbolTableNode *table_insert_string_copy(SymbolTableNode* symbol_table, SymbolName name, String* str) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_variable(symbol, VT_STRING);
+    symbol->data.var->value.s = str;
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+SymbolTableNode* table_insert_class_copy(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_class(symbol, parent_context);
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+SymbolTableNode* table_insert_function_copy(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
+    Symbol* symbol = symbol_init(name);
+    symbol_new_function(symbol, parent_context);
+
+    return table_insert_symbol_copy(symbol_table, symbol);
+}
+
+
+SymbolTableNode* tree_copy(SymbolTableNode* root) {
+    if (root == NULL || root->key == NULL) {
+        return root;
+    }
+    SymbolTableNode* copy_node = table_init();
+    SymbolTableNode* tmp = NULL;
+
+    switch (root->data->type) {
+        case ST_CLASS:
+            tmp = table_insert_class_copy(copy_node, root->key, root->data->data.cls->context);
+            break;
+        case ST_FUNCTION:
+            tmp = table_insert_function_copy(copy_node, root->key, root->data->data.fn->context);
+            break;
+        case ST_VARIABLE:
+            switch (root->data->data.var->type) {
+                case VT_INTEGER:
+                    tmp = table_insert_integer_copy(copy_node, root->key, root->data->data.var->value.i);
+                    break;
+                case VT_DOUBLE:
+                    tmp = table_insert_double_copy(copy_node, root->key, root->data->data.var->value.d);
+                    break;
+                case VT_BOOL:
+                    tmp = table_insert_bool_copy(copy_node, root->key, root->data->data.var->value.b);
+                    break;
+                case VT_STRING:
+                    tmp = table_insert_string_copy(copy_node, root->key, root->data->data.var->value.s);
+                    break;
+                default:
+                    break;
+                }
+            break;
+        case ST_NULL:
+            set_error(ERR_SEMANTIC);
+            break;
+    }
+
+    if(root) {
+        if(root->left) {
+            if(root->left->key) {
+                table_dispose(tmp->left);
+                tmp->left = tree_copy(root->left);
+            }
+        }
+        if(root->right) {
+            if(root->right->key) {
+                table_dispose(tmp->right);
+                tmp->right = tree_copy(root->right);
+            }
+        }
+    }
+
+    return copy_node;
+}

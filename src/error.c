@@ -11,7 +11,7 @@ char err_strings[][255] = {
 
     [ERR_SYNTAX] = { "Syntactical error" }, ///< Syntactical analysis error (wrong syntax)
 
-    [ERR_SEMANTIC] = { "Semantic error - undefined clas,function or variable" }, ///< Semantic error ,Undefined class,function,variable and try redefinition class,function and variable
+    [ERR_SEMANTIC] = { "Semantic error - undefined class, function or variable" }, ///< Semantic error ,Undefined class,function,variable and try redefinition class,function and variable
     [ERR_SEM_PARAMS] = { "Semantic error - wrong compability" }, ///< Semantic error type compability in arithmetic,chain and relational expression. Or wrong type of parameter and function
     [ERR_OTHER_SEMANTIC] = { "Other semantic error" }, ///< Other semantic errors
 

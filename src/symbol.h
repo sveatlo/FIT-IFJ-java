@@ -8,6 +8,7 @@ struct ListStruct;
 #include <stdbool.h>
 #include "context.h"
 #include "list.h"
+#include "scanner_token.h"
 #include "string.h"
 #include "variable.h"
 
@@ -31,7 +32,8 @@ typedef enum SymbolType {
 typedef struct {
     struct ContextStruct* context;   ///< Context of the function
     struct ListStruct* instructions; ///< List of instructions
-    struct ListStruct* params_list; ///< List of parameters - types
+    struct ListStruct* params_types_list; ///< List of parameters - types
+    struct ListStruct* params_ids_list; ///< List of parameters - idents
     VariableType return_type;   ///< return type of the function
 } Function;
 
@@ -72,6 +74,7 @@ typedef String* SymbolName;
  */
 typedef struct SymbolStruct {
     SymbolName name; ///< Name of the symbol (will be used for search)
+    Ident* id; ///< full id of variable
     SymbolType type; ///< Type of the value stored
     SymbolData data; ///< Data of the symbol
 } Symbol;

@@ -15,6 +15,7 @@ Symbol* symbol_init(SymbolName name) {
     }
     symbol->name = name;
     symbol->type = ST_NULL;
+    symbol->id = NULL;
 
     return symbol;
 }
@@ -52,7 +53,8 @@ void symbol_new_function(Symbol* symbol, Context* parent_context) {
     symbol->type = ST_FUNCTION;
     symbol->data.fn = (Function*)malloc(sizeof(Function));
     symbol->data.fn->context = context_init(parent_context);
-    symbol->data.fn->params_list = list_init();
+    symbol->data.fn->params_types_list = list_init();
+    symbol->data.fn->params_ids_list = list_init();
     symbol->data.fn->instructions = list_init();
 }
 
@@ -67,20 +69,20 @@ void symbol_print(Symbol* symbol) {
     switch (symbol->type) {
         case ST_VARIABLE:
             if(symbol->data.var->type == VT_INTEGER) {
-                printf("%s:%d", str_get_str(symbol->name), symbol->data.var->value.i);
+                printf("(INTEGER)%s.%s = %d", str_get_str(symbol->id->class), str_get_str(symbol->id->name), symbol->data.var->value.i);
             } else if (symbol->data.var->type == VT_DOUBLE) {
-                printf("%s:%g", str_get_str(symbol->name), symbol->data.var->value.d);
+                printf("(DOUBLE)%s.%s = %g", str_get_str(symbol->id->class), str_get_str(symbol->id->name), symbol->data.var->value.d);
             } else if(symbol->data.var->type == VT_STRING) {
-                printf("%s:%s", str_get_str(symbol->name), str_get_str(symbol->data.var->value.s));
+                printf("(STRING)%s.%s = %s", str_get_str(symbol->id->class), str_get_str(symbol->id->name), str_get_str(symbol->data.var->value.s));
             } else if(symbol->data.var->type == VT_BOOL) {
-                printf("%s:%s", str_get_str(symbol->name), symbol->data.var->value.b ? "true" : "false");
+                printf("(BOOL)%s.%s = %s", str_get_str(symbol->id->class), str_get_str(symbol->id->name), symbol->data.var->value.b ? "true" : "false");
             }
             break;
         case ST_FUNCTION:
-            printf("FUNCTION<%s>", str_get_str(symbol->name));
+            printf("FUNCTION<%s.%s>", str_get_str(symbol->id->class), str_get_str(symbol->name));
             break;
         case ST_CLASS:
-            printf("CLASS<%s>", str_get_str(symbol->name));
+            printf("CLASS<%s.%s>", str_get_str(symbol->id->class), str_get_str(symbol->name));
             break;
         default:
             break;

@@ -6,7 +6,9 @@
 
 Callscope* callscope_init(Context* context, List* instructions) {
     Callscope* callscope = (Callscope*)malloc(sizeof(Callscope));
-    callscope->context = context;
+    callscope->context = context_init(context->parent_context);
+    table_dispose(callscope->context->symbol_table);
+    callscope->context->symbol_table = tree_copy(context->symbol_table);
     callscope->instructions = list_init();
     callscope->instructions->first = instructions->first;
     callscope->instructions->last = instructions->last;

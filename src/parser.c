@@ -18,6 +18,8 @@ static SymbolName current_class_name; ///< name of current class
 static List* main_instructions;    ///< list of main instructions - these are used for members initialization and to call Main.run fn
 static List* current_instructions; ///< list of instructions of current function
 
+static bool second_run;
+
 
 // sets next token as current_token
 static inline ScannerToken* next_token() {
@@ -55,10 +57,29 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     main_instructions = list_init();
     current_instructions = main_instructions;
 
+    //add builtin fns
+    current_class_name = str_init_const("ifj16");
+    Symbol* new_class = table_insert_class(main_context->symbol_table, current_class_name, main_context);
+    current_context = new_class->data.cls->context;
+
+    current_context = main_context;
+    current_instructions = main_instructions;
 
     // start the actual parsing
     // first thing in file should be class (or several)
+    second_run = false;
     class_list_rule();
+
+    set_error(ERR_NONE);
+    second_run = true;
+    current_context = main_context;
+    current_instructions = main_instructions;
+    list_activate_first(_token_list);
+    token_list = _token_list;
+    current_token = token_list->active->data.token;
+    class_list_rule();
+
+    if(get_error()->type) return;
 
     Ident id = {
         .class = str_init_const("Main"),
@@ -102,11 +123,16 @@ void class_list_rule() {
 //finish @ STT_RIGHT_BRACE
 void class_rule() {
     if(current_token->type != STT_IDENT) return set_error(ERR_SYNTAX);
-    if(table_find_symbol(main_context->symbol_table, current_token->data->id->name) != NULL) {
-        set_error(ERR_SEMANTIC);
-        return;
+    Symbol* new_class = NULL;
+    if(!second_run) {
+        if(table_find_symbol(main_context->symbol_table, current_token->data->id->name) != NULL) {
+            set_error(ERR_OTHER_SEMANTIC);
+            return;
+        }
+        new_class = table_insert_class(main_context->symbol_table, current_token->data->id->name, main_context);
+    } else {
+        new_class = context_find_ident(main_context, main_context, current_token->data->id);
     }
-    Symbol* new_class = table_insert_class(main_context->symbol_table, current_token->data->id->name, main_context);
     current_class_name = current_token->data->id->name;
     current_context = new_class->data.cls->context;
 
@@ -141,16 +167,24 @@ void class_member_rule() {
     KeywordType current_type = current_token->data->keyword_type;
     if(next_token()->type != STT_IDENT) return set_error(ERR_SYNTAX);
     ScannerToken* current_ident = current_token;
+    //add class to symbol ID
+    current_ident->data->id->class = current_class_name;
     next_token();
     if(current_token->type == STT_SEMICOLON) {
         //add variable to context
-        context_add_variable(current_context, current_type, current_ident->data->id->name);
+        if(!second_run) {
+            context_add_variable(current_context, current_type, current_ident->data->id);
+        }
         if(get_error()->type) return;
         //syntax ok
     } else if(current_token->type == STT_EQUALS) {
         //add variable to context
-        Symbol* symbol = context_add_variable(current_context, current_type, current_ident->data->id->name);
-        (void)symbol;
+        Symbol* symbol = NULL;
+        if(!second_run) {
+            symbol = context_add_variable(current_context, current_type, current_ident->data->id);
+        } else {
+            symbol = context_find_ident(current_context, main_context, current_ident->data->id);
+        }
         if(get_error()->type) return;
 
         next_token();
@@ -158,8 +192,10 @@ void class_member_rule() {
         if(get_error()->type) {
             return;
         }
-        instruction_insert_to_list(main_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
-    } else  if(current_token->type == STT_LEFT_PARENTHESE) {
+        if(second_run) {
+            instruction_insert_to_list(main_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
+        }
+    } else if(current_token->type == STT_LEFT_PARENTHESE) {
         // this is a function
         // but also class member
         //    =>
@@ -167,31 +203,37 @@ void class_member_rule() {
         // change context to local function's context
         // swith back after the function
 
-        Symbol* fn_symbol = context_add_function(current_context, current_type, current_ident->data->id->name);
+        Symbol* fn_symbol = NULL;
+        if(!second_run) {
+            fn_symbol = context_add_function(current_context, current_type, current_ident->data->id);
+        } else {
+            fn_symbol = context_find_ident(current_context, main_context, current_ident->data->id);
+        }
         current_context = fn_symbol->data.fn->context;
         current_instructions = fn_symbol->data.fn->instructions;
 
         next_token();
-        params_list_rule(fn_symbol->data.fn->params_list);
+        params_list_rule(fn_symbol->data.fn->params_types_list, fn_symbol->data.fn->params_ids_list);
         if(get_error()->type) {
             return;
         }
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         next_token();
-        stat_list_rule(current_type == KW_VOID, true);
+        stat_list_rule(current_type == VT_VOID, true);
         if(get_error()->type) {
             return;
         }
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
         current_context = current_context->parent_context;
+        current_instructions = main_instructions;
     }
     next_token();
 }
 
 //starts @ STT_KEYWORD_TYPE || STT_RIGHT_PARENTHESE
 //finish @ STT_RIGHT_BRACE
-void params_list_rule(List* params_list) {
+void params_list_rule(List* params_types_list, List* params_ids_list) {
     if(current_token->type == STT_RIGHT_PARENTHESE || get_error()->type) {
         return;
     }
@@ -201,31 +243,39 @@ void params_list_rule(List* params_list) {
     //token must be IDENT and must be simple (no class part)
     if(next_token()->type != STT_IDENT || current_token->data->id->class != NULL) return set_error(ERR_SYNTAX);
     //add variable to current context
-    context_add_variable(current_context, current_type, current_token->data->id->name);
+    if(!second_run) {
+        context_add_variable(current_context, current_type, current_token->data->id);
+    }
 
     //add to params_list
-    ListItemData data;
-    switch (current_type) {
-        case KW_BOOLEAN:
-            data.var_type = VT_BOOL;
-            break;
-        case KW_INT:
-            data.var_type = VT_INTEGER;
-            break;
-        case KW_DOUBLE:
-            data.var_type = VT_DOUBLE;
-            break;
-        case KW_STRING:
-            data.var_type = VT_STRING;
-            break;
-        default:
-            return set_error(ERR_SEMANTIC);
+    if(!second_run) {
+        ListItemData data1;
+        ListItemData data2 = {
+            .id = current_token->data->id
+        };
+        switch (current_type) {
+            case KW_BOOLEAN:
+                data1.var_type = VT_BOOL;
+                break;
+            case KW_INT:
+                data1.var_type = VT_INTEGER;
+                break;
+            case KW_DOUBLE:
+                data1.var_type = VT_DOUBLE;
+                break;
+            case KW_STRING:
+                data1.var_type = VT_STRING;
+                break;
+            default:
+                return set_error(ERR_SEMANTIC);
+        }
+        list_insert_last(params_types_list, data1);
+        list_insert_last(params_ids_list, data2);
     }
-    list_insert_last(params_list, data);
 
     if(next_token()->type == STT_COMMA) {
         next_token();
-        params_list_rule(params_list);
+        params_list_rule(params_types_list, params_ids_list);
     }
 }
 
@@ -241,56 +291,19 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
         return set_error(ERR_SEMANTIC);
     }
 
-    Expression* expr = expression_init();
 
-    VariableType type = fn_params_list->active->data.var_type;
-    if (current_token->type == STT_INT) {
-        // is curren param in fn_params_list VT_INTEGER?
-        expr->op = EO_CONST_INTEGER;
-        if (type == VT_DOUBLE) {
-            expr->i = (int)current_token->data->d;
-        } else if (type == VT_INTEGER) {
-            expr->i = (int)current_token->data->i;
-       } else {
-           return set_error(ERR_SEMANTIC);
-       }
-    } else if(current_token->type == STT_STRING) {
-        // is curren param in fn_params_list VT_STRING?
-        if(type != VT_STRING) {
-            expr->op = EO_CONST_STRING;
-            expr->str = current_token->data->str;
-            return set_error(ERR_SEMANTIC);
-        }
-    } else if(current_token->type == STT_DOUBLE) {
-        // is curren param in fn_params_list VT_DOUBLE?
-        if(type != VT_DOUBLE) {
-            expr->op = EO_CONST_DOUBLE;
-            expr->d = current_token->data->d;
-            return set_error(ERR_SEMANTIC);
-        }
-    } else if(current_token->type == STT_KEYWORD && (
-        current_token->data->keyword_type == KW_TRUE ||
-        current_token->data->keyword_type == KW_FALSE
-    )) {
-        // is curren param in fn_params_list VT_BOOL?
-        if(type == VT_BOOL) {
-            expr->op = EO_CONST_BOOL;
-            expr->b = current_token->data->keyword_type == KW_TRUE ? true : false;
-        } else {
-            return set_error(ERR_SEMANTIC);
-        }
-    } else if(current_token->type == STT_IDENT) {
-        Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
-        if(get_error()->type) return;
-        if(type != symbol->data.var->type) return set_error(ERR_SEMANTIC);
-        expr->op = EO_SYMBOL;
-        expr->symbol = symbol;
-    } else{
-        return set_error(ERR_SYNTAX);
+    // VariableType type = fn_params_list->active->data.var_type;
+    Expression* expr = general_expression_rule(STT_COMMA, STT_RIGHT_PARENTHESE);
+    //insert the expr to call_params_list
+    if(second_run) {
+        ListItemData data = {
+            .expression = expr
+        };
+        list_insert_last(call_params_list, data);
     }
 
     list_activate_next(fn_params_list);
-    if(next_token()->type == STT_COMMA) {
+    if(current_token->type == STT_COMMA) {
         next_token();
         call_params_list_rule(fn_params_list, call_params_list);
     }
@@ -312,7 +325,16 @@ Symbol* definition_rule() {
     }
 
     //add variable to current context
-    return context_add_variable(current_context, current_type, current_token->data->id->name);
+    if(!second_run) {
+        return context_add_variable(current_context, current_type, current_token->data->id);
+    } else {
+        SymbolTableNode* node = table_find_symbol(current_context->symbol_table, current_token->data->id->name);
+        if(node != NULL) {
+            return node->data;
+        } else {
+            return NULL;
+        }
+    }
 }
 
 
@@ -333,12 +355,9 @@ void stat_list_rule(bool is_void, bool can_define) {
 void stat_rule(bool is_void, bool can_define) {
     //return in void
     if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_RETURN ) {
-        if(is_void) {
-            //error
-            fprintf(stderr, "Return in void fn\n");
-            return set_error(ERR_SEMANTIC);
-        } else {
-            Expression* expr = expression_rule();
+        next_token();
+        Expression* expr = expression_rule();
+        if(second_run) {
             instruction_insert_to_list(current_instructions, instruction_generate(IC_RETURN, expr, NULL, NULL));
         }
     } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_IF) {// IF
@@ -347,24 +366,36 @@ void stat_rule(bool is_void, bool can_define) {
         //boolean expression in condition
         next_token();
         Expression* condition = bool_expression_rule();
+        if(get_error()->type) return;
         // )
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
-        Instruction* jmp_to_else = instruction_generate(IC_JMPFALSE, condition, NULL, NULL); // instruction to be jumped to is not set yet
-        instruction_insert_to_list(current_instructions, jmp_to_else);
+        Instruction* jmp_to_else = NULL;
+        if(second_run) {
+            jmp_to_else = instruction_generate(IC_JMPFALSE, condition, NULL, NULL); // instruction to be jumped to is not set yet
+            instruction_insert_to_list(current_instructions, jmp_to_else);
+        }
 
         // {
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         // statements inside IF
         next_token();
         stat_list_rule(is_void, false);
-        Instruction* jmp_after_else = instruction_generate(IC_JMP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
-        instruction_insert_to_list(current_instructions, jmp_after_else);
+        Instruction* jmp_after_else = NULL;
+        Instruction* nop_before_else = NULL;
+        Instruction* nop_after_else = NULL;
+        ListItem* item;
+        if(second_run) {
+            jmp_after_else = instruction_generate(IC_JMP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
+            instruction_insert_to_list(current_instructions, jmp_after_else);
+        }
         // }
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
 
-        Instruction* nop_before_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
-        ListItem* item = instruction_insert_to_list(current_instructions, nop_before_else);
-        jmp_to_else->res = item;
+        if(second_run) {
+            nop_before_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
+            item = instruction_insert_to_list(current_instructions, nop_before_else);
+            jmp_to_else->res = item;
+        }
 
         // ELSE
         next_token();
@@ -376,61 +407,60 @@ void stat_rule(bool is_void, bool can_define) {
         stat_list_rule(is_void, false);
         // }
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-        Instruction* nop_after_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
-        item = instruction_insert_to_list(current_instructions, nop_after_else);
-        jmp_after_else->res = item;
+        if(second_run) {
+            nop_after_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
+            item = instruction_insert_to_list(current_instructions, nop_after_else);
+            jmp_after_else->res = item;
+        }
     } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) { // WHILE
         //(
         if(next_token()->type != STT_LEFT_PARENTHESE) return set_error(ERR_SYNTAX);
         //boolean expression in condition
         next_token();
         Expression* condition = bool_expression_rule();
+        if(get_error()->type) return;
         // )
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
 
         // {
-        ListItem* nop_before_while_cond = instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
-        Instruction* jmp_after_while = instruction_generate(IC_JMPFALSE, condition, NULL, NULL); // instruction to be jumped to is not set yet
-        instruction_insert_to_list(current_instructions, jmp_after_while);
+        ListItem* nop_before_while_cond = NULL;
+        Instruction* jmp_after_while = NULL;
+        if(second_run) {
+            nop_before_while_cond = instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+            jmp_after_while = instruction_generate(IC_JMPFALSE, condition, NULL, NULL); // instruction to be jumped to is not set yet
+            instruction_insert_to_list(current_instructions, jmp_after_while);
+        }
 
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         //statements inside WHILE
         next_token();
         stat_list_rule(is_void, false);
-        instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
+        if(second_run) {
+            instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
+        }
         // }
-
         if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-        Instruction* nop_after_while = instruction_generate(IC_NOP, NULL, NULL, NULL);
-        ListItem* item = instruction_insert_to_list(current_instructions, nop_after_while);
-        jmp_after_while->res = item;
+        if(second_run) {
+            Instruction* nop_after_while = instruction_generate(IC_NOP, NULL, NULL, NULL);
+            ListItem* item = instruction_insert_to_list(current_instructions, nop_after_while);
+            jmp_after_while->res = item;
+        }
     } else if(current_token->type == STT_IDENT) {
         //check if symbol exists
         Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
-        if(get_error()->type) {
-            //ident not found
-            //try built-in fns
-            if(current_token->data->id && current_token->data->id->class && str_cmp_const(current_token->data->id->class, "ifj16") == 0) {
-                //this really is a built-in function => remove error
-                set_error(ERR_NONE);
-
-                // TODO: add builtin fn support
-            } else {
-                return;
-            }
-        }
+        if(get_error()->type) return;
 
         next_token();
         if(current_token->type == STT_LEFT_PARENTHESE) {
             //function call
-            if(symbol->type != ST_FUNCTION) return set_error(ERR_SEMANTIC);
+            if(symbol->type != ST_FUNCTION) return set_error(ERR_OTHER_SEMANTIC);
 
             //list for params types
-            list_activate_first(symbol->data.fn->params_list);
+            list_activate_first(symbol->data.fn->params_types_list);
             next_token();
             List *call_params_list = list_init();
-            call_params_list_rule(symbol->data.fn->params_list, call_params_list);
-            if(symbol->data.fn->params_list->active != NULL) {
+            call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+            if(symbol->data.fn->params_types_list->active != NULL) {
                 fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                 //fn params but call params ended
                 return set_error(ERR_SEMANTIC);
@@ -439,12 +469,17 @@ void stat_rule(bool is_void, bool can_define) {
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
             if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
-            instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
+            }
         } else if(current_token->type == STT_EQUALS) {
+            if(symbol->type != ST_VARIABLE) return set_error(ERR_OTHER_SEMANTIC);
             next_token();
             Expression* expr = expression_rule();
             if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
-            instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
+            }
         } else {
             fprintf(stderr, "Unexpected token: %s\n", token_to_string(current_token));
             return set_error(ERR_SYNTAX);
@@ -463,32 +498,58 @@ void stat_rule(bool is_void, bool can_define) {
             // syntax OK
         } else if(current_token->type == STT_EQUALS) {
             next_token();
-            Expression* expr = expression_rule();
-            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+            if(second_run) {
+                Expression* expr = expression_rule();
+                if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
 
-            instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
+                if(second_run) {
+                    instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
+                }
+            }
         } else {
             set_error(ERR_SYNTAX);
         }
     } else {
         return set_error(ERR_SYNTAX);
     }
+
     next_token();
 }
 
 Expression* bool_expression_rule() {
-    return general_expression_rule(STT_RIGHT_PARENTHESE);
+    if(!second_run) {
+        while(current_token->type != STT_RIGHT_PARENTHESE) {
+            next_token();
+        }
+
+        return NULL;
+    } else {
+        return general_expression_rule(STT_RIGHT_PARENTHESE, STT_EOF);
+    }
+
 }
 
 Expression* expression_rule() {
-    return general_expression_rule(STT_SEMICOLON);
+    if(current_token->type == STT_SEMICOLON) {
+        return NULL;
+    }
+
+    if(!second_run) {
+        while(current_token->type != STT_SEMICOLON) {
+            next_token();
+        }
+
+        return NULL;
+    } else {
+        return general_expression_rule(STT_SEMICOLON, STT_EOF);
+    }
 }
 
-Expression* general_expression_rule(ScannerTokenType end_token) {
+Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType or_end_token) {
     Stack* term_stack = stack_init();
     Stack* nonterm_stack = stack_init();
 
-    while(current_token->type != end_token) {
+    while(current_token->type != end_token && current_token->type != or_end_token) {
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
@@ -513,7 +574,7 @@ Expression* general_expression_rule(ScannerTokenType end_token) {
                 //is keyword => check if is "true" or "false"
                 if(current_token->data->keyword_type == KW_TRUE || current_token->data->keyword_type == KW_FALSE) {
                     is_term = true;
-                    data.expression->op = EO_CONST_STRING;
+                    data.expression->op = EO_CONST_BOOL;
                     data.expression->b = current_token->data->keyword_type == KW_TRUE ? true : false;
                 } else {
                     set_error(ERR_SYNTAX);
@@ -528,16 +589,16 @@ Expression* general_expression_rule(ScannerTokenType end_token) {
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
                     //function call
                     if(symbol->type != ST_FUNCTION) {
-                        set_error(ERR_SEMANTIC);
+                        set_error(ERR_OTHER_SEMANTIC);
                         return NULL;
                     }
 
                     //list for params types
-                    list_activate_first(symbol->data.fn->params_list);
+                    list_activate_first(symbol->data.fn->params_types_list);
                     next_token();
                     List *call_params_list = list_init();
-                    call_params_list_rule(symbol->data.fn->params_list, call_params_list);
-                    if(symbol->data.fn->params_list->active != NULL) {
+                    call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                    if(symbol->data.fn->params_types_list->active != NULL) {
                         fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                         //fn params but call params ended
                         set_error(ERR_SEMANTIC);

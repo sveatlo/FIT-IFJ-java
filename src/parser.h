@@ -73,11 +73,12 @@ void class_member_rule();
  *  Parses <params_list> rule<br>
  *  <params_list> -> <definition>,<params_list><br>
  *
- *  @param[out] params_list List of `VariableType`s (for detecting sem errors)
+ *  @param[out] params_names_list List of `VariableType`s (for detecting sem errors)
+ *  @param[out] params_ids_list List of `Ident`s
  *
  *  @ingroup Parser
  */
-void params_list_rule(List* params_list);
+ void params_list_rule(List* params_names_list, List* params_ids_list);
 
 /**
  *  Parses parameters for function
@@ -161,6 +162,6 @@ Expression* expression_rule();
  *  <expr> -> <expr> "/" <expr><br>
  *
  */
-Expression* general_expression_rule (ScannerTokenType end_token);
+Expression* general_expression_rule (ScannerTokenType end_token, ScannerTokenType or_end_token);
 
 #endif

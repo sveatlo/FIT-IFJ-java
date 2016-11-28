@@ -105,7 +105,11 @@ int str_cmp_const(String* s1, char *s2) {
 }
 
 char* str_get_str(String* s) {
-    return s->str;
+    if(s == NULL) {
+        return "NULL";
+    } else {
+        return s->str;
+    }
 }
 
 int str_length(String* s){
@@ -113,6 +117,9 @@ int str_length(String* s){
 }
 
 void int_to_string(String* s, int i) {
+    if(s == NULL) {
+        s = str_init_n(1);
+    }
     _str_resize_raw(s, 20);
     snprintf(s->str, 20, "%d", i);
     s->length = strlen(s->str);

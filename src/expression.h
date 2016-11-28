@@ -55,8 +55,14 @@ typedef enum {
     EO_AND,
     EO_OR,
     EO_NEGATE,
+    EO_LOGIC_AND, ///< when operation is &&
+    EO_LOGIC_OR, ///< when operation is ||
+    EO_LOGIC_LESS, ///< when operation is <
+    EO_LOGIC_LESS_EQUAL, ///< when operation is <=
+    EO_LOGIC_GREATER, ///< when operation is >
+    EO_LOGIC_GREATER_EQUAL, ///< when operation is =>
     EO_LEFT_PARENTHESE,
-    EO_RIGHT_PARENTHESE
+    EO_RIGHT_PARENTHESE,
 } ExpressionOperation;
 
 /**
@@ -82,7 +88,6 @@ typedef struct ExpressionStruct {
  *  @ingroup Expression
  */
 Expression* expression_init();
-
 
 /**
  *  Prints expression to STDOUT
@@ -112,10 +117,12 @@ Expression *expession_compare(Expression *expr1, Expression *expr2, ExpressionOp
 /**
  *  Fuction for evaulate expressions
  *
- *  @param[in]  expr
+ *  @param[in]  expr            Expression to evaluate
+ *  @param[in]  main_context    Main context to search for symbols
+ *  @param[in]  context         Curren context to search for symbols
  *
  *  @ingroup Expression
  */
-Expression *expression_evaluate(Expression *expr);
+Expression *expression_evaluate(Expression *expr, struct ContextStruct* main_context, struct ContextStruct* context);
 
 #endif

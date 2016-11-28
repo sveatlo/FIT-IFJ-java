@@ -186,8 +186,9 @@ String* read_str(String* a) {
 }
 
 void print_to_stdin(Expression *expr) {
+    (void)expr;
     //TODO: Bug: voidprint("" + 2 + 3) ... bad concatenate
-    expression_evaluate(expr);
-    printf("%s",str_get_str(expr->str));
+    // expression_evaluate(expr);
+    // printf("%s",str_get_str(expr->str));
     //TODO deallocate expr
 }

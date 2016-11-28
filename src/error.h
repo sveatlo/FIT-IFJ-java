@@ -44,7 +44,7 @@ typedef enum {
     //run errors
     ERR_READ_NUM_FROM_STDIN = 7, ///< ERROR - 7, char from stdin is not number
     ERR_RUN_NON_INIT_VAR = 8, ///< ERROR - 8, Run error with work with no-incialized  variable
-    ERR_RUN_DIV_NULL = 9, ///< ERROR -9, Run error divide by zero
+    ERR_RUN_DIV_NULL = 9, ///< ERROR - 9, Run error divide by zero
     ERR_OTHER_RUN = 10, ///< ERROR - 10, Other run problems
 
     //interpret errors

@@ -19,6 +19,7 @@ typedef union {
     ScannerToken* token;
     struct InstructionStruct* instruction;
     VariableType var_type;
+    Ident* id;
 } ListItemData;
 
 /**

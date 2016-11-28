@@ -10,6 +10,9 @@
 #include "scanner_token.h"
 #include "scanner.h"
 #include "string.h"
+#include "interpret.h"
+
+extern Error last_error;
 
 /**
  *  @brief parses parameters
@@ -22,15 +25,26 @@ FILE* parse_parameters(int, char**);
 int main(int argc, char** argv) {
     // (void)argv;
     // (void)argc;
-    set_error(ERR_NONE);
-
+    // set_error(ERR_NONE);
     // String* str0 = str_init();
     // str_append(str0, 'a');
     //
     // String* str1 = str_init();
     // str_append(str1, 'b');
     //
-    // str_concat(str0, str1);
+    // String* str2 = str_init();
+    // str_append(str2, 'c');
+    //
+    // String* str3 = str_init();
+    // str_append(str3, 'x');
+    //
+    // String* str4 = str_init();
+    // str_append(str4, 'z');
+    //
+    // String* str5 = str_init();
+    // str_append(str5, 'y');
+    //str_concat(str0, str1);
+    // printf("%s\n", str0->str);
     // printf("%s\n", str_get_str(str0));
 
     // // printf("%s\n", str_get_str(str0));
@@ -69,13 +83,22 @@ int main(int argc, char** argv) {
 
     // Context* ctx = context_init(NULL);
     // context_delete(ctx);
-        (void)argv;
-        (void)argc;
-    // SymbolTableNode* table = table_init();
-    // table_insert_integer(table, str0, 42);
-    // table_insert_integer(table, str1, 69);
-    // table_dispose(table);
+        // (void)argv;
+        // (void)argc;
 
+    // SymbolTableNode* st = table_init(););
+    // Symbol* a = symbol_init(str0);
+    // Symbol* b = symbol_init(str1);
+    // Symbol* c = symbol_init(str2);
+    // symbol_new_variable(a, VT_INTEGER);
+    // printf("jedna");
+    // SymbolName x = str3;
+    // SymbolName z = str4;
+    // SymbolName y = str5;
+    // tree_insert(tree, x, a);
+    // tree_insert(tree, z, b);
+    // tree_insert(tree, y, c);
+    // SymbolTableNode *copy = tree_copy(tree);
 
     // Expression* expr1 = expression_init();
     // expr1->op = EO_CONST_INTEGER;
@@ -130,24 +153,16 @@ int main(int argc, char** argv) {
 
     // list_dispose(token_list);
 
-    // if(get_error()->type) {
-    //     //lex error => exit
-    //     print_error();
-    //     return -1;
-    // }
-    //
-    // parse(token_list);
-    //
-    // if(get_error()->type) {
-    //     //lex error => exit
-    //     print_error();
-    //     return -1;
-    // }
-
     if(get_error()->type) {
         //lex error => exit
         print_error();
         return -1;
+    }
+
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return get_error()->type;
     }
 
     Context* context = NULL;
@@ -157,7 +172,7 @@ int main(int argc, char** argv) {
     if(get_error()->type) {
         //lex error => exit
         print_error();
-        return -1;
+        return get_error()->type;
     }
 
     // list_activate_first(instructions);
@@ -168,6 +183,11 @@ int main(int argc, char** argv) {
     // }
     // printf("\n");
     interpret(context, instructions);
+    if(get_error()->type) {
+        //lex error => exit
+        print_error();
+        return get_error()->type;
+    }
 
 
 
@@ -179,13 +199,13 @@ int main(int argc, char** argv) {
 
 FILE* parse_parameters(int argc, char** argv) {
     if(argc != 2 || argc > 3) {
-        set_error(ERR_PARAMS);
+        set_error(ERR_SEM_PARAMS);
         return NULL;
     }
 
     FILE *f = fopen(argv[1], "r");
     if(f == NULL) {
-        set_error(ERR_CANNOT_OPEN_FILE);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
 

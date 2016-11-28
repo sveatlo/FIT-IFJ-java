@@ -152,4 +152,6 @@ void sort_str(Symbol* op1, Symbol* res);
  */
 void find_str(Symbol* op1, Symbol* op2, Symbol* res);
 
+void assign_value_to_variable(Symbol* symbol, Expression* expr);
+
 #endif
