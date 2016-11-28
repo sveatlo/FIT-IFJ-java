@@ -28,22 +28,27 @@ extern char* name_of_file;
 // -------------------------------------
 typedef enum {
     //general errors
-    ERR_NONE, ///<No error
-    ERR_UNKNOWN, ///<Unknown error
-    ERR_OTHER_RUN, ///< Others run errors Error - 10
-
-    //interpret start errors
-    ERR_PARAMS, ///<Bad program parameters
-    ERR_ALLOCATION, ///<Cannot allocate memory
-    ERR_CANNOT_OPEN_FILE, ///<Cannot open input file,
-    ERR_READ_NUM_FROM_STDIN, ///<Error - 7, char from stdin is not number
+    ERR_NONE = 0, ///<No error
 
     //scanner errors
-    ERR_LEX, ///< Lexical error
+    ERR_LEX = 1, ///< ERROR -1, Lexical analysis error (wrong actual lexem)
 
     //parser errors
-    ERR_SYNTAX, ///< Syntax error
-    ERR_SEMANTIC
+    ERR_SYNTAX = 2, ///< ERROR - 2, Syntactical analysis error (wrong syntax)
+
+    //semantic errors
+    ERR_SEMANTIC = 3, ///< ERROR - 3, Semantic error ,Undefined class,function,variable and try redefinition class,function and variable
+    ERR_SEM_PARAMS = 4, ///< ERROR - 4, Semantic error type compability in arithmetic,chain and relational expression. Or wrong type of parameter and function
+    ERR_OTHER_SEMANTIC = 6, ///< ERROR - 6, Other semantic errors
+
+    //run errors
+    ERR_READ_NUM_FROM_STDIN = 7, ///< ERROR - 7, char from stdin is not number
+    ERR_RUN_NON_INIT_VAR = 8, ///< ERROR - 8, Run error with work with no-incialized  variable
+    ERR_RUN_DIV_NULL = 9, ///< ERROR - 9, Run error divide by zero
+    ERR_OTHER_RUN = 10, ///< ERROR - 10, Other run problems
+
+    //interpret errors
+    ERR_INTERPRET = 99, ///< ERROR - 99, Internal interpret error unafected by entry program (bad parameters from stdin)
 } ErrorType;
 
 /**
@@ -88,7 +93,7 @@ extern Error last_error;
  *
  *  @ingroup Error
  */
-#define set_error_lex(err_type, filename, line) set_error_fn(err_type, filename, line, __func__)
+//#define set_error_lex(err_type, filename, line) set_error_fn(err_type, filename, line, __func__)
 
 /**
  *  Actual function setting error

@@ -9,24 +9,14 @@
 
 struct SymbolStruct;
 struct ListStruct;
+struct ContextStruct;
 
+#include "context.h"
 #include "ial.h"
 #include "list.h"
+#include "scanner_token.h"
 #include "string.h"
 #include "symbol.h"
-
-/**
- *  Defines priority between tokens on the stack and input token
- *
- *  @ingroup Expression
- **/
-typedef enum
-{
-    L, ///< LOW. Token on the top of the stack has Ler priority than input token
-    H, ///< HIGH. Token on the top of the stack has Her priority than input token
-    E, ///< EQUAL. Token on the top of the stack has same priority as input token
-    N  ///< NOT ALLOWED. Token on the top of the stack cannot be folLed by input token, syntax N
-} TokenPrecedence;
 
 /**
  *  Defines type of result after operation (+,-,*,/)
@@ -43,22 +33,36 @@ typedef enum
 
 typedef enum {
     EO_SYMBOL, ///< when operand is a symbol
+    // NOTE: possibly redundant data - if EO_SYMBOL and symbol->type === FN => EO_SYMBOL_CALL
+    //  con: redundancy
+    //  pro: structure has different set of members set => simple to use
+    EO_SYMBOL_CALL, ///< when operand is a symbol, but also a function
     EO_CONST_INTEGER, ///< when operand is an integer constant
-    EO_CONST_DOUBLE, ///< when operand is an double constant
-    EO_CONST_STRING, ///< when operand is an string constant
-    EO_CONST_BOOL, ///< when operand is an boolean constant
-    EO_PLUS, ///< when operation is +
-    EO_MINUS, ///< when operation is -
-    EO_MULTIPLY, ///< when operation is *
-    EO_DIVIDE, ///< when operation is /
-    EO_LOGIC_EQUAL, ///< when operation is ==
-    EO_LOGIC_NOT_EQUAL, ///< when operation is !=
+    EO_CONST_DOUBLE, ///< when operand is a double constant
+    EO_CONST_STRING, ///< when operand is a string constant
+    EO_CONST_BOOL, ///< when operand is a boolean constant
+
+    EO_PLUS,
+    EO_MINUS,
+    EO_MULTIPLY,
+    EO_DIVIDE,
+    EO_LESS,
+    EO_GREATER,
+    EO_LESS_EQUALS,
+    EO_GREATER_EQUALS,
+    EO_LOGIC_EQUAL,
+    EO_LOGIC_NOT_EQUAL,
+    EO_AND,
+    EO_OR,
+    EO_NEGATE,
     EO_LOGIC_AND, ///< when operation is &&
     EO_LOGIC_OR, ///< when operation is ||
     EO_LOGIC_LESS, ///< when operation is <
     EO_LOGIC_LESS_EQUAL, ///< when operation is <=
     EO_LOGIC_GREATER, ///< when operation is >
-    EO_LOGIC_GREATER_EQUAL ///< when operation is =>
+    EO_LOGIC_GREATER_EQUAL, ///< when operation is =>
+    EO_LEFT_PARENTHESE,
+    EO_RIGHT_PARENTHESE,
 } ExpressionOperation;
 
 /**
@@ -71,6 +75,7 @@ typedef struct ExpressionStruct {
     struct ExpressionStruct* expr1; ///< pointer to child expression (if available)
     struct ExpressionStruct* expr2; ///< pointer to second child expression (if available)
     struct SymbolStruct* symbol;   ///< pointer to symbol table
+    struct ListStruct* call_params; ///< pointer to a list of parameters of the function
     int i;  ///< integer const value
     double d; ///< double const value
     String* str; ///< string value
@@ -85,12 +90,11 @@ typedef struct ExpressionStruct {
 Expression* expression_init();
 
 /**
- *  Prints Expression
+ *  Prints expression to STDOUT
  *
  *  @ingroup Expression
  */
 void expression_print(Expression* expr);
-
 
 /**
  *  Parses tokens, which should be expression
@@ -113,10 +117,12 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
 /**
  *  Fuction for evaulate expressions
  *
- *  @param[in]  expr
+ *  @param[in]  expr            Expression to evaluate
+ *  @param[in]  main_context    Main context to search for symbols
+ *  @param[in]  context         Curren context to search for symbols
  *
  *  @ingroup Expression
  */
-Expression *expression_evaluate(Expression *expr);
+Expression *expression_evaluate(Expression *expr, struct ContextStruct* main_context, struct ContextStruct* context);
 
 #endif

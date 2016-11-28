@@ -43,6 +43,13 @@ String* str_init_n(int n);
 String* str_init();
 
 /**
+ *  Initializes String from char*
+ *
+ *  @ingroup String
+ */
+String* str_init_const(char* src);
+
+/**
  *  Used for all resizing operations
  *
  *  @ingroup String
@@ -76,6 +83,16 @@ void str_append(String* s1, char c);
  *  @ingroup String
  */
 void str_concat(String* dest, String* src);
+
+/**
+ *  Concatenates String and char*
+ *
+ *  @param[in,out] dest = dest + src
+ *  @param[in] c-string to be appended to src
+ *
+ *  @ingroup String
+ */
+void str_concat_const(String* dest, char* src);
 
 /**
  *  Copy the content of `src` to `dest`

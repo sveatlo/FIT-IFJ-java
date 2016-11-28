@@ -10,6 +10,14 @@
 #include "instruction.h"
 
 /**
+ * Main function of Interpret
+ *
+ * @ingroup Interpret
+ */
+void interpret(Context* main_context, List* instructions);
+void interpretation_loop();
+
+/**
  * Function for mathematical instruction
  *
  * @param	op1	operand1
@@ -144,22 +152,6 @@ void sort_str(Symbol* op1, Symbol* res);
  */
 void find_str(Symbol* op1, Symbol* op2, Symbol* res);
 
-/**
- * Wrapper Function for jump
- *
- * @param	op1	operand1
- * @param	op2	operand2
- * @param	res	result
- *
- * @ingroup Interpret
- */
-void jump(Expression *op1, List *op2, Symbol *res);
-
-/**
- * Main function of Interpret
- *
- * @ingroup Interpret
- */
-void interpret();
+void assign_value_to_variable(Symbol* symbol, Expression* expr);
 
 #endif

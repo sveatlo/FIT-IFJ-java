@@ -7,12 +7,12 @@
 String* str_init_n(int n) {
     String* s = (String*) malloc(sizeof(String));
     if (s == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
     s->str = (char*) malloc(n * STR_INC_SIZE);
     if(s->str == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         free(s);
         return NULL;
     }
@@ -28,10 +28,18 @@ String* str_init() {
     return str_init_n(1);
 }
 
+String* str_init_const(char* src) {
+    int l = strlen(src);
+    String* str = str_init_n(l);
+    str_concat_const(str, src);
+
+    return str;
+}
+
 void _str_resize_raw(String* s, int size) {
     s->str = (char*) realloc(s->str, size);
     if (!s->str) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return;
     }
     s->mem_size = size;
@@ -65,7 +73,17 @@ void str_concat(String* dest, String* src) {
     }
 
     strncat(dest->str, src->str, dest->mem_size);
-    dest->length += dest->length;
+    dest->length += src->length;
+}
+
+void str_concat_const(String* dest, char* src) {
+    int l = strlen(src);
+    if(dest->length + l > dest->mem_size) {
+        _str_resize_raw(dest, dest->length + l);
+    }
+
+    strncat(dest->str, src, dest->mem_size);
+    dest->length += l;
 }
 
 void str_copy_string(String* dest, String* str) {
@@ -87,7 +105,11 @@ int str_cmp_const(String* s1, char *s2) {
 }
 
 char* str_get_str(String* s) {
-    return s->str;
+    if(s == NULL) {
+        return "NULL";
+    } else {
+        return s->str;
+    }
 }
 
 int str_length(String* s){
@@ -95,6 +117,9 @@ int str_length(String* s){
 }
 
 void int_to_string(String* s, int i) {
+    if(s == NULL) {
+        s = str_init_n(1);
+    }
     _str_resize_raw(s, 20);
     snprintf(s->str, 20, "%d", i);
     s->length = strlen(s->str);
@@ -108,7 +133,7 @@ void double_to_string(String* s, double d) {
 
 String* substr(String* s, int i, int n) {
     if (i < 0 || n < 0 || n < i || i > s->length) {
-        set_error(ERR_UNKNOWN);
+        set_error(ERR_OTHER_RUN);
         return NULL;
     }
     int sublen = n - i + 1;

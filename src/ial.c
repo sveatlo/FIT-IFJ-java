@@ -316,12 +316,12 @@ SymbolTableNode* table_insert_function_copy(SymbolTableNode* symbol_table, Symbo
 }
 
 
-SymbolTableNode* copy_tree(SymbolTableNode* root) {
+SymbolTableNode* tree_copy(SymbolTableNode* root) {
     if (root == NULL || root->key == NULL) {
         return root;
     }
     SymbolTableNode* copy_node = table_init();
-    SymbolTableNode* tmp;
+    SymbolTableNode* tmp = NULL;
 
     switch (root->data->type) {
         case ST_CLASS:
@@ -349,7 +349,7 @@ SymbolTableNode* copy_tree(SymbolTableNode* root) {
                 }
             break;
         case ST_NULL:
-            // TODO set_error();
+            set_error(ERR_SEMANTIC);
             break;
     }
 
@@ -357,13 +357,13 @@ SymbolTableNode* copy_tree(SymbolTableNode* root) {
         if(root->left) {
             if(root->left->key) {
                 table_dispose(tmp->left);
-                tmp->left = copy_tree(root->left);
+                tmp->left = tree_copy(root->left);
             }
         }
         if(root->right) {
             if(root->right->key) {
                 table_dispose(tmp->right);
-                tmp->right = copy_tree(root->right);
+                tmp->right = tree_copy(root->right);
             }
         }
     }

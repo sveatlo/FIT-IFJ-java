@@ -6,7 +6,7 @@
 List* list_init () {
     List* list = (List*) malloc(sizeof(List));
     if (list == NULL) {
-        set_error(ERR_ALLOCATION);
+        set_error(ERR_INTERPRET);
         return NULL;
     }
 
@@ -32,10 +32,10 @@ void list_dispose (List* list) {
     free(list);
 }
 
-void list_insert_first (List* list, ListItemData data) {
+ListItem *list_insert_first (List* list, ListItemData data) {
     ListItem *list_item = (ListItem *)malloc(sizeof(ListItem));
     if(list_item == NULL) {
-        //malloc error
+        set_error(ERR_INTERPRET); //malloc error
         //TODO: throw exception (or some C equivalent)
     }
 
@@ -47,16 +47,21 @@ void list_insert_first (List* list, ListItemData data) {
         //empty list
         list->first = list_item;
         list->last = list_item;
-        return;
+        return list_item;
     }
 
     list->first->prev = list_item;
     list_item->next = list->first;
     list->first = list_item;
+
+    return list_item;
 }
 
-void list_insert_last (List* list, ListItemData data) {
+ListItem *list_insert_last (List* list, ListItemData data) {
     ListItem *list_item = (ListItem *)malloc(sizeof(ListItem));
+    if(list_item == NULL) {
+        set_error(ERR_INTERPRET); //malloc error
+    }
     list_item->data = data;
     list_item->next = NULL;
     list_item->prev = NULL;
@@ -65,12 +70,14 @@ void list_insert_last (List* list, ListItemData data) {
         //empty list
         list->first = list_item;
         list->last = list_item;
-        return;
+        return list_item;
     }
 
     list->last->next = list_item;
     list_item->prev = list->last;
     list->last = list_item;
+
+    return list_item;
 }
 
 

@@ -7,6 +7,7 @@
 #include "string.h"
 #include "expression.h"
 
+extern Error last_error;
 
 int read_int() {
     char c;
@@ -16,7 +17,8 @@ int read_int() {
         if (!isdigit(c)) {
             set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
             str_dispose(number);
-            return 7; //error 7
+            set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+            return last_error.type;
         } else {
             str_append(number, c);
         }
@@ -29,7 +31,8 @@ int read_int() {
     } else {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
         str_dispose(number);
-        return 7; //error 7
+        set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+        return last_error.type;
     }
 }
 
@@ -63,7 +66,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
                 break;
 
@@ -80,7 +84,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
 
                 break;
@@ -95,7 +100,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
 
                 break;
@@ -114,7 +120,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
 
                 break;
@@ -129,7 +136,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
 
                 break;
@@ -152,7 +160,8 @@ double read_double() {
                 } else {
                     set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
                     str_dispose(number);
-                    return 7; //error 7
+                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+                    return last_error.type;
                 }
 
                 break;
@@ -161,7 +170,8 @@ double read_double() {
         }
     } else {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-        return 7; //error 7
+        set_error(ERR_READ_NUM_FROM_STDIN); //error 7
+        return last_error.type;
     }
 }
 
@@ -176,8 +186,9 @@ String* read_str(String* a) {
 }
 
 void print_to_stdin(Expression *expr) {
+    (void)expr;
     //TODO: Bug: voidprint("" + 2 + 3) ... bad concatenate
-    expression_evaluate(expr);
-    printf("%s",str_get_str(expr->str));
+    // expression_evaluate(expr);
+    // printf("%s",str_get_str(expr->str));
     //TODO deallocate expr
 }
