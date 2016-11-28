@@ -631,47 +631,73 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             }
 
         case EO_SYMBOL:
-            if (expr->symbol != NULL) {
-                expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
-                if(expr->symbol == NULL) {
-                    set_error(ERR_INTERPRET);
-                    return NULL;
-                }
-
-                switch (expr->symbol->data.var->type) {
-                    case VT_INTEGER:
-                        res_expr = expression_init();
-                        res_expr->i = expr->symbol->data.var->value.i;
-                        res_expr->op = EO_CONST_INTEGER;
-                        return res_expr;
-
-                    case VT_DOUBLE:
-                        res_expr = expression_init();
-                        res_expr->d = expr->symbol->data.var->value.d;
-                        res_expr->op = EO_CONST_DOUBLE;
-                        return res_expr;
-
-                    case VT_STRING:
-                        res_expr = expression_init();
-                        res_expr->str = expr->symbol->data.var->value.s;
-                        res_expr->op = EO_CONST_STRING;
-                        return res_expr;
-
-                    case VT_BOOL:
-                        res_expr = expression_init();
-                        res_expr->b = expr->symbol->data.var->value.b;
-                        res_expr->op = EO_CONST_BOOL;
-                        return res_expr;
-
-                    default:
-                        return NULL;
-
-                }
-            } else {
-                set_error(ERR_SEMANTIC);
+            if (expr->symbol == NULL) {
+                set_error(ERR_SEM_PARAMS);
                 return NULL;
-                // expression_dispose(expr);
-                // return NULL;
+            }
+
+            expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
+            if(expr->symbol == NULL) {
+                set_error(ERR_INTERPRET);
+                return NULL;
+            }
+            if(!expr->symbol->data.var->initialized) {
+                set_error(ERR_SEM_PARAMS);
+                return NULL;
+            }
+
+            switch (expr->symbol->data.var->type) {
+                case VT_INTEGER:
+                    res_expr = expression_init();
+                    res_expr->i = expr->symbol->data.var->value.i;
+                    res_expr->op = EO_CONST_INTEGER;
+                    return res_expr;
+
+                case VT_DOUBLE:
+                    res_expr = expression_init();
+                    res_expr->d = expr->symbol->data.var->value.d;
+                    res_expr->op = EO_CONST_DOUBLE;
+                    return res_expr;
+
+                case VT_STRING:
+                    res_expr = expression_init();
+                    res_expr->str = expr->symbol->data.var->value.s;
+                    res_expr->op = EO_CONST_STRING;
+                    return res_expr;
+
+                case VT_BOOL:
+                    res_expr = expression_init();
+                    res_expr->b = expr->symbol->data.var->value.b;
+                    res_expr->op = EO_CONST_BOOL;
+                    return res_expr;
+
+                default:
+                    return NULL;
+
+            }
+            switch (expr->symbol->data.var->type) {
+                case VT_INTEGER:
+                    expr->i = expr->symbol->data.var->value.i;
+                    expr->op = EO_CONST_INTEGER;
+                    return expr;
+
+                case VT_DOUBLE:
+                    expr->d = expr->symbol->data.var->value.d;
+                    expr->op = EO_CONST_DOUBLE;
+                    return expr;
+
+                case VT_STRING:
+                    expr->str = expr->symbol->data.var->value.s;
+                    expr->op = EO_CONST_STRING;
+                    return expr;
+
+                case VT_BOOL:
+                    expr->b = expr->symbol->data.var->value.b;
+                    expr->op = EO_CONST_BOOL;
+                    return expr;
+
+                default:
+                    return NULL;
             }
             break;
 
