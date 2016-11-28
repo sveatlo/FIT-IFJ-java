@@ -144,9 +144,6 @@ ScannerToken* get_next_token(FILE *f) {
         set_error(ERR_INTERPRET);
         return NULL;
     }
-    //initialize string
-    //string* token_data_str = str_init();
-    //if lexical error => kind of free
 
     while (69) {
         //get next char from file
@@ -208,6 +205,7 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->id->name, c);
                     current_state = SS_IDENT;
                 } else if (isdigit(c)) {
+                    //number
                     token->data = (ScannerTokenData*)malloc(sizeof(ScannerTokenData));
                     if (token->data == NULL) {
                         set_error(ERR_INTERPRET);
@@ -230,7 +228,12 @@ ScannerToken* get_next_token(FILE *f) {
                     token->type = STT_SEMICOLON;
                     return token;
                 } else if (c == '"') {
+                    //string
                     token->data = (ScannerTokenData*)malloc(sizeof(ScannerTokenData));
+                    if (token->data == NULL) {
+                        set_error(ERR_INTERPRET);
+                        return NULL;
+                    }
                     token->data->str = str_init();
                     if (token->data->str == NULL) {
                         set_error(ERR_INTERPRET);
@@ -294,6 +297,7 @@ ScannerToken* get_next_token(FILE *f) {
                                 free(token->data);
                                 return NULL;
                             }
+
                             //cut content from token->data->id->name to token->data->id->class and ignore .
                             str_copy_string(token->data->id->class, token->data->id->name);
                             str_clear(token->data->id->name);
@@ -317,8 +321,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_CLASS_AND_FUNCTION_1:
-                // id is identificator with .
-                // append alnum chars for 2. identificator
+                // append alpha chars for 2. identificator - member
                 if (isalpha(c)) {
                     str_append(token->data->id->name, c);
                     current_state = SS_CLASS_AND_FUNCTION_2;
@@ -334,8 +337,7 @@ ScannerToken* get_next_token(FILE *f) {
 
 
             case SS_CLASS_AND_FUNCTION_2:
-                // id is identificator with .
-                // append alnum chars for 2. identificator
+                // append alpha chars for 2. identificator - member
                 if (isalnum(c)) {
                     str_append(token->data->id->name, c);
                     current_state = SS_CLASS_AND_FUNCTION_2;
@@ -349,7 +351,6 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_NUMBER:
                 //is number
-                //load whole string
                 if (isdigit(c)) {
                     //is digit => append
                     str_append(token->data->str, c);
@@ -668,6 +669,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_LEX_ERROR:
+                // lexical error
                 if (c == '\n') {
                     line--;
                 }
@@ -675,6 +677,7 @@ ScannerToken* get_next_token(FILE *f) {
                 if (c == '\n') {
                     line++;
                 }
+                // continue with scan file after isspace
                 while (c == isalnum(c)) {
                     c = getc(f);
                 }
@@ -684,6 +687,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_EOF:
+                //end of file
                 token->type = STT_EOF;
                 return token;
 

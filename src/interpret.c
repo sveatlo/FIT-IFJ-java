@@ -142,16 +142,16 @@ void interpretation_loop() {
                 case IC_EVAL:
                 {
                     Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_scope->context);
-                    // printf("IC_EVAL res: ");
-                    // expression_print(res);
+                    printf("IC_EVAL res: ");
+                    expression_print(res);
                     if(get_error()->type) return;
 
                     if(current_instruction->res != NULL) {
                         Symbol* res_symbol = context_find_ident(current_scope->context, main_context, ((Symbol*)current_instruction->res)->id);
                         res_symbol->id = ((Symbol*)current_instruction->res)->id;
                         assign_value_to_variable(res_symbol, res);
-                        // symbol_print(res_symbol);
-                        // printf("\n");
+                        symbol_print(res_symbol);
+                        printf("\n");
                     }
 
                     break;
@@ -462,6 +462,7 @@ void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
 void assign_value_to_variable(Symbol* symbol, Expression* expr) {
     if(get_error()->type) return;
     if(symbol->type != ST_VARIABLE) return set_error(ERR_INTERPRET);
+    printf("%i\n", symbol->type == ST_VARIABLE);
     switch(symbol->data.var->type) {
         case VT_INTEGER:
             if(expr->op == EO_CONST_INTEGER) {
@@ -502,5 +503,5 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             break;
     }
 
-    expr->symbol->data.var->initialized = true;
+    symbol->data.var->initialized = true;
 }

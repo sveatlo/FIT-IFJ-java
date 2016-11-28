@@ -579,16 +579,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
 }
 
 Expression *expression_evaluate(Expression *expr, Context* main_context, Context* context) {
-    // if (((expr->expr1 == NULL) && (expr->expr2 != NULL)) || ((expr->expr2 == NULL) && (expr->expr1 != NULL))){
-    //     if ((expr->expr1 == NULL) && (expr->expr2 != NULL)) {
-    //         // expression_dispose(expr->expr2);
-    //     }
-    //     if ((expr->expr2 == NULL) && (expr->expr1 != NULL)) {
-    //         // expression_dispose(expr->expr1);
-    //     }
-    //     return NULL;
-    // }
-
+    // printf("expression_evaluate: OP = %s, int val = %d\n", operations_char[expr->op], expr->i);
     Expression* res_expr = NULL;
 
     switch (expr->op) {
