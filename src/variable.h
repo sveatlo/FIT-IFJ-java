@@ -1,3 +1,8 @@
+/**
+ *  @defgroup Variable
+ *  @brief Module defining variable (specific symbol type)
+ */
+
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
@@ -7,7 +12,7 @@
 /**
  *  Union, where the actual variable data will be stored
  *
- *  @ingroup IAL
+ *  @ingroup Variable
  */
 typedef union {
     int i;
@@ -19,7 +24,7 @@ typedef union {
 /**
  *  Variables types
  *
- *  @ingroup IAL
+ *  @ingroup Variable
  */
 typedef enum {
     VT_NULL,    ///< IDK YET
@@ -33,7 +38,7 @@ typedef enum {
 /**
  *  Structure storing informations about a variable
  *
- *  @ingroup IAL
+ *  @ingroup Variable
  */
 typedef struct {
     VariableType type;  ///< Type of the variable

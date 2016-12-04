@@ -1,3 +1,8 @@
+/**
+ *  @defgroup Symbol
+ *  @brief Module defining symbols and their operations
+ */
+
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
@@ -15,7 +20,7 @@ struct ListStruct;
 /**
  *  Type of the value of symbol
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef enum SymbolType {
     ST_NULL,
@@ -27,7 +32,7 @@ typedef enum SymbolType {
 /**
  *  Structure storing informations about the function
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef struct {
     struct ContextStruct* context;   ///< Context of the function
@@ -40,7 +45,7 @@ typedef struct {
 /**
  *  Structure storing class info
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef struct {
     struct ContextStruct* context;   ///< Context of the class
@@ -49,7 +54,7 @@ typedef struct {
 /**
  *  Union that holds data sector of Symbol.
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef union {
     Variable* var;
@@ -63,14 +68,14 @@ typedef union {
  *
  *  Used to keep semantic value
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef String* SymbolName;
 
 /**
  *  Structure of each symbol
  *
- *  @ingroup IAL
+ *  @ingroup Symbol
  */
 typedef struct SymbolStruct {
     SymbolName name; ///< Name of the symbol (will be used for search)
@@ -80,11 +85,47 @@ typedef struct SymbolStruct {
 } Symbol;
 
 
+/**
+ *  Initializes new Symbol, allocating memory
+ *
+ *  @ingroup Symbol
+ */
 Symbol* symbol_init(SymbolName);
+
+/**
+ *  Disposing symbol freeing its memory
+ *
+ *  @ingroup Symbol
+ */
 void symbol_dispose(Symbol*);
+
+/**
+ *  Initializes new variable Symbol
+ *
+ *  @see Variable
+ *  @ingroup Symbol
+ */
 void symbol_new_variable(Symbol*, VariableType);
+
+/**
+ *  Initializes new function Symbol
+ *
+ *  @ingroup Symbol
+ */
 void symbol_new_function(Symbol*, struct ContextStruct*);
+
+/**
+ *  Initializes new class Symbol
+ *
+ *  @ingroup Symbol
+ */
 void symbol_new_class(Symbol*, struct ContextStruct*);
+
+/**
+ *  Prints out symbol. Useful for debugging purposes
+ *
+ *  @ingroup Symbol
+ */
 void symbol_print(Symbol*);
 
 #endif

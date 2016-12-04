@@ -107,6 +107,7 @@ Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
 }
 
 Symbol* context_find_ident(Context* context, Context* root_context, Ident* token_ident) {
+    // printf("context_find_ident looking for: %s\n", str_get_str(token_ident->name));
     if(token_ident->class != NULL) {
         Symbol* class_symbol = context_find_symbol(root_context, token_ident->class);
         if(class_symbol == NULL) {
