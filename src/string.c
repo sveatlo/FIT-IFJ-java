@@ -127,7 +127,7 @@ void int_to_string(String* s, int i) {
 
 void double_to_string(String* s, double d) {
     _str_resize_raw(s, 20);
-    snprintf(s->str, 20, "%f", d);
+    snprintf(s->str, 20, "%g", d);
     s->length = strlen(s->str);
 }
 

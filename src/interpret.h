@@ -16,6 +16,7 @@
  */
 void interpret(Context* main_context, List* instructions);
 void interpretation_loop();
+void process_frame();
 
 /**
  * Function for mathematical instruction
@@ -152,6 +153,8 @@ void sort_str(Symbol* op1, Symbol* res);
  */
 void find_str(Symbol* op1, Symbol* op2, Symbol* res);
 
+void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frames);
 void assign_value_to_variable(Symbol* symbol, Expression* expr);
+
 
 #endif

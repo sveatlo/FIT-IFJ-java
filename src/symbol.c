@@ -38,6 +38,8 @@ void symbol_dispose(Symbol* symbol) {
         free(symbol->data.cls);
     }
 
+    str_dispose(symbol->name);
+
     // free the symbol itself
     free(symbol);
 }

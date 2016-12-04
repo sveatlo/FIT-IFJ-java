@@ -220,7 +220,7 @@ void class_member_rule() {
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         next_token();
-        stat_list_rule(current_type == VT_VOID, true);
+        stat_list_rule(current_type == KW_VOID, true);
         if(get_error()->type) {
             return;
         }
@@ -319,7 +319,8 @@ Symbol* definition_rule() {
 
     KeywordType current_type = current_token->data->keyword_type;
     //token must be IDENT and must be simple (no class part)
-    if(next_token()->type != STT_IDENT || current_token->data->id->class != NULL) {
+    next_token();
+    if(current_token->type != STT_IDENT || current_token->data->id->class != NULL) {
         set_error(ERR_SYNTAX);
         return NULL;
     }
@@ -447,33 +448,42 @@ void stat_rule(bool is_void, bool can_define) {
         }
     } else if(current_token->type == STT_IDENT) {
         //check if symbol exists
-        Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
-        if(get_error()->type) return;
+        Symbol* symbol;
+        if(second_run) {
+            symbol = context_find_ident(current_context, main_context, current_token->data->id);
+            if(get_error()->type) return;
+        }
 
         next_token();
         if(current_token->type == STT_LEFT_PARENTHESE) {
-            //function call
-            if(symbol->type != ST_FUNCTION) return set_error(ERR_OTHER_SEMANTIC);
+            if(second_run) {
+                //function call
+                if(symbol->type != ST_FUNCTION) return set_error(ERR_OTHER_SEMANTIC);
 
-            //list for params types
-            list_activate_first(symbol->data.fn->params_types_list);
-            next_token();
-            List *call_params_list = list_init();
-            call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
-            if(symbol->data.fn->params_types_list->active != NULL) {
-                fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
-                //fn params but call params ended
-                return set_error(ERR_SEMANTIC);
+                //list for params types
+                list_activate_first(symbol->data.fn->params_types_list);
+                next_token();
+                List *call_params_list = list_init();
+                call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                if(symbol->data.fn->params_types_list->active != NULL) {
+                    fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                    //fn params but call params ended
+                    return set_error(ERR_SEMANTIC);
+                }
+                if(get_error()->type) return;
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
+            } else {
+                while(current_token->type != STT_RIGHT_PARENTHESE) {
+                    next_token();
+                }
             }
-            if(get_error()->type) return;
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
             if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
-            if(second_run) {
-                instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
-            }
         } else if(current_token->type == STT_EQUALS) {
-            if(symbol->type != ST_VARIABLE) return set_error(ERR_OTHER_SEMANTIC);
+            if(second_run) {
+                if(symbol->type != ST_VARIABLE) return set_error(ERR_OTHER_SEMANTIC);
+            }
             next_token();
             Expression* expr = expression_rule();
             if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
@@ -498,18 +508,18 @@ void stat_rule(bool is_void, bool can_define) {
             // syntax OK
         } else if(current_token->type == STT_EQUALS) {
             next_token();
-            if(second_run) {
-                Expression* expr = expression_rule();
-                if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+            Expression* expr = expression_rule();
+            if(get_error()->type) return;
+            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
 
-                if(second_run) {
-                    instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
-                }
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
             }
         } else {
             set_error(ERR_SYNTAX);
         }
     } else {
+        printf("Unexpected token: %s %s %d\n", token_to_string(current_token), __func__, __LINE__);
         return set_error(ERR_SYNTAX);
     }
 
@@ -615,6 +625,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->call_params = call_params_list;
                 } else {
                     prev_token();
+                    if(symbol->type != ST_VARIABLE) {
+                        set_error(ERR_OTHER_SEMANTIC);
+                        return NULL;
+                    }
                     data.expression->op = EO_SYMBOL;
                     data.expression->symbol = symbol;
                 }

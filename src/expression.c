@@ -3,6 +3,7 @@
 #include "error.h"
 #include "expression.h"
 #include "context.h"
+#include "interpret.h"
 #include "list.h"
 #include "scanner_token.h"
 #include "symbol.h"
@@ -218,6 +219,8 @@ const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_B
 
 
 Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
+    // printf("expr comp %d\n", OperationTablePlus[expr1->op][expr2->op]);
+    // fflush(stdout);
     Expression *res_expr = expression_init();
     switch (operation) {
         case EO_PLUS:
@@ -236,6 +239,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else if (OperationTablePlus[expr1->op][expr2->op] == S) {
                 res_expr->op = EO_CONST_STRING;
+                res_expr->str = str_init();
 
                 if (expr1->op == EO_CONST_INTEGER) {
                     int_to_string(res_expr->str, expr1->i);
@@ -579,10 +583,10 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
 }
 
 Expression *expression_evaluate(Expression *expr, Context* main_context, Context* context) {
-    // printf("expression_evaluate: OP = %s, int val = %d\n", operations_char[expr->op], expr->i);
+    // printf("expression_evaluate: OP = %s\n", operations_char[expr->op]);
     Expression* res_expr = NULL;
 
-    switch (expr->op) {
+    switch(expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
                 res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_PLUS);
@@ -607,21 +611,7 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             }
             break;
         case EO_SYMBOL_CALL:
-            {
-                if (expr->symbol != NULL) {
-                    expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
-                    if(expr->symbol == NULL) {
-                        set_error(ERR_INTERPRET);
-                        return NULL;
-                    }
-                } else {
-                    set_error(ERR_SEMANTIC);
-                    return NULL;
-                }
-                break;
-            }
-
-        case EO_SYMBOL:
+        {
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
@@ -632,31 +622,95 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 set_error(ERR_INTERPRET);
                 return NULL;
             }
-            if(!expr->symbol->data.var->initialized) {
+            if(expr->symbol->type != ST_FUNCTION) {
+                set_error(ERR_SEM_PARAMS);
+                return NULL;
+            }
+            // printf("EO_SYMBOL_CALL 2\n");
+
+            // create tmp return symbol
+            Symbol* tmp = symbol_init(str_init_const("tmp_symbol"));
+            Ident id = {
+                .class = NULL,
+                .name = str_init_const("tmp_symbol")
+            };
+            tmp->id = &id;
+            // printf("EO_SYMBOL_CALL 3\n");
+            tmp->type = ST_VARIABLE;
+            // printf("EO_SYMBOL_CALL 4: %d\n", expr->symbol->data.fn->return_type);
+            symbol_new_variable(tmp, expr->symbol->data.fn->return_type);
+
+            // call the fn
+            // printf("EO_SYMBOL_CALL 5\n");
+            call(expr->symbol, expr->call_params, tmp, true);
+            // printf("EO_SYMBOL_CALL 6\n");
+
+            // symbol -> expression
+            Expression expr;
+            // printf("EO_SYMBOL_CALL 7\n");
+            expr.op = EO_SYMBOL;
+            // printf("EO_SYMBOL_CALL 8\n");
+            expr.symbol = tmp;
+            // printf("EO_SYMBOL_CALL 9\n");
+            // res shall contain some const expression
+            Expression* res = expression_evaluate(&expr, main_context, context);
+            // printf("EO_SYMBOL_CALL 10\n");
+            //dispose tmp symbol
+            symbol_dispose(tmp);
+
+            //return the const expression
+            return res;
+        }
+        case EO_SYMBOL:
+        {
+            // printf("expr eval EO_SYMBOL 0\n");
+            if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
+            if(str_cmp_const(expr->symbol->id->name, "tmp_symbol") != 0) {
+                // printf("expr eval EO_SYMBOL 1 %s\n", str_get_str(expr->symbol->id->name));
+                expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
+                if(expr->symbol == NULL) {
+                    set_error(ERR_INTERPRET);
+                    return NULL;
+                }
+                // printf("expr eval EO_SYMBOL 2 %d in context %d\n", expr->symbol, context);
+                // printf("expr eval EO_SYMBOL 3 %d %d\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
+                if(expr->symbol->type != ST_VARIABLE || expr->symbol->data.var->initialized != true) {
+                    printf("    \n\nSETTING ERROR: ERR_SEM_PARAMS: %d %d\n\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
+                    set_error(ERR_SEM_PARAMS);
+                    return NULL;
+                }
+            }
+
+            // printf("expr eval EO_SYMBOL 4\n");
             switch (expr->symbol->data.var->type) {
                 case VT_INTEGER:
+                    // printf("expr eval EO_SYMBOL 4a\n");
                     res_expr = expression_init();
                     res_expr->i = expr->symbol->data.var->value.i;
                     res_expr->op = EO_CONST_INTEGER;
                     return res_expr;
 
                 case VT_DOUBLE:
+                    // printf("expr eval EO_SYMBOL 4b\n");
                     res_expr = expression_init();
                     res_expr->d = expr->symbol->data.var->value.d;
                     res_expr->op = EO_CONST_DOUBLE;
                     return res_expr;
 
                 case VT_STRING:
+                    // printf("expr eval EO_SYMBOL 4c\n");
                     res_expr = expression_init();
                     res_expr->str = expr->symbol->data.var->value.s;
                     res_expr->op = EO_CONST_STRING;
+                    // printf("expr eval EO_SYMBOL 4c1\n");
                     return res_expr;
 
                 case VT_BOOL:
+                    // printf("expr eval EO_SYMBOL 4d\n");
                     res_expr = expression_init();
                     res_expr->b = expr->symbol->data.var->value.b;
                     res_expr->op = EO_CONST_BOOL;
@@ -691,7 +745,7 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                     return NULL;
             }
             break;
-
+        }
         case EO_CONST_INTEGER:
             return expr;
 
@@ -761,5 +815,6 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
     // }
     // expression_dispose(expr->expr1);
     // expression_dispose(expr->expr2);
+    // printf("expression_evaluate res: OP = %s\n", operations_char[expr->op]);
     return res_expr;
 }
