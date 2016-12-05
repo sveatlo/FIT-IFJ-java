@@ -283,7 +283,7 @@ void class_member_rule() {
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         next_token();
-        stat_list_rule(current_type == VT_VOID, true);
+        stat_list_rule(current_type == KW_VOID, true);
         if(get_error()->type) {
             return;
         }
