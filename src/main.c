@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     if(get_error()->type) {
         //lex error => exit
         print_error();
-        return -1;
+        return get_error()->type;
     }
 
     if(get_error()->type) {

@@ -20,7 +20,7 @@ struct ListItemStruct;
 typedef enum {
     IC_NOP, ///< NOP instruction => no action
     IC_EVAL, ///< Evaluates Expression (op1) and saves the result to res
-    IC_RETURN,  ///< Special instruction to return from current call scope
+    IC_RETURN,  ///< Special instruction to return from current call frame
     IC_JMP, ///< jump/goto some address
     IC_JMPFALSE, ///< Evaluates Expression (op1) and jump (set as active in list) to Instruction (res) if op1 == false
     IC_JMPTRUE, ///< Evaluates Expression (op1) and jump (set as active in list) to Instruction (res) if op1 == true
