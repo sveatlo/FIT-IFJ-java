@@ -1,0 +1,7 @@
+class Main() {
+  static void run() {
+    while (3 > 5){
+      int x = 3;
+    }
+  }
+}

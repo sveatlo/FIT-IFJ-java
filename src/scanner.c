@@ -808,7 +808,7 @@ ScannerToken* get_next_token(FILE *f) {
                     //could be end of block comment
                     current_state = SS_COMMENT_BLOCK_END;
                 } else if (c == EOF) {
-                    // end of file = end of comment
+                    // end of file without proper comment ending => error
                     ungetc(c, f);
                     current_state = SS_LEX_ERROR;
                 } else {
@@ -839,6 +839,9 @@ ScannerToken* get_next_token(FILE *f) {
                 // continue with scan file after isspace
                 while (!isspace(c)) {
                     c = getc(f);
+                    if(c == -1) {
+                        break;
+                    }
                 }
                 token->type = STT_EMPTY;
                 return token;

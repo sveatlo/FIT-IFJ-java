@@ -133,33 +133,48 @@ void process_frame() {
                 } else {
                     return set_error(ERR_INTERPRET);
                 }
+
                 break;
             }
             case IC_EVAL:
             {
-                Instruction* my_current_instruction = current_instruction;
-                printf("   EVAL start current_frame: %d and current_instruction %d\n", current_frame, current_instruction);
-                printf("IC_EVAL (context = %d): ", current_frame->context);
-                expression_print((Expression*)my_current_instruction->op1);
-                Expression* res = expression_evaluate((Expression*)my_current_instruction->op1, main_context, current_frame->context);
-                if(get_error()->type) return;
+                printf("IC_EVAL: ");
+                expression_print((Expression*)current_instruction->op1);
                 printf(" = ");
+                fflush(stdout);
+                Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
+                if(get_error()->type) return;
                 expression_print(res);
 
-                printf("   EVAL post eval current_frame: %d and my_current_instruction %d\n", current_frame, my_current_instruction);
-
-                if(my_current_instruction->res != NULL) {
-                    Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)my_current_instruction->res)->id);
-                    res_symbol->id = ((Symbol*)my_current_instruction->res)->id;
+                if(current_instruction->res != NULL) {
+                    Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
+                    res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
-                    if(get_error()->type) return;
                     printf(" = ");
                     symbol_print(res_symbol);
+                    printf("\n");
                 }
-                printf("\n");
 
                 break;
             }
+            case IC_READ_INT:
+                break;
+            case IC_READ_DOUBLE:
+                break;
+            case IC_READ_STRING:
+                break;
+            case IC_PRINT:
+                break;
+            case IC_STR_LENGTH:
+                break;
+            case IC_STR_SORT:
+                break;
+            case IC_STR_FIND:
+                break;
+            case IC_STR_SUBSTRING:
+                break;
+            case IC_STR_COMP:
+                break;
             default:
             {
                 return set_error(ERR_INTERPRET);
@@ -252,7 +267,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
             list_activate_next(params);
         }
     }
-    // printf("\n");
+    printf("\n");
     // printf("new current_context: %d %d\n", current_frame->context, __LINE__);
 
     if(manage_frames) {
@@ -266,11 +281,11 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 }
 
 void assign_value_to_variable(Symbol* symbol, Expression* expr) {
-    printf("assigning to ");
-    symbol_print(symbol);
-    printf("@ %d expression ", symbol);
-    expression_print(expr);
-    printf("in context: %d of frame: %d\n", current_frame->context, current_frame);
+    // printf("assigning to ");
+    // symbol_print(symbol);
+    // printf("@ %d expression ", symbol);
+    // expression_print(expr);
+    // printf("in context: %d of frame: %d\n", current_frame->context, current_frame);
 
     if(get_error()->type) return;
     if(symbol->type != ST_VARIABLE) return set_error(ERR_INTERPRET);
@@ -279,7 +294,7 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             if(expr->op == EO_CONST_INTEGER) {
                 symbol->data.var->value.i = expr->i;
             } else {
-                return set_error(ERR_INTERPRET);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_DOUBLE:
@@ -288,7 +303,7 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             } else if(expr->op == EO_CONST_INTEGER) {
                 symbol->data.var->value.d = (double)expr->i;
             } else {
-                return set_error(ERR_INTERPRET);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_BOOL:
@@ -299,14 +314,14 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             } else if(expr->op == EO_CONST_DOUBLE) {
                 symbol->data.var->value.b = (bool)expr->d;
             } else {
-                return set_error(ERR_INTERPRET);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_STRING:
             if(expr->op == EO_CONST_STRING) {
                 symbol->data.var->value.s = expr->str;
             } else {
-                return set_error(ERR_INTERPRET);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         default:

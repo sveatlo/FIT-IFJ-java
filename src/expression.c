@@ -612,12 +612,15 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             break;
         case EO_SYMBOL_CALL:
         {
+            printf("EO_SYMBOL_CALL 1\n");
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
             expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
+            symbol_print(expr->symbol);
+            printf("\n");
             if(expr->symbol == NULL) {
                 set_error(ERR_INTERPRET);
                 return NULL;

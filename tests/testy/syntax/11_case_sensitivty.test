@@ -1,0 +1,6 @@
+class Main(){
+  static void run(){
+    INT x = 3;
+    X = x + 1;
+  }
+}

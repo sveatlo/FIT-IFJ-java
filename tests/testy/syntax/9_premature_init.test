@@ -1,0 +1,6 @@
+class Main() {
+  String s = "Ja sa nikdy nespustim";
+  static void run() {
+
+  }
+}

@@ -101,7 +101,7 @@ int str_cmp(String* s1, String* s2) {
 }
 
 int str_cmp_const(String* s1, char *s2) {
-    return strcmp( s1->str, s2);
+    return strcmp(s1->str, s2);
 }
 
 char* str_get_str(String* s) {

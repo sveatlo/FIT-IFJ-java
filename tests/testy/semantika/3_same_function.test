@@ -1,0 +1,13 @@
+class Main(){
+  static void run(){
+    String s = "Nespustaj ma";
+  }
+
+  static String foo(){
+    String s = "Ani mna";
+  }
+
+  static String foo(){
+    String s = "Preco ma volas dva krat";
+  }
+}
