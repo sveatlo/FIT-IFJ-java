@@ -1,0 +1,13 @@
+class Main(){
+  static void run() {
+    if(1){
+      ifj16.print("passed")
+    }
+
+    else {
+      ifj16.print("failed");
+    }
+
+    return 0;
+  }
+}

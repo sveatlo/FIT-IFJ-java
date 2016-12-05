@@ -1,0 +1,10 @@
+class Main(){
+  static void run(){
+  int i = 3;
+  int vysledok=1;
+  while (i > 0){
+    vysledok = vysledok * i;
+    i = i - 1;
+  }
+  }
+}

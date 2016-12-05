@@ -1,0 +1,19 @@
+class Main(){
+  static void run() {
+    int a = 0;
+
+    a = a + 2;
+    ifj16.print("Vysledok: " +a + "\n");
+
+    a = a - 1;
+    ifj16.print("Vysledok: " +a + "\n");
+
+    a = a * 2;
+    ifj16.print("Vysledok: " +a + "\n");
+
+    a = a / 2;
+    ifj16.print("Vysledok: " +a + "\n")
+
+
+  }
+}

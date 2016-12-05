@@ -1,0 +1,7 @@
+class Main() {
+  static void run() {
+    if (0 == 0){
+      int x = 2;
+    }
+  }
+}
