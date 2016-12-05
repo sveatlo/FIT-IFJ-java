@@ -36,6 +36,13 @@ typedef enum {
     SS_EQUAL, ///< =
     SS_NEGATE, ///< !
     SS_SLASH, ///< /
+    SS_BACKSLASH, ///< backlesh
+    SS_OCT_ESCAPE_1, ///< octal escape 1
+    SS_OCT_ESCAPE_2, ///< octal escape 2
+    SS_OCT_ESCAPE_MIN_1, ///< octal first is '0'
+    SS_OCT_ESCAPE_MIN_2, ///< octal '00' next char !='0'
+    SS_OCT_ESCAPE_MAX_1, ///< octal first is '3'next char != '8' or '9'
+    SS_OCT_ESCAPE_MAX_2, ///< octal next char != '8' or '9' and next state = SS_STRING
     SS_COMMENT_LINE, ///< //
     SS_COMMENT_BLOCK, ///< /*
     SS_COMMENT_BLOCK_END, ///< */
@@ -65,6 +72,6 @@ List *scan_file(FILE *, List *);
  *
  *  @ingroup Scanner
  */
-ScannerToken key_or_ident (ScannerToken *token);
+void key_or_ident(ScannerToken *token);
 
 #endif

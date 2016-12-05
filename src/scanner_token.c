@@ -19,6 +19,8 @@ void token_delete (ScannerToken *token) {
         free(token->data);
     } else if (token->type == STT_KEYWORD) {
         free(token->data);
+    } else if (token->type == STT_KEYWORD_TYPE) {
+        free(token->data);
     } else if (token->type == STT_IDENT) {
         if(token->data->id->class != NULL) {
             str_dispose(token->data->id->class);
