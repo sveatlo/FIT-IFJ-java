@@ -15,15 +15,6 @@ static ScannerToken* current_token; ///< token currently being processed
 static Context* main_context; ///< main context
 static Context* current_context; ///< context, which is currently being used
 static SymbolName current_class_name; ///< name of current class
-static Symbol *fn_read_int;
-static Symbol *fn_read_double;
-static Symbol *fn_read_string;
-static Symbol *fn_length;
-static Symbol *fn_substring;
-static Symbol *fn_compare;
-static Symbol *fn_sort;
-static Symbol *fn_find;
-static Symbol *fn_print;
 static List* main_instructions;    ///< list of main instructions - these are used for members initialization and to call Main.run fn
 static List* current_instructions; ///< list of instructions of current function
 
@@ -71,27 +62,27 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     Symbol* new_class = table_insert_class(main_context->symbol_table, current_class_name, main_context);
     current_context = new_class->data.cls->context;
 
-    fn_read_int = context_add_function(current_context, KW_INT, current_token->data->id);
+    Symbol* fn_read_int = context_add_function(current_context, KW_INT, current_token->data->id);
     ListItemData param;
     param.var_type = VT_NULL;
     list_insert_last(fn_read_int->data.fn->params_types_list, param);
 
-    fn_read_double = context_add_function(current_context, KW_DOUBLE, current_token->data->id);
+    Symbol* fn_read_double = context_add_function(current_context, KW_DOUBLE, current_token->data->id);
     ListItemData param1;
     param1.var_type = VT_NULL;
     list_insert_last(fn_read_double->data.fn->params_types_list, param1);
 
-    fn_read_string = context_add_function(current_context, KW_STRING, current_token->data->id);
+    Symbol* fn_read_string = context_add_function(current_context, KW_STRING, current_token->data->id);
     ListItemData param2;
     param2.var_type = VT_NULL;
     list_insert_last(fn_read_string->data.fn->params_types_list, param2);
 
-    fn_length = context_add_function(current_context, KW_INT, current_token->data->id);
+    Symbol* fn_length = context_add_function(current_context, KW_INT, current_token->data->id);
     ListItemData param3;
     param3.var_type = VT_STRING;
     list_insert_last(fn_length->data.fn->params_types_list, param3);
 
-    fn_substring = context_add_function(current_context, KW_STRING, current_token->data->id);
+    Symbol* fn_substring = context_add_function(current_context, KW_STRING, current_token->data->id);
     ListItemData param4;
     param4.var_type = VT_STRING;
     list_insert_last(fn_substring->data.fn->params_types_list, param4);
@@ -102,7 +93,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     param6.var_type = VT_INTEGER;
     list_insert_last(fn_substring->data.fn->params_types_list, param6);
 
-    fn_compare = context_add_function(current_context, KW_INT, current_token->data->id);
+    Symbol* fn_compare = context_add_function(current_context, KW_INT, current_token->data->id);
     ListItemData param7;
     param7.var_type = VT_STRING;
     list_insert_last(fn_compare->data.fn->params_types_list, param7);
@@ -110,7 +101,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     param8.var_type = VT_STRING;
     list_insert_last(fn_compare->data.fn->params_types_list, param8);
 
-    fn_find = context_add_function(current_context, KW_INT, current_token->data->id);
+    Symbol* fn_find = context_add_function(current_context, KW_INT, current_token->data->id);
     ListItemData param9;
     param9.var_type = VT_STRING;
     list_insert_last(fn_find->data.fn->params_types_list, param9);
@@ -118,12 +109,12 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     param10.var_type = VT_STRING;
     list_insert_last(fn_find->data.fn->params_types_list, param10);
 
-    fn_sort = context_add_function(current_context, KW_STRING, current_token->data->id);
+    Symbol* fn_sort = context_add_function(current_context, KW_STRING, current_token->data->id);
     ListItemData param11;
     param11.var_type = VT_STRING;
     list_insert_last(fn_sort->data.fn->params_types_list, param11);
 
-    fn_print = context_add_function(current_context, KW_STRING, current_token->data->id);
+    Symbol* fn_print = context_add_function(current_context, KW_STRING, current_token->data->id);
     ListItemData param12;
     param12.var_type = VT_INTEGER;
     list_insert_last(fn_print->data.fn->params_types_list, param12);
