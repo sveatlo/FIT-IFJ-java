@@ -767,6 +767,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
             case STT_IDENT:
             {
                 is_term = true;
+                Ident* current_ident = current_token->data->id;
                 Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
                 if(get_error()->type) return NULL;
                 printf("STT_IDENT in expression; symbol = ");
@@ -799,6 +800,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->op = EO_SYMBOL_CALL;
                     data.expression->symbol = symbol;
                     data.expression->call_params = call_params_list;
+                    data.expression->symbol->id = current_ident;
                 } else {
                     prev_token();
                     data.expression->op = EO_SYMBOL;
