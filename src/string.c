@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,7 +102,7 @@ int str_cmp(String* s1, String* s2) {
 }
 
 int str_cmp_const(String* s1, char *s2) {
-    return strcmp( s1->str, s2);
+    return strcmp(s1->str, s2);
 }
 
 char* str_get_str(String* s) {
@@ -128,6 +129,12 @@ void int_to_string(String* s, int i) {
 void double_to_string(String* s, double d) {
     _str_resize_raw(s, 20);
     snprintf(s->str, 20, "%g", d);
+    s->length = strlen(s->str);
+}
+
+void bool_to_string(String* s, bool b) {
+    _str_resize_raw(s, 5);
+    snprintf(s->str, 5, "%s", b ? "true" : "false");
     s->length = strlen(s->str);
 }
 

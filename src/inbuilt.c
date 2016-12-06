@@ -1,194 +1,74 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <ctype.h>
-
-#include "inbuilt.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include "error.h"
-#include "string.h"
 #include "expression.h"
+#include "inbuilt.h"
+#include "string.h"
 
 extern Error last_error;
 
 int read_int() {
-    char c;
     String* number = str_init();
-    c = getchar();
+    int c = getchar();
     while (c != '\n') {
-        if (!isdigit(c)) {
-            set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-            str_dispose(number);
-            set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-            return last_error.type;
-        } else {
-            str_append(number, c);
-        }
+        str_append(number, c);
         c = getchar();
     }
-    if (number->str != NULL) {
-        int i = atoi(str_get_str(number));
-        str_dispose(number);
-        return i;
-    } else {
+    char *err;
+    int i = strtol(number->str, &err, 0);
+    if (*err != 0) {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-        str_dispose(number);
-        set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-        return last_error.type;
+        return -1;
     }
+
+    return i;
 }
 
 double read_double() {
-    char c;
-    c = getchar();
-    if (isdigit(c)) {
-        String* number = str_init();
-        statetype state = NUMBER; //enum of states
-        while (1) {
-            switch (state) {
-                case NUMBER:
-                //is number
-                if (isdigit(c)) {
-                    //is digit => append
-                    str_append(number, c);
-                    state = NUMBER;
-                } else if ((c == 'e') || (c == 'E')) {
-                    //is exponent => append
-                    str_append(number, c);
-                    state = DOUBLE_EX_1;
-                } else if (c == '.') {
-                    //is decimal mark => append
-                    str_append(number, c);
-                    state = DOUBLE_DEC_1;
-                } else if (c == '\n') {
-                    // finish
-                    int i = atoi(str_get_str(number));
-                    str_dispose(number);
-                    return i;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-                break;
-
-                case DOUBLE_EX_1:
-                //is double with exponent
-                if ((c == '-') || (c == '+')) {
-                    // +,- => must be append number
-                    str_append(number, c);
-                    state = DOUBLE_EX_2;
-                } else if (isdigit(c)) {
-                    // is digit => append
-                    str_append(number, c);
-                    state = DOUBLE_EX_3;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-
-                break;
-
-                case DOUBLE_EX_2:
-                //is double with exponent with +,-
-                // must be number
-                if (isdigit(c)) {
-                    // is digit => append
-                    str_append(number, c);
-                    state = DOUBLE_EX_3;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-
-                break;
-
-                case DOUBLE_EX_3:
-                //is double => must be digit or finish
-                if (isdigit(c)) {
-                    // is digit => append
-                    str_append(number, c);
-                    state = DOUBLE_EX_3;
-                } else if (c == '\n') {
-                    //finish
-                    double d = atof(str_get_str(number));
-                    str_dispose(number);
-                    return d;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-
-                break;
-
-                case DOUBLE_DEC_1:
-                //is double => must be only digit
-                // is number
-                if (isdigit(c)) {
-                    // is digit => append
-                    str_append(number, c);
-                    state = DOUBLE_DEC_2;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-
-                break;
-
-                case DOUBLE_DEC_2:
-                //is double => must be digit or exponent or next token
-                if (isdigit(c)) {
-                    // is digit => append
-                    str_append(number, c);
-                    state = DOUBLE_DEC_2;
-                } else if ((c == 'e') || (c == 'E')) {
-                    // is exponent
-                    str_append(number, c);
-                    state = DOUBLE_EX_1;
-                } else if (c == '\n') {
-                    //finish
-                    double d = atof(str_get_str(number));
-                    str_dispose(number);
-                    return d;
-                } else {
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-                    str_dispose(number);
-                    set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-                    return last_error.type;
-                }
-
-                break;
-            }
-            c = getchar();
-        }
-    } else {
-        set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
-        set_error(ERR_READ_NUM_FROM_STDIN); //error 7
-        return last_error.type;
-    }
-}
-
-String* read_str(String* a) {
-    char c;
-    c = getchar();
+    String* number = str_init();
+    int c = getchar();
     while (c != '\n') {
-        str_append(a, c);
+        str_append(number, c);
         c = getchar();
     }
-    return a;
+    char *err;
+    double d = strtod(number->str, &err);
+    if (*err != 0) {
+        set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
+        return -1;
+    }
+
+    return d;
+}
+
+String* read_str() {
+    String* str = str_init();
+
+    int c = getchar();
+    while (c != '\n') {
+        str_append(str, c);
+        c = getchar();
+    }
+    return str;
 }
 
 void print_to_stdin(Expression *expr) {
-    (void)expr;
-    //TODO: Bug: voidprint("" + 2 + 3) ... bad concatenate
-    // expression_evaluate(expr);
-    // printf("%s",str_get_str(expr->str));
-    //TODO deallocate expr
+    switch (expr->op) {
+        case EO_CONST_STRING:
+            printf("%s", str_get_str(expr->str));
+            break;
+        case EO_CONST_INTEGER:
+            printf("%d", expr->i);
+            break;
+        case EO_CONST_DOUBLE:
+            printf("%g", expr->d);
+            break;
+        case EO_CONST_BOOL:
+            printf("%s", expr->b ? "true" : "false");
+            break;
+        default:
+            set_error(ERR_SEM_PARAMS);
+            break;
+    }
 }

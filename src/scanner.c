@@ -191,6 +191,8 @@ ScannerToken* get_next_token(FILE *f) {
             }
         }
 
+        String *number;
+
         switch (current_state) {
             //default state => every token starts here
             case SS_EMPTY:
@@ -413,7 +415,7 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     // next token
                     char *endptr;
-                    long i = strtol(str_get_str(token->data->str), &endptr, 10);
+                    long i = strtol(str_get_str(token->data->str), &endptr, 8);
                     if (i > INT_MAX) {
                         str_dispose(token->data->str);
                         free(token->data);
@@ -575,7 +577,6 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_LEX_ERROR;
                 } else if (c == '\\') {
                     // '\'
-                    str_append(token->data->str, c);
                     current_state = SS_BACKSLASH;
                 } else if (c != '"') {
                     //not '"' => append
@@ -590,17 +591,29 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_BACKSLASH:
-                if ((c == 'n') || (c == '"') || (c == 't') || (c == '\\')) {
-                    str_append(token->data->str, c);
+                if (c == 'n') {
+                    str_append(token->data->str, 10);
+                    current_state = SS_STRING;
+                } else if (c == '"') {
+                    str_append(token->data->str, 34);
+                    current_state = SS_STRING;
+                } else if (c == 't') {
+                    str_append(token->data->str, 9);
+                    current_state = SS_STRING;
+                } else if (c == '\\') {
+                    str_append(token->data->str, 92);
                     current_state = SS_STRING;
                 } else if (c == '0') {
-                    str_append(token->data->str, c);
+                    number = str_init();
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MIN_1;
                 } else if ((c == '1') || (c == '2')) {
-                    str_append(token->data->str, c);
+                    number = str_init();
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_1;
                 } else if (c == '3') {
-                    str_append(token->data->str, c);
+                    number = str_init();
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MAX_1;
                 } else {
                     str_dispose(token->data->str);
@@ -611,9 +624,10 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_1:
                 if (isdigit(c)) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_2;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -622,9 +636,13 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_2:
                 if (isdigit(c)) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
+                    str_append(token->data->str, i);
+                    str_dispose(number);
                     current_state = SS_STRING;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -633,9 +651,10 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_MAX_1:
                 if (isdigit(c) && (c != '8') && (c != '9')) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MAX_2;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -644,9 +663,13 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_MAX_2:
                 if (isdigit(c) && (c != '8') && (c != '9')) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
+                    str_append(token->data->str, i);
+                    str_dispose(number);
                     current_state = SS_STRING;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -655,12 +678,13 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_MIN_1:
                 if (c == '0') {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MIN_2;
                 } else if (isdigit(c)) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
                     current_state = SS_OCT_ESCAPE_2;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -669,9 +693,13 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_OCT_ESCAPE_MIN_2:
                 if (isdigit(c) && (c != '0')) {
-                    str_append(token->data->str, c);
+                    str_append(number, c);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
+                    str_append(token->data->str, i);
+                    str_dispose(number);
                     current_state = SS_STRING;
                 } else {
+                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -808,7 +836,7 @@ ScannerToken* get_next_token(FILE *f) {
                     //could be end of block comment
                     current_state = SS_COMMENT_BLOCK_END;
                 } else if (c == EOF) {
-                    // end of file = end of comment
+                    // end of file without proper comment ending => error
                     ungetc(c, f);
                     current_state = SS_LEX_ERROR;
                 } else {
@@ -839,6 +867,9 @@ ScannerToken* get_next_token(FILE *f) {
                 // continue with scan file after isspace
                 while (!isspace(c)) {
                     c = getc(f);
+                    if(c == -1) {
+                        break;
+                    }
                 }
                 token->type = STT_EMPTY;
                 return token;

@@ -62,6 +62,162 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     Symbol* new_class = table_insert_class(main_context->symbol_table, current_class_name, main_context);
     current_context = new_class->data.cls->context;
 
+    do {
+        Ident fn_read_int_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("readInt")
+        };
+        Symbol* fn_read_int = context_add_function(current_context, KW_INT, &fn_read_int_id);
+
+        Ident fn_read_double_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("readDouble")
+        };
+        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
+
+        Ident fn_read_string_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("readString")
+        };
+        /*Symbol* fn_read_string = */context_add_function(current_context, KW_STRING, &fn_read_string_id);
+
+        Ident fn_length_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("length")
+        };
+        Symbol* fn_length = context_add_function(current_context, KW_INT, &fn_length_id);
+        Ident id0 = {
+            .class = NULL,
+            .name = str_init_const("s")
+        };
+        ListItemData param_type0, param_id0 = {
+            .id = &id0
+        };
+        param_type0.var_type = VT_STRING;
+        list_insert_last(fn_length->data.fn->params_types_list, param_type0);
+        list_insert_last(fn_length->data.fn->params_ids_list, param_id0);
+
+        Ident fn_substring_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("substr")
+        };
+        Symbol* fn_substring = context_add_function(current_context, KW_STRING, &fn_substring_id);
+        Ident id1 = {
+            .class = NULL,
+            .name = str_init_const("s")
+        };
+        ListItemData param_type1, param_id1 = {
+            .id = &id1
+        };
+        param_type1.var_type = VT_STRING;
+        list_insert_last(fn_substring->data.fn->params_types_list, param_type1);
+        list_insert_last(fn_substring->data.fn->params_ids_list, param_id1);
+        Ident id2 = {
+            .class = NULL,
+            .name = str_init_const("i")
+        };
+        ListItemData param_type2, param_id2 = {
+            .id = &id2
+        };
+        param_type2.var_type = VT_INTEGER;
+        list_insert_last(fn_substring->data.fn->params_types_list, param_type2);
+        list_insert_last(fn_substring->data.fn->params_ids_list, param_id2);
+        Ident id3 = {
+            .class = NULL,
+            .name = str_init_const("n")
+        };
+        ListItemData param_type3, param_id3 = {
+            .id = &id3
+        };
+        param_type3.var_type = VT_INTEGER;
+        list_insert_last(fn_substring->data.fn->params_types_list, param_type3);
+        list_insert_last(fn_substring->data.fn->params_ids_list, param_id3);
+
+        Ident fn_compare_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("compare")
+        };
+        Symbol* fn_compare = context_add_function(current_context, KW_INT, &fn_compare_id);
+        Ident id4 = {
+            .class = NULL,
+            .name = str_init_const("s1")
+        };
+        ListItemData param_type4, param_id4 = {
+            .id = &id4
+        };
+        param_type4.var_type = VT_STRING;
+        list_insert_last(fn_compare->data.fn->params_types_list, param_type4);
+        list_insert_last(fn_compare->data.fn->params_ids_list, param_id4);
+        Ident id5 = {
+            .class = NULL,
+            .name = str_init_const("s2")
+        };
+        ListItemData param_type5, param_id5 = {
+            .id = &id5
+        };
+        param_type5.var_type = VT_STRING;
+        list_insert_last(fn_compare->data.fn->params_types_list, param_type5);
+        list_insert_last(fn_compare->data.fn->params_ids_list, param_id5);
+
+        Ident fn_find_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("find")
+        };
+        Symbol* fn_find = context_add_function(current_context, KW_INT, &fn_find_id);
+        Ident id6 = {
+            .class = NULL,
+            .name = str_init_const("s")
+        };
+        ListItemData param_type6, param_id6 = {
+            .id = &id6
+        };
+        param_type6.var_type = VT_STRING;
+        list_insert_last(fn_find->data.fn->params_types_list, param_type6);
+        list_insert_last(fn_find->data.fn->params_ids_list, param_id6);
+        Ident id7 = {
+            .class = NULL,
+            .name = str_init_const("search")
+        };
+        ListItemData param_type7, param_id7 = {
+            .id = &id7
+        };
+        param_type7.var_type = VT_STRING;
+        list_insert_last(fn_find->data.fn->params_types_list, param_type7);
+        list_insert_last(fn_find->data.fn->params_ids_list, param_id7);
+
+        Ident fn_sort_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("sort")
+        };
+        Symbol* fn_sort = context_add_function(current_context, KW_STRING, &fn_sort_id);
+        Ident id8 = {
+            .class = NULL,
+            .name = str_init_const("s")
+        };
+        ListItemData param_type8, param_id8 = {
+            .id = &id8
+        };
+        param_type8.var_type = VT_STRING;
+        list_insert_last(fn_sort->data.fn->params_types_list, param_type8);
+        list_insert_last(fn_sort->data.fn->params_ids_list, param_id8);
+
+        Ident fn_print_id = {
+            .class = str_init_const("ifj16"),
+            .name = str_init_const("print")
+        };
+        Symbol* fn_print = context_add_function(current_context, KW_STRING, &fn_print_id);
+        Ident id9 = {
+            .class = NULL,
+            .name = str_init_const("s")
+        };
+        ListItemData param_type9, param_id9 = {
+            .id = &id9
+        };
+        param_type9.var_type = VT_STRING;
+        list_insert_last(fn_print->data.fn->params_types_list, param_type9);
+        list_insert_last(fn_print->data.fn->params_ids_list, param_id9);
+    } while(false);
+
     current_context = main_context;
     current_instructions = main_instructions;
 
@@ -448,6 +604,7 @@ void stat_rule(bool is_void, bool can_define) {
         }
     } else if(current_token->type == STT_IDENT) {
         //check if symbol exists
+        Ident* current_ident = current_token->data->id;
         Symbol* symbol = NULL;
         if(second_run) {
             symbol = context_find_ident(current_context, main_context, current_token->data->id);
@@ -471,7 +628,44 @@ void stat_rule(bool is_void, bool can_define) {
                     return set_error(ERR_SEMANTIC);
                 }
                 if(get_error()->type) return;
-                instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
+
+                if(current_ident->class != NULL && str_cmp_const(current_ident->class, "ifj16") == 0) {
+                    /*
+                     *  substr, compare, find, sort generate a nop instruction because, they have no real use when not in expression
+                     */
+
+                    if(str_cmp_const(current_ident->name, "readInt") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_READ_INT, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "readDouble") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_READ_DOUBLE, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "readString") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_READ_STRING, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "print") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_PRINT, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "length") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_LENGTH, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "substr") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SORT, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "compare") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_FIND, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "find") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SUBSTRING, NULL, call_params_list, NULL));
+                    } else if(str_cmp_const(current_ident->name, "sort") == 0) {
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_COMP, NULL, call_params_list, NULL));
+                    } else {
+                        // unknown fn
+                        // redundat check (first checking in context_find_ident)
+                        return set_error(ERR_SEMANTIC);
+                    }
+                } else {
+                    //just general fn call
+                    instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
+                }
             } else {
                 while(current_token->type != STT_RIGHT_PARENTHESE) {
                     next_token();
@@ -594,6 +788,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
             case STT_IDENT:
             {
                 is_term = true;
+                Ident* current_ident = current_token->data->id;
                 Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
                 if(get_error()->type) return NULL;
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
@@ -623,6 +818,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->op = EO_SYMBOL_CALL;
                     data.expression->symbol = symbol;
                     data.expression->call_params = call_params_list;
+                    data.expression->symbol->id = current_ident;
                 } else {
                     prev_token();
                     if(symbol->type != ST_VARIABLE) {

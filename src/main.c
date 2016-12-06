@@ -25,6 +25,12 @@ int main(int argc, char** argv) {
     List *token_list = list_init();
 
     token_list = scan_file(f, token_list);
+    if(get_error()->type) {
+        // lex error => exit
+        // TODO: cleanup
+        print_error();
+        return get_error()->type;
+    }
 
     list_activate_first(token_list);
     // while(token_list->active != NULL) {
@@ -45,38 +51,26 @@ int main(int argc, char** argv) {
     //
     // list_dispose(token_list);
 
-    fclose(f);
-
-    if(get_error()->type) {
-        //lex error => exit
-        print_error();
-        return get_error()->type;
-    }
-
-    if(get_error()->type) {
-        //lex error => exit
-        print_error();
-        return get_error()->type;
-    }
-
     Context* context = NULL;
     List* instructions = NULL;
     parse(token_list, &context, &instructions);
 
     if(get_error()->type) {
-        //lex error => exit
+        // parser error => exit
+        // TODO: cleanup
         print_error();
         return get_error()->type;
     }
 
     interpret(context, instructions);
     if(get_error()->type) {
-        //lex error => exit
+        // interpret error => exit
+        // TODO: cleanup
         print_error();
         return get_error()->type;
     }
 
-
+    fclose(f);
 
     return 0;
 }

@@ -74,8 +74,6 @@ Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
         return NULL;
     }
 
-
-
     //type to return_type (VariableType)
     VariableType return_type;
     switch (type) {
@@ -111,7 +109,6 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
     if(token_ident->class != NULL) {
         Symbol* class_symbol = context_find_symbol(root_context, token_ident->class);
         if(class_symbol == NULL) {
-            // TODO: Error - unused var
             set_error(ERR_SEMANTIC);
             if(str_cmp_const(token_ident->class, "ifj16")) {
                 fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
@@ -123,7 +120,6 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
 
     Symbol* symbol = context_find_symbol(context, token_ident->name);
     if(symbol == NULL) {
-        // TODO: Error - unused var
         set_error(ERR_SEMANTIC);
         if(token_ident->class != NULL) {
             fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
