@@ -270,6 +270,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
             list_activate_next(params);
         }
     }
+
     // printf("\n");
     // printf("new current_context: %d %d\n", current_frame->context, __LINE__);
 
