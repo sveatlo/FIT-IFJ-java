@@ -20,7 +20,7 @@ run_tests() {
     echo "---"
 
     for file in $(find "$test_dir" -mindepth 1 -maxdepth 1 -name "*.test"); do
-        echo "Currently testing [${YELLOW} $file ${RESET}]. With following results: "
+        echo -n "Running [${YELLOW} $file ${RESET}] "
         # 2&>1 takes STDERR into equation
         "$intepret" "$file" > /dev/null 2>&1
         returned=$?
@@ -29,14 +29,13 @@ run_tests() {
 
         if [ "$returned" -eq "$expected" ]; then
             passed=$((passed + 1))
-            echo "Finished testing [${YELLOW} $file ${RESET}] with returned value of [${YELLOW} $returned ${RESET}]. Test seems to be ${GREEN}successful${RESET}"
-            echo "Returned value [${GREEN} $returned ${RESET}] which matches the expected result"
+            echo "(${GREEN}successful${RESET})"
         else
             failed=$((failed + 1))
-            echo "Finished testing [${YELLOW} $file ${RESET}] with returned value of [${YELLOW} $returned ${RESET}]. Test seems to be ${RED}unsuccesful${RESET}."
-            echo "Returned value [${RED} $returned ${RESET}] which does not match the expected result: $expected"
+            echo "(${RED}failed${RESET})"
+            echo "    EXPECTED: ${GREEN} $expected ${RESET}"
+            echo "    RETURNED: ${RED} $returned ${RESET}"
         fi
-        echo ""
     done
 
 
@@ -46,20 +45,28 @@ run_tests() {
     echo "Amount of ${GREEN}successful ${RESET}tests run: ${GREEN} $passed ${RESET}out of $totalamount"
     echo "Amount of ${RED}unsuccessful ${RESET}tests run: ${RED} $failed ${RESET} out of $totalamount"
     echo "*****************************************************"
+    echo ""
+    echo ""
+    echo ""
 }
 
+testgroup="all"
+
 # parse arguments
-while getopts :h FLAG; do
-  case $FLAG in
-    h) #show help
-        echo "Usage: ./test INTERPRET_BINARY"
-        exit 0
-        ;;
-    \?) # unrecognized option - show help
-        echo "Option -${BOLD}$OPTARG${NORM} not allowed. Use -h to see usage." 1>&2
-        exit 1
-      ;;
-  esac
+while getopts :t:h FLAG; do
+    case $FLAG in
+        t) # run only one group of tests
+            testgroup=$OPTARG
+            ;;
+        h) # show help
+            echo "Usage: ./test [-t lex|syntax|sem|overall|all] INTERPRET_BINARY"
+            exit 0
+            ;;
+        \?) # unrecognized option - show help
+            echo "Option -${BOLD}$OPTARG${NORM} not allowed. Use -h to see usage." 1>&2
+            exit 1
+            ;;
+    esac
 done
 
 shift $((OPTIND-1))
@@ -69,8 +76,33 @@ if ! [[ -f "$interpret" &&  -x "$interpret" ]]; then
     exit 1
 fi
 
+interpret=$(readlink -f "$interpret")
 
-run_tests "$interpret" "LEXICAL ANALYZATOR" "./testy/lexika"
-run_tests "$interpret" "SEMANTIC ANALYZATOR" "./testy/semantika"
-run_tests "$interpret" "SYNTAX ANALYZATOR" "./testy/syntax"
-run_tests "$interpret" "OVERALL ANALYZATOR" "./testy/interpret"
+
+# cd to the directory of test script
+cd $(dirname $(readlink -f "$0"))
+
+case $testgroup in
+    "all")
+        run_tests "$interpret" "LEXICAL ANALYZATOR" "./testy/lexika"
+        run_tests "$interpret" "SEMANTIC ANALYZATOR" "./testy/semantika"
+        run_tests "$interpret" "SYNTAX ANALYZATOR" "./testy/syntax"
+        run_tests "$interpret" "OVERALL ANALYZATOR" "./testy/interpret"
+        ;;
+    "lex")
+        run_tests "$interpret" "LEXICAL ANALYZATOR" "./testy/lexika"
+        ;;
+    "semantic")
+        run_tests "$interpret" "SEMANTIC ANALYZATOR" "./testy/semantika"
+        ;;
+    "syntax")
+        run_tests "$interpret" "SYNTAX ANALYZATOR" "./testy/syntax"
+        ;;
+    "overall")
+        run_tests "$interpret" "OVERALL ANALYZATOR" "./testy/interpret"
+        ;;
+    \?)
+        echo "Test group not recognized" 1>&2
+        ;;
+
+esac
