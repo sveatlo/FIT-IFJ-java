@@ -73,8 +73,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readDouble")
         };
-        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
-
+        Symbol* fn_read_double = context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
         Ident fn_read_string_id = {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readString")
@@ -791,6 +790,9 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 Ident* current_ident = current_token->data->id;
                 Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
                 if(get_error()->type) return NULL;
+                printf("STT_IDENT in expression; symbol = ");
+                symbol_print(symbol);
+                printf("\n");
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
                     //function call
                     if(symbol->type != ST_FUNCTION) {
