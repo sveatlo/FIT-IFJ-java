@@ -59,14 +59,14 @@ void process_frame() {
                 break;
             case IC_RETURN:
             {
-                printf("IC_RETURN: ");
-                expression_print((Expression*)current_instruction->op1);
-                printf(" = ");
+                // printf("IC_RETURN: ");
+                // expression_print((Expression*)current_instruction->op1);
+                // printf(" = ");
                 Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
 
-                expression_print(res);
-                printf("\n");
+                // expression_print(res);
+                // printf("\n");
                 if(current_frame->return_symbol != NULL) {
                     assign_value_to_variable(current_frame->return_symbol, res);
                     if(get_error()->type) return;
@@ -87,8 +87,8 @@ void process_frame() {
             }
             case IC_JMPTRUE:
             {
-                printf("jmptrue cond expr: ");
-                expression_print((Expression*)current_instruction->op1);
+                // printf("jmptrue cond expr: ");
+                // expression_print((Expression*)current_instruction->op1);
                 Expression* expr = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
 
@@ -111,8 +111,8 @@ void process_frame() {
             }
             case IC_JMPFALSE:
             {
-                printf("jmpfalse cond expr: ");
-                expression_print((Expression*)current_instruction->op1);
+                // printf("jmpfalse cond expr: ");
+                // expression_print((Expression*)current_instruction->op1);
                 Expression* expr = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
 
@@ -138,7 +138,7 @@ void process_frame() {
             case IC_EVAL:
             {
                 Instruction* my_current_instruction = current_instruction;
-                printf("   EVAL start current_frame: %d and current_instruction %d\n", current_frame, current_instruction);
+                // printf("   EVAL start current_frame: %d and current_instruction %d\n", current_frame, current_instruction);
                 printf("IC_EVAL (context = %d): ", current_frame->context);
                 expression_print((Expression*)my_current_instruction->op1);
                 Expression* res = expression_evaluate((Expression*)my_current_instruction->op1, main_context, current_frame->context);
@@ -146,7 +146,7 @@ void process_frame() {
                 printf(" = ");
                 expression_print(res);
 
-                printf("   EVAL post eval current_frame: %d and my_current_instruction %d\n", current_frame, my_current_instruction);
+                // printf("   EVAL post eval current_frame: %d and my_current_instruction %d\n", current_frame, my_current_instruction);
 
                 if(my_current_instruction->res != NULL) {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)my_current_instruction->res)->id);
@@ -252,6 +252,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
             list_activate_next(params);
         }
     }
+
     // printf("\n");
     // printf("new current_context: %d %d\n", current_frame->context, __LINE__);
 
@@ -266,12 +267,11 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 }
 
 void assign_value_to_variable(Symbol* symbol, Expression* expr) {
-    printf("assigning to ");
-    symbol_print(symbol);
-    printf("@ %d expression ", symbol);
-    expression_print(expr);
-    printf("in context: %d of frame: %d\n", current_frame->context, current_frame);
-
+    // printf("assigning to ");
+    // symbol_print(symbol);
+    // printf("@ %d expression ", symbol);
+    // expression_print(expr);
+    // printf("in context: %d of frame: %d\n", current_frame->context, current_frame);
     if(get_error()->type) return;
     if(symbol->type != ST_VARIABLE) return set_error(ERR_INTERPRET);
     switch(symbol->data.var->type) {
