@@ -22,10 +22,11 @@ run_tests() {
     for file in $(find "$test_dir" -mindepth 1 -maxdepth 1 -name "*.test"); do
         echo -n "Running [${YELLOW} $file ${RESET}] "
         # 2&>1 takes STDERR into equation
-        "$intepret" "$file" > /dev/null 2>&1
-        returned=$?
         file=${file%.*}
-        expected=$(cat "$file".output)
+
+        "$intepret" "$file" < "$file.input" > /dev/null 2>&1
+        returned=$?
+        expected=$(cat "$file".code)
 
         if [ "$returned" -eq "$expected" ]; then
             passed=$((passed + 1))
