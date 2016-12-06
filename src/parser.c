@@ -73,13 +73,13 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readDouble")
         };
-        Symbol* fn_read_double = context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
+        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
 
         Ident fn_read_string_id = {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readString")
         };
-        Symbol* fn_read_string = context_add_function(current_context, KW_STRING, &fn_read_string_id);
+        /*Symbol* fn_read_string = */context_add_function(current_context, KW_STRING, &fn_read_string_id);
 
         Ident fn_length_id = {
             .class = str_init_const("ifj16"),
@@ -99,7 +99,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
 
         Ident fn_substring_id = {
             .class = str_init_const("ifj16"),
-            .name = str_init_const("substring")
+            .name = str_init_const("substr")
         };
         Symbol* fn_substring = context_add_function(current_context, KW_STRING, &fn_substring_id);
         Ident id1 = {
@@ -630,6 +630,10 @@ void stat_rule(bool is_void, bool can_define) {
                 if(get_error()->type) return;
 
                 if(current_ident->class != NULL && str_cmp_const(current_ident->class, "ifj16") == 0) {
+                    /*
+                     *  substr, compare, find, sort generate a nop instruction because, they have no real use when not in expression
+                     */
+
                     if(str_cmp_const(current_ident->name, "readInt") == 0) {
                         instruction_insert_to_list(current_instructions, instruction_generate(IC_READ_INT, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "readDouble") == 0) {
@@ -639,15 +643,20 @@ void stat_rule(bool is_void, bool can_define) {
                     } else if(str_cmp_const(current_ident->name, "print") == 0) {
                         instruction_insert_to_list(current_instructions, instruction_generate(IC_PRINT, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "length") == 0) {
-                        instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_LENGTH, NULL, call_params_list, NULL));
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_LENGTH, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "substr") == 0) {
-                        instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SORT, NULL, call_params_list, NULL));
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SORT, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "compare") == 0) {
-                        instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_FIND, NULL, call_params_list, NULL));
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_FIND, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "find") == 0) {
-                        instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SUBSTRING, NULL, call_params_list, NULL));
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_SUBSTRING, NULL, call_params_list, NULL));
                     } else if(str_cmp_const(current_ident->name, "sort") == 0) {
-                        instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_COMP, NULL, call_params_list, NULL));
+                        instruction_insert_to_list(current_instructions, instruction_generate(IC_NOP, NULL, NULL, NULL));
+                        // instruction_insert_to_list(current_instructions, instruction_generate(IC_STR_COMP, NULL, call_params_list, NULL));
                     } else {
                         // unknown fn
                         // redundat check (first checking in context_find_ident)

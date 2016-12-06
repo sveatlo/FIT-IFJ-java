@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "context.h"
 #include "error.h"
 #include "expression.h"
-#include "context.h"
+#include "inbuilt.h"
 #include "interpret.h"
 #include "list.h"
-#include "scanner_token.h"
-#include "symbol.h"
-#include "stack.h"
 #include "precedence_table.h"
+#include "scanner_token.h"
+#include "stack.h"
+#include "symbol.h"
 
 char operations_char[][255] = {
     [EO_SYMBOL] = "EO_SYMBOL",
@@ -182,11 +183,11 @@ const ExpressionOperationSign OperationTablePlus[EO_CONST_BOOL + 1][EO_CONST_BOO
             [EO_CONST_INTEGER] = S,
             [EO_CONST_DOUBLE] = S,
             [EO_CONST_STRING] = S,
-            [EO_CONST_BOOL] = U }, //string
+            [EO_CONST_BOOL] = S }, //string
         [EO_CONST_BOOL]    =  {
             [EO_CONST_INTEGER] = U,
             [EO_CONST_DOUBLE] = U,
-            [EO_CONST_STRING] = U,
+            [EO_CONST_STRING] = S,
             [EO_CONST_BOOL] = U }  //boolean
 };
 
@@ -247,11 +248,17 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 } else if (expr1->op == EO_CONST_DOUBLE) {
                     double_to_string(res_expr->str, expr1->d);
                     str_concat(res_expr->str, expr2->str);
+                } else if (expr1->op == EO_CONST_BOOL) {
+                    bool_to_string(res_expr->str, expr1->d);
+                    str_concat(res_expr->str, expr2->str);
                 } else if (expr2->op == EO_CONST_INTEGER) {
                     int_to_string(res_expr->str, expr2->i);
                     str_concat(res_expr->str, expr1->str);
                 } else if (expr2->op == EO_CONST_DOUBLE) {
                     double_to_string(res_expr->str, expr2->d);
+                    str_concat(res_expr->str, expr1->str);
+                } else if (expr2->op == EO_CONST_BOOL) {
+                    bool_to_string(res_expr->str, expr2->d);
                     str_concat(res_expr->str, expr1->str);
                 } else {
                     str_concat(expr1->str, expr2->str);
@@ -612,15 +619,14 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             break;
         case EO_SYMBOL_CALL:
         {
-            printf("EO_SYMBOL_CALL 1\n");
+            // printf("EO_SYMBOL_CALL 0\n");
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
             expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
-            symbol_print(expr->symbol);
-            printf("\n");
+            // printf("EO_SYMBOL_CALL 1\n");
             if(expr->symbol == NULL) {
                 set_error(ERR_INTERPRET);
                 return NULL;
@@ -629,40 +635,175 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
+            if(expr->symbol->data.fn->return_type == VT_VOID) {
+                set_error(ERR_SEM_PARAMS);
+                return NULL;
+            }
             // printf("EO_SYMBOL_CALL 2\n");
 
-            // create tmp return symbol
-            Symbol* tmp = symbol_init(str_init_const("tmp_symbol"));
-            Ident id = {
-                .class = NULL,
-                .name = str_init_const("tmp_symbol")
-            };
-            tmp->id = &id;
-            // printf("EO_SYMBOL_CALL 3\n");
-            tmp->type = ST_VARIABLE;
-            // printf("EO_SYMBOL_CALL 4: %d\n", expr->symbol->data.fn->return_type);
-            symbol_new_variable(tmp, expr->symbol->data.fn->return_type);
+            if(expr->symbol->id->class != NULL  && str_cmp_const(expr->symbol->id->class, "ifj16") == 0) {
+                //builtin fn call
 
-            // call the fn
-            // printf("EO_SYMBOL_CALL 5\n");
-            call(expr->symbol, expr->call_params, tmp, true);
-            // printf("EO_SYMBOL_CALL 6\n");
+                Expression* res_expr = expression_init();
+                if(str_cmp_const(expr->symbol->id->name, "readInt") == 0) {
+                    res_expr->op = EO_CONST_INTEGER;
+                    res_expr->i = read_int();
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        return NULL;
+                    }
+                } else if(str_cmp_const(expr->symbol->id->name, "readDouble") == 0) {
+                    res_expr->op = EO_CONST_DOUBLE;
+                    res_expr->d = read_double();
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        return NULL;
+                    }
+                } else if(str_cmp_const(expr->symbol->id->name, "readString") == 0) {
+                    res_expr->op = EO_CONST_STRING;
+                    res_expr->str = read_str();
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        return NULL;
+                    }
+                } else if(str_cmp_const(expr->symbol->id->name, "length") == 0) {
+                    res_expr->op = EO_CONST_INTEGER;
+                    Expression* res = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(res);
+                        return NULL;
+                    }
+                    if(res->op != EO_CONST_STRING) {
+                        set_error(ERR_SEM_PARAMS);
+                        expression_dispose(res_expr);
+                        expression_dispose(res);
+                        return NULL;
+                    }
+                    res_expr->i = str_length(res->str);
+                } else if(str_cmp_const(expr->symbol->id->name, "substr") == 0) {
+                    res_expr->op = EO_CONST_STRING;
+                    Expression* s1 = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
+                    Expression* i = expression_evaluate(expr->call_params->first->next->data.expression, main_context, context);
+                    Expression* n = expression_evaluate(expr->call_params->first->next->next->data.expression, main_context, context);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(i);
+                        expression_dispose(n);
+                        return NULL;
+                    }
+                    if(s1->op != EO_CONST_STRING || i->op != EO_CONST_INTEGER || i->op != EO_CONST_INTEGER) {
+                        set_error(ERR_SEM_PARAMS);
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(i);
+                        expression_dispose(n);
+                        return NULL;
+                    }
+                    res_expr->str = substr(s1->str, i->i, n->i);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(i);
+                        expression_dispose(n);
+                        return NULL;
+                    }
+                } else if(str_cmp_const(expr->symbol->id->name, "compare") == 0) {
+                    res_expr->op = EO_CONST_INTEGER;
+                    res_expr->op = EO_CONST_INTEGER;
+                    Expression* s1 = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
+                    Expression* s2 = expression_evaluate(expr->call_params->first->next->data.expression, main_context, context);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(s2);
+                        return NULL;
+                    }
+                    if(s1->op != EO_CONST_STRING || s2->op != EO_CONST_STRING) {
+                        set_error(ERR_SEM_PARAMS);
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(s2);
+                        return NULL;
+                    }
+                    res_expr->i = str_cmp(s1->str, s2->str);
+                } else if(str_cmp_const(expr->symbol->id->name, "find") == 0) {
+                    res_expr->op = EO_CONST_INTEGER;
+                    Expression* s1 = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
+                    Expression* s2 = expression_evaluate(expr->call_params->first->next->data.expression, main_context, context);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(s2);
+                        return NULL;
+                    }
+                    if(s1->op != EO_CONST_STRING || s2->op != EO_CONST_STRING) {
+                        set_error(ERR_SEM_PARAMS);
+                        expression_dispose(res_expr);
+                        expression_dispose(s1);
+                        expression_dispose(s2);
+                        return NULL;
+                    }
+                    res_expr->i = ial_find(s1->str, s2->str);
+                } else if(str_cmp_const(expr->symbol->id->name, "sort") == 0) {
+                    res_expr->op = EO_CONST_STRING;
+                    Expression* res = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
+                    if(get_error()->type) {
+                        expression_dispose(res_expr);
+                        expression_dispose(res);
+                        return NULL;
+                    }
+                    if(res->op != EO_CONST_STRING) {
+                        set_error(ERR_SEM_PARAMS);
+                        expression_dispose(res_expr);
+                        expression_dispose(res);
+                        return NULL;
+                    }
+                    res_expr->str = ial_sort(res->str);
+                } else {
+                    // pretty much unnecessary
+                    set_error(ERR_SEMANTIC);
+                    return NULL;
+                }
 
-            // symbol -> expression
-            Expression expr;
-            // printf("EO_SYMBOL_CALL 7\n");
-            expr.op = EO_SYMBOL;
-            // printf("EO_SYMBOL_CALL 8\n");
-            expr.symbol = tmp;
-            // printf("EO_SYMBOL_CALL 9\n");
-            // res shall contain some const expression
-            Expression* res = expression_evaluate(&expr, main_context, context);
-            // printf("EO_SYMBOL_CALL 10\n");
-            //dispose tmp symbol
-            symbol_dispose(tmp);
+                return res_expr;
+            } else  {
+                //normal fn call
 
-            //return the const expression
-            return res;
+                // create tmp return symbol
+                Symbol* tmp = symbol_init(str_init_const("tmp_symbol"));
+                Ident id = {
+                    .class = NULL,
+                    .name = str_init_const("tmp_symbol")
+                };
+                tmp->id = &id;
+                // printf("EO_SYMBOL_CALL 3\n");
+                tmp->type = ST_VARIABLE;
+                // printf("EO_SYMBOL_CALL 4: %d\n", expr->symbol->data.fn->return_type);
+                symbol_new_variable(tmp, expr->symbol->data.fn->return_type);
+
+                // call the fn
+                // printf("EO_SYMBOL_CALL 5\n");
+                call(expr->symbol, expr->call_params, tmp, true);
+                // printf("EO_SYMBOL_CALL 6\n");
+
+                // symbol -> expression
+                Expression expr;
+                // printf("EO_SYMBOL_CALL 7\n");
+                expr.op = EO_SYMBOL;
+                // printf("EO_SYMBOL_CALL 8\n");
+                expr.symbol = tmp;
+                // printf("EO_SYMBOL_CALL 9\n");
+                // res shall contain some const expression
+                Expression* res = expression_evaluate(&expr, main_context, context);
+                // printf("EO_SYMBOL_CALL 10\n");
+                //dispose tmp symbol
+                symbol_dispose(tmp);
+
+                //return the const expression
+                return res;
+            }
         }
         case EO_SYMBOL:
         {

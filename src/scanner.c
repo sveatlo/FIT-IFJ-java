@@ -415,7 +415,7 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     // next token
                     char *endptr;
-                    long i = strtol(str_get_str(token->data->str), &endptr, 10);
+                    long i = strtol(str_get_str(token->data->str), &endptr, 8);
                     if (i > INT_MAX) {
                         str_dispose(token->data->str);
                         free(token->data);
@@ -585,7 +585,6 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     //is '"' => end of string => parse
                     token->type = STT_STRING;
-                    printf("%s\n",token->data->str->str );
                     return token;
                 }
 
@@ -638,8 +637,7 @@ ScannerToken* get_next_token(FILE *f) {
             case SS_OCT_ESCAPE_2:
                 if (isdigit(c)) {
                     str_append(number, c);
-                    char *endptr;
-                    int i = (int)strtol(str_get_str(number), &endptr, 10);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
                     str_append(token->data->str, i);
                     str_dispose(number);
                     current_state = SS_STRING;
@@ -666,8 +664,7 @@ ScannerToken* get_next_token(FILE *f) {
             case SS_OCT_ESCAPE_MAX_2:
                 if (isdigit(c) && (c != '8') && (c != '9')) {
                     str_append(number, c);
-                    char *endptr;
-                    int i = (int)strtol(str_get_str(number), &endptr, 10);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
                     str_append(token->data->str, i);
                     str_dispose(number);
                     current_state = SS_STRING;
@@ -697,8 +694,7 @@ ScannerToken* get_next_token(FILE *f) {
             case SS_OCT_ESCAPE_MIN_2:
                 if (isdigit(c) && (c != '0')) {
                     str_append(number, c);
-                    char *endptr;
-                    int i = (int)strtol(str_get_str(number), &endptr, 10);
+                    int i = (int)strtol(str_get_str(number), NULL, 8);
                     str_append(token->data->str, i);
                     str_dispose(number);
                     current_state = SS_STRING;

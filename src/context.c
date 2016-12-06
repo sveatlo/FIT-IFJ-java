@@ -74,8 +74,6 @@ Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
         return NULL;
     }
 
-
-
     //type to return_type (VariableType)
     VariableType return_type;
     switch (type) {
