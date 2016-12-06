@@ -1,6 +1,5 @@
-class Main(){
+class Main {
   static void run(){
-    String s = "Hello World
-    ";
+  //wtf was this for?
   }
 }

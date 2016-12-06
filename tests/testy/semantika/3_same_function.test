@@ -1,4 +1,4 @@
-class Main(){
+class Main {
   static void run(){
     String s = "Nespustaj ma";
   }

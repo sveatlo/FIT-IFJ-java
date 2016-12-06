@@ -596,25 +596,53 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
     switch(expr->op) {
         case EO_PLUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_PLUS);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_PLUS);
             }
             break;
 
         case EO_MINUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_MINUS);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_MINUS);
             }
             break;
 
         case EO_MULTIPLY:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_MULTIPLY);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_MULTIPLY);
             }
             break;
 
         case EO_DIVIDE:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_DIVIDE);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_DIVIDE);
             }
             break;
         case EO_SYMBOL_CALL:
@@ -632,7 +660,7 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 return NULL;
             }
             if(expr->symbol->type != ST_FUNCTION) {
-                set_error(ERR_SEM_PARAMS);
+                set_error(ERR_SEMANTIC);
                 return NULL;
             }
             if(expr->symbol->data.fn->return_type == VT_VOID) {
@@ -822,9 +850,13 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 }
                 // printf("expr eval EO_SYMBOL 2 %d in context %d\n", expr->symbol, context);
                 // printf("expr eval EO_SYMBOL 3 %d %d\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
-                if(expr->symbol->type != ST_VARIABLE || expr->symbol->data.var->initialized != true) {
-                    printf("    \n\nSETTING ERROR: ERR_SEM_PARAMS: %d %d\n\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
-                    set_error(ERR_SEM_PARAMS);
+                if(expr->symbol->type != ST_VARIABLE) {
+                    set_error(ERR_INTERPRET);
+                    return NULL;
+                }
+                if(expr->symbol->data.var->initialized != true) {
+                    // printf("    \n\nSETTING ERROR: ERR_SEM_PARAMS: %d %d\n\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
+                    set_error(ERR_RUN_NON_INIT_VAR);
                     return NULL;
                 }
             }
@@ -904,49 +936,105 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
 
         case EO_LOGIC_EQUAL:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_LOGIC_EQUAL);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_LOGIC_EQUAL);
             }
             break;
 
         case EO_LOGIC_NOT_EQUAL:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_LOGIC_NOT_EQUAL);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_LOGIC_NOT_EQUAL);
             }
             break;
 
         case EO_GREATER:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_GREATER);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_GREATER);
             }
             break;
 
         case EO_GREATER_EQUALS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_GREATER_EQUALS);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_GREATER_EQUALS);
             }
             break;
 
         case EO_LESS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_LESS);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_LESS);
             }
             break;
 
         case EO_LESS_EQUALS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_LESS_EQUALS);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_LESS_EQUALS);
             }
             break;
 
         case EO_AND:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_AND);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_AND);
             }
             break;
 
         case EO_OR:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
-                res_expr = expression_compare(expression_evaluate(expr->expr1, main_context, context), expression_evaluate(expr->expr2, main_context, context), EO_OR);
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                Expression* expr2 = expression_evaluate(expr->expr2, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    expression_dispose(expr2);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, expr2, EO_OR);
             }
             break;
 

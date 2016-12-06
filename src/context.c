@@ -4,6 +4,7 @@
 #include "context.h"
 #include "error.h"
 #include "ial.h"
+#include "parser.h"
 
 Context* context_init(Context* parent_context) {
     Context* new_context = (Context*)malloc(sizeof(Context));
@@ -36,7 +37,7 @@ Symbol* context_find_symbol(Context* context, SymbolName name) {
 
 Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
     if(table_find_symbol(context->symbol_table, id->name) != NULL) {
-        fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
+        //fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
         set_error(ERR_SEMANTIC);
         return NULL;
     }
@@ -69,7 +70,7 @@ Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
 
 Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
     if(table_find_symbol(context->symbol_table, id->name) != NULL) {
-        fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
+        //fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
         set_error(ERR_SEMANTIC);
         return NULL;
     }
@@ -111,7 +112,7 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
         if(class_symbol == NULL) {
             set_error(ERR_SEMANTIC);
             if(str_cmp_const(token_ident->class, "ifj16")) {
-                fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
+                //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
             }
             return NULL;
         }
@@ -122,9 +123,9 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
     if(symbol == NULL) {
         set_error(ERR_SEMANTIC);
         if(token_ident->class != NULL) {
-            fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
+            //fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
         } else {
-            fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
+            //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
         }
         return NULL;
     } else {

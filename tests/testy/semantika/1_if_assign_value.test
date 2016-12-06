@@ -1,4 +1,4 @@
-class Main(){
+class Main {
   static void run() {
     int x = 1;
     if (x = 2){

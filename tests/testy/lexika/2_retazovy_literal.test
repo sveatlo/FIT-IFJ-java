@@ -1,4 +1,4 @@
-class Main(){
+class Main {
   static void run() {
     String s = "Hello\nWor'ld\\\042 \000";
     ifj16.print(s);

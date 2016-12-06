@@ -24,7 +24,7 @@ run_tests() {
         # 2&>1 takes STDERR into equation
         file=${file%.*}
 
-        "$intepret" "$file" < "$file.input" > /dev/null 2>&1
+        $(cat "$file.input") | "$intepret" "$file.test" > /dev/null 2>&1
         returned=$?
         expected=$(cat "$file".code)
 

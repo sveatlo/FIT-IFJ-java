@@ -27,6 +27,9 @@ all: interpret
 docs: $(wildcard $(SRC_DIR)*)
 	doxygen
 
+tests: interpret
+	./tests/run.sh -t all $(DIST_DIR)ifj16
+
 stats:
 	@echo -n "Lines of code: " && wc -l $(wildcard $(SRC_DIR)*.c $(SRC_DIR)*.h) | tail -n 1 | sed -r "s/[ ]*([0-9]+).*/\1/g"
 	@echo -n "Size of code: " && du -hsc $(wildcard $(SRC_DIR)*.c $(SRC_DIR)*.h) | tail -n 1 | cut -f 1

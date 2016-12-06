@@ -225,7 +225,9 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     second_run = false;
     class_list_rule();
 
-    set_error(ERR_NONE);
+    // don't do 2nd run if errors occured
+    if(get_error()->type) return;
+
     second_run = true;
     current_context = main_context;
     current_instructions = main_instructions;
@@ -364,14 +366,13 @@ void class_member_rule() {
         } else {
             fn_symbol = context_find_ident(current_context, main_context, current_ident->data->id);
         }
+        if(get_error()->type) return;
         current_context = fn_symbol->data.fn->context;
         current_instructions = fn_symbol->data.fn->instructions;
 
         next_token();
         params_list_rule(fn_symbol->data.fn->params_types_list, fn_symbol->data.fn->params_ids_list);
-        if(get_error()->type) {
-            return;
-        }
+        if(get_error()->type) return;
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
         next_token();
@@ -558,7 +559,7 @@ void stat_rule(bool is_void, bool can_define) {
         if(current_token->type != STT_KEYWORD || current_token->data->keyword_type != KW_ELSE) return set_error(ERR_SYNTAX);
         // {
         if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        // statements inside IF
+        // statements inside IF (ELSE)
         next_token();
         stat_list_rule(is_void, false);
         // }
@@ -622,7 +623,7 @@ void stat_rule(bool is_void, bool can_define) {
                 List *call_params_list = list_init();
                 call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
                 if(symbol->data.fn->params_types_list->active != NULL) {
-                    fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                    //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
                     return set_error(ERR_SEMANTIC);
                 }
@@ -684,12 +685,12 @@ void stat_rule(bool is_void, bool can_define) {
                 instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
             }
         } else {
-            fprintf(stderr, "Unexpected token: %s\n", token_to_string(current_token));
+            //fprintf(stderr, "Unexpected token: %s\n", token_to_string(current_token));
             return set_error(ERR_SYNTAX);
         }
     } else if(current_token->type == STT_KEYWORD_TYPE) {
         if(!can_define) {
-            fprintf(stderr, "Variable definition is not allowed here\n");
+            //fprintf(stderr, "Variable definition is not allowed here\n");
             return set_error(ERR_SEMANTIC);
         }
 
@@ -722,7 +723,33 @@ void stat_rule(bool is_void, bool can_define) {
 Expression* bool_expression_rule() {
     if(!second_run) {
         while(current_token->type != STT_RIGHT_PARENTHESE) {
-            next_token();
+            // detect unwanted tokens even in 1st run
+            if(
+                current_token->type == STT_INT ||
+                current_token->type == STT_DOUBLE ||
+                current_token->type == STT_STRING ||
+                current_token->type == STT_KEYWORD ||
+                current_token->type == STT_IDENT ||
+                current_token->type == STT_PLUS ||
+                current_token->type == STT_MINUS ||
+                current_token->type == STT_MULTIPLY ||
+                current_token->type == STT_DIVIDE ||
+                current_token->type == STT_LEFT_PARENTHESE ||
+                current_token->type == STT_RIGHT_PARENTHESE ||
+                current_token->type == STT_AND ||
+                current_token->type == STT_OR ||
+                current_token->type == STT_LESS ||
+                current_token->type == STT_GREATER ||
+                current_token->type == STT_LESS_EQUALS ||
+                current_token->type == STT_GREATER_EQUALS ||
+                current_token->type == STT_LOGIC_EQUAL ||
+                current_token->type == STT_LOGIC_NOT_EQUAL
+            ) {
+                next_token();
+            } else {
+                set_error(ERR_SYNTAX);
+                return NULL;
+            }
         }
 
         return NULL;
@@ -739,7 +766,33 @@ Expression* expression_rule() {
 
     if(!second_run) {
         while(current_token->type != STT_SEMICOLON) {
-            next_token();
+            // detect unwanted tokens even in 1st run
+            if(
+                current_token->type == STT_INT ||
+                current_token->type == STT_DOUBLE ||
+                current_token->type == STT_STRING ||
+                current_token->type == STT_KEYWORD ||
+                current_token->type == STT_IDENT ||
+                current_token->type == STT_PLUS ||
+                current_token->type == STT_MINUS ||
+                current_token->type == STT_MULTIPLY ||
+                current_token->type == STT_DIVIDE ||
+                current_token->type == STT_LEFT_PARENTHESE ||
+                current_token->type == STT_RIGHT_PARENTHESE ||
+                current_token->type == STT_AND ||
+                current_token->type == STT_OR ||
+                current_token->type == STT_LESS ||
+                current_token->type == STT_GREATER ||
+                current_token->type == STT_LESS_EQUALS ||
+                current_token->type == STT_GREATER_EQUALS ||
+                current_token->type == STT_LOGIC_EQUAL ||
+                current_token->type == STT_LOGIC_NOT_EQUAL
+            ) {
+                next_token();
+            } else {
+                set_error(ERR_SYNTAX);
+                return NULL;
+            }
         }
 
         return NULL;
@@ -790,9 +843,6 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 Ident* current_ident = current_token->data->id;
                 Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
                 if(get_error()->type) return NULL;
-                printf("STT_IDENT in expression; symbol = ");
-                symbol_print(symbol);
-                printf("\n");
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
                     //function call
                     if(symbol->type != ST_FUNCTION) {
@@ -806,7 +856,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     List *call_params_list = list_init();
                     call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
                     if(symbol->data.fn->params_types_list->active != NULL) {
-                        fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                        //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                         //fn params but call params ended
                         set_error(ERR_SEMANTIC);
                         return NULL;
@@ -1008,7 +1058,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
 
     StackItem* res = stack_pop(term_stack);
     if(stack_pop(term_stack) != NULL) {
-        fprintf(stderr, "Cannot parse expression\n");
+        //fprintf(stderr, "Cannot parse expression\n");
         set_error(ERR_SYNTAX);
         return NULL;
     }

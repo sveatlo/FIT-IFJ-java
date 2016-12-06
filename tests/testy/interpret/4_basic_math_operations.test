@@ -1,4 +1,4 @@
-class Main(){
+class Main {
   static void run() {
     int a = 0;
 
@@ -12,7 +12,7 @@ class Main(){
     ifj16.print("Vysledok: " +a + "\n");
 
     a = a / 2;
-    ifj16.print("Vysledok: " +a + "\n")
+    ifj16.print("Vysledok: " +a + "\n");
 
 
   }

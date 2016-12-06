@@ -1,6 +1,6 @@
-class Main(){
+class Main {
   static void run() {
-    boolean bool1;
+    boolean bool1 = true;
     bool1 = bool1 + 1;
   }
 }

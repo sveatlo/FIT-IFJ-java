@@ -22,6 +22,13 @@ int main(int argc, char** argv) {
     set_error(ERR_NONE);
 
     FILE *f = parse_parameters(argc, argv);
+    if(get_error()->type) {
+        // lex error => exit
+        // TODO: cleanup
+        print_error();
+        return get_error()->type;
+    }
+
     List *token_list = list_init();
 
     token_list = scan_file(f, token_list);
