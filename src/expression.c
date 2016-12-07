@@ -739,7 +739,6 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                     }
                 } else if(str_cmp_const(expr->symbol->id->name, "compare") == 0) {
                     res_expr->op = EO_CONST_INTEGER;
-                    res_expr->op = EO_CONST_INTEGER;
                     Expression* s1 = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
                     Expression* s2 = expression_evaluate(expr->call_params->first->next->data.expression, main_context, context);
                     if(get_error()->type) {
