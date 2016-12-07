@@ -550,10 +550,19 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_OCT;
                 } else {
-                    //error
-                    str_dispose(token->data->str);
-                    free(token->data);
-                    current_state = SS_LEX_ERROR;
+                    char *endptr;
+                    long i = strtol(str_get_str(token->data->str), &endptr, 8);
+                    if (i > INT_MAX) {
+                        str_dispose(token->data->str);
+                        free(token->data);
+                        current_state = SS_LEX_ERROR;
+                    } else {
+                        str_dispose(token->data->str);
+                        token->data->i = (int)i;
+                        token->type = STT_INT;
+                        ungetc(c, f);
+                        return token;
+                    }
                 }
 
                 break;
