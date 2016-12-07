@@ -523,8 +523,7 @@ void stat_rule(bool is_void, bool can_define) {
         next_token();
         if((current_token->type == STT_SEMICOLON && !is_void) || (is_void && current_token->type != STT_SEMICOLON)) {
             //semicolon right after return in non-void fn OR in void fn, but there is some expression after return => error
-            set_error(ERR_RUN_NON_INIT_VAR);
-            return NULL;
+            return set_error(ERR_RUN_NON_INIT_VAR);
         } else {
             Expression* expr = NULL;
             if(current_token->type != STT_SEMICOLON) {
