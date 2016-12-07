@@ -82,6 +82,13 @@ typedef struct ExpressionStruct {
 Expression* expression_init();
 
 /**
+ *  Disposes Expression, freeing its memory
+ *
+ *  @ingroup Expression
+ */
+void expression_dispose(Expression *expr);
+
+/**
  *  Prints expression to STDOUT
  *
  *  @ingroup Expression

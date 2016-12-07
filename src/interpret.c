@@ -54,6 +54,8 @@ void interpretation_loop() {
 
 void process_frame() {
     while (current_frame->instructions->active != NULL) {
+        if(get_error()->type) return;
+
         current_instruction = current_frame->instructions->active->data.instruction;
         // printf("\n\n");
         // instruction_print(current_instruction);
@@ -150,6 +152,7 @@ void process_frame() {
                 // printf(" = \n");
                 // fflush(stdout);
                 Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
+
                 if(get_error()->type) return;
                 // expression_print(res);
 
