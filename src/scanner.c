@@ -399,18 +399,12 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_DOUBLE_DEC_1;
                 } else {
                     // next token
-<<<<<<< HEAD
-                    char *endptr;
-                    long i = strtol(str_get_str(token->data->str), &endptr, 10);
-=======
-                    long i = strtol(str_get_str(token->data->str), NULL, 8);
->>>>>>> IFJ28-BASE
+                    long i = strtol(str_get_str(token->data->str), NULL, 10);
+                    str_dispose(token->data->str);
                     if (i > INT_MAX) {
-                        str_dispose(token->data->str);
                         free(token->data);
                         current_state = SS_LEX_ERROR;
                     } else {
-                        str_dispose(token->data->str);
                         token->data->i = (int)i;
                         token->type = STT_INT;
                         ungetc(c, f);
@@ -550,9 +544,9 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_OCT;
                 } else {
-                    int i = (int)strtol(str_get_str(token->data->str), NULL, 10);
+                    //must be zero
                     str_dispose(token->data->str);
-                    token->data->i = i;
+                    token->data->i = 0;
                     token->type = STT_INT;
                     ungetc(c, f);
                     return token;

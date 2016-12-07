@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
         return get_error()->type;
     }
 
-    list_activate_first(token_list);
+    // list_activate_first(token_list);
     // while(token_list->active != NULL) {
     //     ScannerToken* token = token_list->active->data.token;
     //     if(token->type == STT_IDENT) {
@@ -58,24 +58,24 @@ int main(int argc, char** argv) {
     //
     // list_dispose(token_list);
 
-    Context* context = NULL;
-    List* instructions = NULL;
-    parse(token_list, &context, &instructions);
-
-    if(get_error()->type) {
-        // parser error => exit
-        // TODO: cleanup
-        print_error();
-        return get_error()->type;
-    }
-
-    interpret(context, instructions);
-    if(get_error()->type) {
-        // interpret error => exit
-        // TODO: cleanup
-        print_error();
-        return get_error()->type;
-    }
+    // Context* context = NULL;
+    // List* instructions = NULL;
+    // parse(token_list, &context, &instructions);
+    //
+    // if(get_error()->type) {
+    //     // parser error => exit
+    //     // TODO: cleanup
+    //     print_error();
+    //     return get_error()->type;
+    // }
+    //
+    // interpret(context, instructions);
+    // if(get_error()->type) {
+    //     // interpret error => exit
+    //     // TODO: cleanup
+    //     print_error();
+    //     return get_error()->type;
+    // }
 
     fclose(f);
 
