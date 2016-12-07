@@ -39,43 +39,43 @@ int main(int argc, char** argv) {
         return get_error()->type;
     }
 
-    list_activate_first(token_list);
-    while(token_list->active != NULL) {
-        ScannerToken* token = token_list->active->data.token;
-        if(token->type == STT_IDENT) {
-            if(token->data->id->class != NULL) {
-                printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
-            } else {
-                printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
+    // list_activate_first(token_list);
+    // while(token_list->active != NULL) {
+    //     ScannerToken* token = token_list->active->data.token;
+    //     if(token->type == STT_IDENT) {
+    //         if(token->data->id->class != NULL) {
+    //             printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
+    //         } else {
+    //             printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
+    //
+    //         }
+    //     } else {
+    //         printf("%s ", token_to_string(token));
+    //     }
+    //     list_activate_next(token_list);
+    // }
+    // printf("\n");
 
-            }
-        } else {
-            printf("%s ", token_to_string(token));
-        }
-        list_activate_next(token_list);
+    // list_dispose(token_list);
+
+    Context* context = NULL;
+    List* instructions = NULL;
+    parse(token_list, &context, &instructions);
+
+    if(get_error()->type) {
+        // parser error => exit
+        // TODO: cleanup
+        print_error();
+        return get_error()->type;
     }
-    printf("\n");
 
-    list_dispose(token_list);
-
-    // Context* context = NULL;
-    // List* instructions = NULL;
-    // parse(token_list, &context, &instructions);
-    //
-    // if(get_error()->type) {
-    //     // parser error => exit
-    //     // TODO: cleanup
-    //     print_error();
-    //     return get_error()->type;
-    // }
-    //
-    // interpret(context, instructions);
-    // if(get_error()->type) {
-    //     // interpret error => exit
-    //     // TODO: cleanup
-    //     print_error();
-    //     return get_error()->type;
-    // }
+    interpret(context, instructions);
+    if(get_error()->type) {
+        // interpret error => exit
+        // TODO: cleanup
+        print_error();
+        return get_error()->type;
+    }
 
     fclose(f);
 

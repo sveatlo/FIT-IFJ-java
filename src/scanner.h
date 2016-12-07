@@ -20,7 +20,6 @@
 typedef enum {
     SS_EMPTY, ///< empty
     SS_LEX_ERROR, ///< lexical error
-    SS_IDENT, ///< identificator
     SS_KEYWORD_IDENT, ///< keyword or identificator
     SS_CLASS_AND_FUNCTION_1,
     SS_CLASS_AND_FUNCTION_2,
