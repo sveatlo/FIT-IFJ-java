@@ -621,7 +621,10 @@ void stat_rule(bool is_void, bool can_define) {
 
         next_token();
         if(current_token->type == STT_LEFT_PARENTHESE) {
-            if(second_run) {
+            if(!second_run) {
+                next_token();
+                call_params_list_rule(NULL, NULL);
+            } else {
                 //function call
                 if(symbol->type != ST_FUNCTION) return set_error(ERR_OTHER_SEMANTIC);
 
@@ -674,12 +677,9 @@ void stat_rule(bool is_void, bool can_define) {
                     //just general fn call
                     instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
                 }
-            } else {
-                while(current_token->type != STT_RIGHT_PARENTHESE) {
-                    next_token();
-                }
             }
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
+            printf("%s\n", token_to_string(current_token));
             if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
         } else if(current_token->type == STT_EQUALS) {
@@ -751,7 +751,6 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     Stack* nonterm_stack = stack_init();
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
-        printf("%s\n", token_to_string(current_token));
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
