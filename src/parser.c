@@ -452,7 +452,7 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
 
 
     // VariableType type = fn_params_list->active->data.var_type;
-    printf("call_params_list before general_expression_rule call\n");
+    // printf("call_params_list before general_expression_rule call\n");
     Expression* expr = general_expression_rule(STT_COMMA, STT_RIGHT_PARENTHESE);
     //insert the expr to call_params_list
     if(second_run) {
@@ -545,6 +545,7 @@ void stat_rule(bool is_void, bool can_define) {
         // statements inside IF
         next_token();
         stat_list_rule(is_void, false);
+        if(get_error()->type) return;
         Instruction* jmp_after_else = NULL;
         Instruction* nop_before_else = NULL;
         Instruction* nop_after_else = NULL;
@@ -679,7 +680,6 @@ void stat_rule(bool is_void, bool can_define) {
                 }
             }
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
-            printf("%s\n", token_to_string(current_token));
             if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
         } else if(current_token->type == STT_EQUALS) {
@@ -784,36 +784,36 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             case STT_IDENT:
             {
-                printf("general_expression_rule IDENT 0\n");
+                // printf("general_expression_rule IDENT 0\n");
                 is_term = true;
                 Ident* current_ident = current_token->data->id;
                 Symbol* symbol = NULL;
                 if(second_run) {
                     symbol = context_find_ident(current_context, main_context, current_token->data->id);
                 }
-                printf("general_expression_rule IDENT 1\n");
+                // printf("general_expression_rule IDENT 1\n");
                 if(get_error()->type) return NULL;
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
-                    printf("general_expression_rule IDENT 2\n");
+                    // printf("general_expression_rule IDENT 2\n");
                     //function call
                     if(second_run) {
-                        printf("general_expression_rule IDENT 2.5\n");
+                        // printf("general_expression_rule IDENT 2.5\n");
                         if(symbol->type != ST_FUNCTION) {
                             set_error(ERR_OTHER_SEMANTIC);
                             return NULL;
                         }
                     }
 
-                    printf("general_expression_rule IDENT 2.75\n");
+                    // printf("general_expression_rule IDENT 2.75\n");
                     data.expression->op = EO_SYMBOL_CALL;
-                    printf("general_expression_rule IDENT 3\n");
+                    // printf("general_expression_rule IDENT 3\n");
 
                     //list for params types
                     if(!second_run) {
-                        printf("general_expression_rule IDENT 4\n");
+                        // printf("general_expression_rule IDENT 4\n");
                         next_token();
                         call_params_list_rule(NULL, NULL);
-                        printf("general_expression_rule IDENT 5\n");
+                        // printf("general_expression_rule IDENT 5\n");
                     } else {
                         list_activate_first(symbol->data.fn->params_types_list);
                         next_token();
