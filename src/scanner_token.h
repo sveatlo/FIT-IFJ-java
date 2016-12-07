@@ -7,6 +7,7 @@
 #ifndef SCANNER_TOKEN_H
 #define SCANNER_TOKEN_H
 
+#include <stdbool.h>
 #include "string.h"
 
 /**

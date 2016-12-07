@@ -140,7 +140,6 @@ int str_length(String* s);
 /**
  *  Function get string from integer
  *
- *  @return string
  *  @ingroup String
  */
 void int_to_string(String* s, int i);
@@ -148,10 +147,16 @@ void int_to_string(String* s, int i);
 /**
  *  Function get string from double
  *
- *  @return string
  *  @ingroup String
  */
 void double_to_string(String* s, double i);
+
+/**
+ *  Function get string from bool
+ *
+ *  @ingroup String
+ */
+void bool_to_string(String* s, bool b);
 
 
 /**

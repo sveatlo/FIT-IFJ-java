@@ -442,23 +442,31 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
         return;
     }
 
-    if(fn_params_list->active == NULL) {
-        //no more fn params, but more call params => error
-        return set_error(ERR_SEMANTIC);
+    if(second_run) {
+        if(fn_params_list->active == NULL) {
+            //no more fn params, but more call params => error
+            return set_error(ERR_SEM_PARAMS);
+        }
     }
 
 
+
     // VariableType type = fn_params_list->active->data.var_type;
+    printf("call_params_list before general_expression_rule call\n");
     Expression* expr = general_expression_rule(STT_COMMA, STT_RIGHT_PARENTHESE);
     //insert the expr to call_params_list
     if(second_run) {
         ListItemData data = {
             .expression = expr
         };
-        list_insert_last(call_params_list, data);
+        if(second_run) {
+            list_insert_last(call_params_list, data);
+        }
     }
 
-    list_activate_next(fn_params_list);
+    if(second_run) {
+        list_activate_next(fn_params_list);
+    }
     if(current_token->type == STT_COMMA) {
         next_token();
         call_params_list_rule(fn_params_list, call_params_list);
@@ -625,7 +633,7 @@ void stat_rule(bool is_void, bool can_define) {
                 if(symbol->data.fn->params_types_list->active != NULL) {
                     //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
-                    return set_error(ERR_SEMANTIC);
+                    return set_error(ERR_SEM_PARAMS);
                 }
                 if(get_error()->type) return;
 
@@ -721,84 +729,21 @@ void stat_rule(bool is_void, bool can_define) {
 }
 
 Expression* bool_expression_rule() {
-    if(!second_run) {
-        while(current_token->type != STT_RIGHT_PARENTHESE) {
-            // detect unwanted tokens even in 1st run
-            if(
-                current_token->type == STT_INT ||
-                current_token->type == STT_DOUBLE ||
-                current_token->type == STT_STRING ||
-                current_token->type == STT_KEYWORD ||
-                current_token->type == STT_IDENT ||
-                current_token->type == STT_PLUS ||
-                current_token->type == STT_MINUS ||
-                current_token->type == STT_MULTIPLY ||
-                current_token->type == STT_DIVIDE ||
-                current_token->type == STT_LEFT_PARENTHESE ||
-                current_token->type == STT_RIGHT_PARENTHESE ||
-                current_token->type == STT_AND ||
-                current_token->type == STT_OR ||
-                current_token->type == STT_LESS ||
-                current_token->type == STT_GREATER ||
-                current_token->type == STT_LESS_EQUALS ||
-                current_token->type == STT_GREATER_EQUALS ||
-                current_token->type == STT_LOGIC_EQUAL ||
-                current_token->type == STT_LOGIC_NOT_EQUAL
-            ) {
-                next_token();
-            } else {
-                set_error(ERR_SYNTAX);
-                return NULL;
-            }
-        }
-
+    if(current_token->type == STT_RIGHT_PARENTHESE) {
+        set_error(ERR_SYNTAX);
         return NULL;
-    } else {
-        return general_expression_rule(STT_RIGHT_PARENTHESE, STT_EOF);
     }
 
+    return general_expression_rule(STT_RIGHT_PARENTHESE, STT_EOF);
 }
 
 Expression* expression_rule() {
     if(current_token->type == STT_SEMICOLON) {
+        set_error(ERR_SYNTAX);
         return NULL;
     }
 
-    if(!second_run) {
-        while(current_token->type != STT_SEMICOLON) {
-            // detect unwanted tokens even in 1st run
-            if(
-                current_token->type == STT_INT ||
-                current_token->type == STT_DOUBLE ||
-                current_token->type == STT_STRING ||
-                current_token->type == STT_KEYWORD ||
-                current_token->type == STT_IDENT ||
-                current_token->type == STT_PLUS ||
-                current_token->type == STT_MINUS ||
-                current_token->type == STT_MULTIPLY ||
-                current_token->type == STT_DIVIDE ||
-                current_token->type == STT_LEFT_PARENTHESE ||
-                current_token->type == STT_RIGHT_PARENTHESE ||
-                current_token->type == STT_AND ||
-                current_token->type == STT_OR ||
-                current_token->type == STT_LESS ||
-                current_token->type == STT_GREATER ||
-                current_token->type == STT_LESS_EQUALS ||
-                current_token->type == STT_GREATER_EQUALS ||
-                current_token->type == STT_LOGIC_EQUAL ||
-                current_token->type == STT_LOGIC_NOT_EQUAL
-            ) {
-                next_token();
-            } else {
-                set_error(ERR_SYNTAX);
-                return NULL;
-            }
-        }
-
-        return NULL;
-    } else {
-        return general_expression_rule(STT_SEMICOLON, STT_EOF);
-    }
+    return general_expression_rule(STT_SEMICOLON, STT_EOF);
 }
 
 Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType or_end_token) {
@@ -806,6 +751,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     Stack* nonterm_stack = stack_init();
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
+        printf("%s\n", token_to_string(current_token));
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
@@ -839,46 +785,68 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             case STT_IDENT:
             {
+                printf("general_expression_rule IDENT 0\n");
                 is_term = true;
                 Ident* current_ident = current_token->data->id;
-                Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
+                Symbol* symbol = NULL;
+                if(second_run) {
+                    symbol = context_find_ident(current_context, main_context, current_token->data->id);
+                }
+                printf("general_expression_rule IDENT 1\n");
                 if(get_error()->type) return NULL;
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
+                    printf("general_expression_rule IDENT 2\n");
                     //function call
-                    if(symbol->type != ST_FUNCTION) {
-                        set_error(ERR_OTHER_SEMANTIC);
-                        return NULL;
+                    if(second_run) {
+                        printf("general_expression_rule IDENT 2.5\n");
+                        if(symbol->type != ST_FUNCTION) {
+                            set_error(ERR_OTHER_SEMANTIC);
+                            return NULL;
+                        }
                     }
 
+                    printf("general_expression_rule IDENT 2.75\n");
+                    data.expression->op = EO_SYMBOL_CALL;
+                    printf("general_expression_rule IDENT 3\n");
+
                     //list for params types
-                    list_activate_first(symbol->data.fn->params_types_list);
-                    next_token();
-                    List *call_params_list = list_init();
-                    call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
-                    if(symbol->data.fn->params_types_list->active != NULL) {
-                        //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
-                        //fn params but call params ended
-                        set_error(ERR_SEMANTIC);
-                        return NULL;
+                    if(!second_run) {
+                        printf("general_expression_rule IDENT 4\n");
+                        next_token();
+                        call_params_list_rule(NULL, NULL);
+                        printf("general_expression_rule IDENT 5\n");
+                    } else {
+                        list_activate_first(symbol->data.fn->params_types_list);
+                        next_token();
+                        List *call_params_list = list_init();
+                        call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                        if(symbol->data.fn->params_types_list->active != NULL) {
+                            //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                            //fn params but call params ended
+                            set_error(ERR_SEM_PARAMS);
+                            return NULL;
+                        }
+
+
+                        data.expression->symbol = symbol;
+                        data.expression->symbol->id = current_ident;
+                        data.expression->call_params = call_params_list;
                     }
                     if(get_error()->type) return NULL;
                     if(current_token->type != STT_RIGHT_PARENTHESE) {
                         set_error(ERR_SYNTAX);
                         return NULL;
                     }
-
-                    data.expression->op = EO_SYMBOL_CALL;
-                    data.expression->symbol = symbol;
-                    data.expression->call_params = call_params_list;
-                    data.expression->symbol->id = current_ident;
                 } else {
                     prev_token();
-                    if(symbol->type != ST_VARIABLE) {
-                        set_error(ERR_OTHER_SEMANTIC);
-                        return NULL;
-                    }
                     data.expression->op = EO_SYMBOL;
-                    data.expression->symbol = symbol;
+                    if(second_run) {
+                        if(symbol->type != ST_VARIABLE) {
+                            set_error(ERR_OTHER_SEMANTIC);
+                            return NULL;
+                        }
+                        data.expression->symbol = symbol;
+                    }
                 }
                 break;
             }
