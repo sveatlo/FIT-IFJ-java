@@ -240,7 +240,11 @@ ScannerToken* get_next_token(FILE *f) {
                         return NULL;
                     }
                     str_append(token->data->str, c);
-                    current_state = SS_NUMBER;
+                    if (c == '0') {
+                        current_state = SS_NUMERAL_SYS;
+                    } else {
+                        current_state = SS_NUMBER;
+                    }
                 } else if (c == '=') {
                     current_state = SS_EQUAL;
                 } else if (c == ',') {
@@ -528,6 +532,178 @@ ScannerToken* get_next_token(FILE *f) {
                         token->type = STT_DOUBLE;
                         return token;
                     }
+                }
+
+                break;
+
+            case SS_NUMERAL_SYS:
+                if (c == 'b') {
+                    //is binary
+                    str_clear(token->data->str);
+                    current_state = SS_NUMBER_BIN;
+                } else if (c == 'x') {
+                    // hex
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX;
+                } else if (isdigit(c) && (c != '9') && (c != '8')) {
+                    // oct
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_OCT;
+                } else {
+                    //error
+                    str_dispose(token->data->str);
+                    free(token->data);
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_NUMBER_OCT:
+                if (isdigit(c) && (c != '9') && (c != '8')) {
+                    //is oct
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_OCT;
+                } else if (c == '_') {
+                    current_state = SS_NUMBER_OCT;
+                } else {
+                    // return number
+                    long i = strtol(str_get_str(token->data->str), NULL, 8);
+                    if (i > INT_MAX) {
+                        str_dispose(token->data->str);
+                        free(token->data);
+                        current_state = SS_LEX_ERROR;
+                    } else {
+                        str_dispose(token->data->str);
+                        token->data->i = (int)i;
+                        token->type = STT_INT;
+                        ungetc(c, f);
+                        return token;
+                    }
+                }
+
+                break;
+
+            case SS_NUMBER_BIN:
+                if ((c == '0') || (c == '1')) {
+                    //is binary
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_BIN;
+                } else if (c == '_') {
+                    current_state = SS_NUMBER_BIN;
+                } else {
+                    // return number
+                    long i = strtol(str_get_str(token->data->str), NULL, 2);
+                    if (i > INT_MAX) {
+                        str_dispose(token->data->str);
+                        free(token->data);
+                        current_state = SS_LEX_ERROR;
+                    } else {
+                        str_dispose(token->data->str);
+                        token->data->i = (int)i;
+                        token->type = STT_INT;
+                        ungetc(c, f);
+                        return token;
+                    }
+                }
+
+                break;
+
+            case SS_NUMBER_HEX:
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                    //is hex
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX;
+                } else if (c == '_') {
+                    current_state = SS_NUMBER_HEX;
+                } else if (c == '.') {
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_1;
+                } else {
+                    // return number
+                    long i = strtol(str_get_str(token->data->str), NULL, 16);
+                    if (i > INT_MAX) {
+                        str_dispose(token->data->str);
+                        free(token->data);
+                        current_state = SS_LEX_ERROR;
+                    } else {
+                        str_dispose(token->data->str);
+                        token->data->i = (int)i;
+                        token->type = STT_INT;
+                        ungetc(c, f);
+                        return token;
+                    }
+                }
+
+                break;
+
+            case SS_NUMBER_HEX_DOUBLE_1:
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                    //is double hex
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_1;
+                } else if (c == '_') {
+                    current_state = SS_NUMBER_HEX_DOUBLE_1;
+                } else if ((c == 'P') || (c == 'p')) {
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_2;
+                } else {
+                    //error
+                    str_dispose(token->data->str);
+                    free(token->data);
+                    current_state = SS_LEX_ERROR;
+                }
+
+                break;
+
+            case SS_NUMBER_HEX_DOUBLE_2:
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                    //after P(p) can be + or -
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_3;
+                } else if ((c == '-') || (c == '+')) {
+                    current_state = SS_NUMBER_HEX_DOUBLE_4;
+                } else {
+                    // return number
+                    double d = strtod(str_get_str(token->data->str), NULL);
+                    str_dispose(token->data->str);
+                    token->data->d = d;
+                    token->type = STT_DOUBLE;
+                    ungetc(c, f);
+                    return token;
+                }
+
+                break;
+
+            case SS_NUMBER_HEX_DOUBLE_3:
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                    //after number
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_3;
+                } else if (c == '_') {
+                    current_state = SS_NUMBER_HEX_DOUBLE_3;
+                } else {
+                    // return number
+                    int d = strtod(str_get_str(token->data->str), NULL);
+                    str_dispose(token->data->str);
+                    token->data->d = d;
+                    token->type = STT_DOUBLE;
+                    ungetc(c, f);
+                    return token;
+                }
+
+                break;
+
+            case SS_NUMBER_HEX_DOUBLE_4:
+                //after + or - must be number
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                    //is binary
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_3;
+                } else {
+                    //error
+                    str_dispose(token->data->str);
+                    free(token->data);
+                    current_state = SS_LEX_ERROR;
                 }
 
                 break;

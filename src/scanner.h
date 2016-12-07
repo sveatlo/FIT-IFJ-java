@@ -24,6 +24,14 @@ typedef enum {
     SS_CLASS_AND_FUNCTION_1,
     SS_CLASS_AND_FUNCTION_2,
     SS_NUMBER, ///< number
+    SS_NUMERAL_SYS, ///< number in other numeral systems (bin, oct, hex)
+    SS_NUMBER_OCT, ///< number is oct
+    SS_NUMBER_HEX, ///< number is hex
+    SS_NUMBER_HEX_DOUBLE_1, ///< number is hex with '.'
+    SS_NUMBER_HEX_DOUBLE_2, ///< number is hex with 'p' or 'P'
+    SS_NUMBER_HEX_DOUBLE_3, ///< number is hex after 'p' or 'P'
+    SS_NUMBER_HEX_DOUBLE_4, ///< number is hex after + or - must be number
+    SS_NUMBER_BIN, ///< number is bin
     SS_DOUBLE_EX_1, ///< e or E (exponent)
     SS_DOUBLE_EX_2, ///< exponent+ or expoenent-
     SS_DOUBLE_EX_3, ///< expoenent(sign)number
