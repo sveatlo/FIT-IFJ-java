@@ -1,0 +1,7 @@
+class Main {
+    static void run() {
+        int b = 69;
+      	    int a = 42;
+            int var = (a  b);
+    }
+}

@@ -1,0 +1,7 @@
+/* IDE ma vracat asi 4 OVERIT */
+class Main {
+    static void run(){
+        boolean a = true;
+        ifj16.print(5 + a);
+    }
+}

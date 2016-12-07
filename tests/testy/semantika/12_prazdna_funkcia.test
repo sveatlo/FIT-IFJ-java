@@ -1,0 +1,6 @@
+/* IDE ma vratit chybu 4 a vracia */
+class Main {
+    static void run(){
+        ifj16.print();
+    }
+}
