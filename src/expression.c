@@ -30,9 +30,7 @@ char operations_char[][255] = {
     [EO_LOGIC_NOT_EQUAL] = "EO_LOGIC_NOT_EQUAL",
     [EO_AND] = "EO_AND",
     [EO_OR] = "EO_OR",
-    [EO_NEGATE] = "EO_NEGATE",
-    [EO_LEFT_PARENTHESE] = "EO_LEFT_PARENTHESE",
-    [EO_RIGHT_PARENTHESE] = "EO_RIGHT_PARENTHESE"
+    [EO_NEGATE] = "EO_NEGATE"
 };
 
 
@@ -66,6 +64,7 @@ void expression_dispose(Expression *expr) {
 
 void expression_print (Expression* expr) {
     printf("%s(", operations_char[expr->op]);
+    fflush(stdout);
     switch (expr->op) {
         case EO_CONST_INTEGER:
             printf("%d", expr->i);
@@ -80,10 +79,18 @@ void expression_print (Expression* expr) {
             printf("%s", expr->b ? "true" : "false");
             break;
         case EO_SYMBOL:
-            symbol_print(expr->symbol);
+            if(expr->symbol != NULL) {
+                symbol_print(expr->symbol);
+            } else {
+                printf("SYMBOL");
+            }
             break;
         case EO_SYMBOL_CALL:
-            symbol_print(expr->symbol);
+            if(expr->symbol != NULL) {
+                symbol_print(expr->symbol);
+            } else {
+                printf("SYMBOL_CALL");
+            }
             break;
         case EO_PLUS:
             expression_print(expr->expr1);
@@ -145,21 +152,10 @@ void expression_print (Expression* expr) {
             printf(", ");
             expression_print(expr->expr2);
             break;
-        case EO_LOGIC_GREATER:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
         case EO_NEGATE:
             expression_print(expr->expr1);
             printf(", ");
             expression_print(expr->expr2);
-            break;
-        case EO_LEFT_PARENTHESE:
-            printf("(");
-            break;
-        case EO_RIGHT_PARENTHESE:
-            printf(")");
             break;
         default:
             printf("???\n");
@@ -835,21 +831,21 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
         }
         case EO_SYMBOL:
         {
-            printf("expr eval EO_SYMBOL 0\n");
+            // printf("expr eval EO_SYMBOL 0\n");
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
             if(str_cmp_const(expr->symbol->id->name, "tmp_symbol") != 0) {
-                printf("expr eval EO_SYMBOL 1 %s\n", str_get_str(expr->symbol->id->name));
+                // printf("expr eval EO_SYMBOL 1 %s\n", str_get_str(expr->symbol->id->name));
                 expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
                 if(expr->symbol == NULL) {
                     set_error(ERR_INTERPRET);
                     return NULL;
                 }
-                printf("expr eval EO_SYMBOL 2 %d in context %d\n", expr->symbol, context);
-                printf("expr eval EO_SYMBOL 3 %d %d\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
+                // printf("expr eval EO_SYMBOL 2 %d in context %d\n", expr->symbol, context);
+                // printf("expr eval EO_SYMBOL 3 %d %d\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
                 if(expr->symbol->type != ST_VARIABLE) {
                     set_error(ERR_INTERPRET);
                     return NULL;
@@ -861,32 +857,32 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 }
             }
 
-            printf("expr eval EO_SYMBOL 4\n");
+            // printf("expr eval EO_SYMBOL 4\n");
             switch (expr->symbol->data.var->type) {
                 case VT_INTEGER:
-                    printf("expr eval EO_SYMBOL 4a\n");
+                    // printf("expr eval EO_SYMBOL 4a\n");
                     res_expr = expression_init();
                     res_expr->i = expr->symbol->data.var->value.i;
                     res_expr->op = EO_CONST_INTEGER;
                     return res_expr;
 
                 case VT_DOUBLE:
-                    printf("expr eval EO_SYMBOL 4b\n");
+                    // printf("expr eval EO_SYMBOL 4b\n");
                     res_expr = expression_init();
                     res_expr->d = expr->symbol->data.var->value.d;
                     res_expr->op = EO_CONST_DOUBLE;
                     return res_expr;
 
                 case VT_STRING:
-                    printf("expr eval EO_SYMBOL 4c\n");
+                    // printf("expr eval EO_SYMBOL 4c\n");
                     res_expr = expression_init();
                     res_expr->str = expr->symbol->data.var->value.s;
                     res_expr->op = EO_CONST_STRING;
-                    printf("expr eval EO_SYMBOL 4c1\n");
+                    // printf("expr eval EO_SYMBOL 4c1\n");
                     return res_expr;
 
                 case VT_BOOL:
-                    printf("expr eval EO_SYMBOL 4d\n");
+                    // printf("expr eval EO_SYMBOL 4d\n");
                     res_expr = expression_init();
                     res_expr->b = expr->symbol->data.var->value.b;
                     res_expr->op = EO_CONST_BOOL;

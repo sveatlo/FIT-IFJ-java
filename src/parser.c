@@ -680,7 +680,8 @@ void stat_rule(bool is_void, bool can_define) {
                 }
             }
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
-            if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+            next_token();
+            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
         } else if(current_token->type == STT_EQUALS) {
             if(second_run) {
@@ -863,10 +864,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 data.expression->op = EO_DIVIDE;
                 break;
             case STT_LEFT_PARENTHESE:
-                data.expression->op = EO_LEFT_PARENTHESE;
-                break;
-            case STT_RIGHT_PARENTHESE:
-                data.expression->op = EO_RIGHT_PARENTHESE;
+                is_term = true;
+                expression_dispose(data.expression);
+                next_token();
+                data.expression = general_expression_rule(end_token, or_end_token);
                 break;
             case STT_AND:
                 data.expression->op = EO_AND;
@@ -898,91 +899,48 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
         }
 
         if(is_term) {
+            // printf("pushing term\n");
             stack_push(term_stack, data);
         } else {
             StackItemData* top = stack_top(nonterm_stack);
-            if(data.expression->op == EO_RIGHT_PARENTHESE) {
-                //treat "(" and ")"
-                // TODO: expression_dispose data.expression
-                while(top != NULL && top->expression->op != EO_LEFT_PARENTHESE) {
-                    //reduce
+            // printf("pushing nonterm\n");
 
-                    // first to ->expr2
-                    StackItemData* term_top2 = stack_top(term_stack);
-                    if(term_top2 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-                    // second to ->expr1
-                    StackItemData* term_top1 = stack_top(term_stack);
-                    if(term_top1 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
+            //while there are ops on stack with priority equal or higher than current op => reduce
+            while(top != NULL && precedence_table[top->expression->op][data.expression->op] > E) {
+                // reducing nonterm array means poping 2 (or generally x) values from term stack
+                // and assigning them to the top expr
+                // the top expr will then be poped from nonterm stack and pushed to term stack
 
-                    //set terms for current top
-                    top->expression->expr2 = term_top2->expression;
-                    top->expression->expr1 = term_top1->expression;
-
-                    //push the top to term
-                    stack_push(term_stack, *top);
-                    //pop it from nonterm
-                    stack_pop(nonterm_stack);
-
-
-                    // set new top
-                    top = stack_top(nonterm_stack);
-                }
-
-                if(top->expression->op == EO_LEFT_PARENTHESE) {
-                    // TODO: expression_dispose top.expression
-                    // pop the "("
-                    stack_pop(nonterm_stack);
-                } else {
-                    // missing "(" => SYNTAX error
+                // first to ->expr2
+                StackItemData* term_top2 = stack_top(term_stack);
+                if(term_top2 == NULL) {
                     set_error(ERR_SYNTAX);
                     return NULL;
                 }
-            } else {
-                //while there are ops on stack with priority equal or higher than current op => reduce
-                while(top != NULL && precedence_table[top->expression->op][data.expression->op] > E) {
-                    // reducing nonterm array means poping 2 (or generally x) values from term stack
-                    // and assigning them to the top expr
-                    // the top expr will then be poped from nonterm stack and pushed to term stack
-
-                    // first to ->expr2
-                    StackItemData* term_top2 = stack_top(term_stack);
-                    if(term_top2 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-                    // second to ->expr1
-                    StackItemData* term_top1 = stack_top(term_stack);
-                    if(term_top1 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-
-                    //set terms for current top
-                    top->expression->expr2 = term_top2->expression;
-                    top->expression->expr1 = term_top1->expression;
-
-                    //push the top to term
-                    stack_push(term_stack, *top);
-                    //pop it from nonterm
-                    stack_pop(nonterm_stack);
-
-
-                    // set new top
-                    top = stack_top(nonterm_stack);
+                stack_pop(term_stack);
+                // second to ->expr1
+                StackItemData* term_top1 = stack_top(term_stack);
+                if(term_top1 == NULL) {
+                    set_error(ERR_SYNTAX);
+                    return NULL;
                 }
+                stack_pop(term_stack);
 
-                stack_push(nonterm_stack, data);
+                //set terms for current top
+                top->expression->expr2 = term_top2->expression;
+                top->expression->expr1 = term_top1->expression;
+
+                //push the top to term
+                stack_push(term_stack, *top);
+                //pop it from nonterm
+                stack_pop(nonterm_stack);
+
+
+                // set new top
+                top = stack_top(nonterm_stack);
             }
+
+            stack_push(nonterm_stack, data);
         }
 
         next_token();
