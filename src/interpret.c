@@ -150,7 +150,7 @@ void process_frame() {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
                     res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
-                    if(get_error()->type) return set_error(ERR_SEM_PARAMS);
+                    if(get_error()->type) return;
                     // printf(" = ");
                     // symbol_print(res_symbol);
                     // printf("\n");
