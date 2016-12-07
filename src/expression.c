@@ -249,14 +249,23 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     bool_to_string(res_expr->str, expr1->d);
                     str_concat(res_expr->str, expr2->str);
                 } else if (expr2->op == EO_CONST_INTEGER) {
-                    int_to_string(res_expr->str, expr2->i);
+                    String* tmp_str = str_init();
+                    int_to_string(tmp_str, expr2->i);
                     str_concat(res_expr->str, expr1->str);
+                    str_concat(res_expr->str, tmp_str);
+                    str_dispose(tmp_str);
                 } else if (expr2->op == EO_CONST_DOUBLE) {
-                    double_to_string(res_expr->str, expr2->d);
+                    String* tmp_str = str_init();
+                    double_to_string(tmp_str, expr2->d);
                     str_concat(res_expr->str, expr1->str);
+                    str_concat(res_expr->str, tmp_str);
+                    str_dispose(tmp_str);
                 } else if (expr2->op == EO_CONST_BOOL) {
-                    bool_to_string(res_expr->str, expr2->d);
+                    String* tmp_str = str_init();
+                    bool_to_string(tmp_str, expr2->b);
                     str_concat(res_expr->str, expr1->str);
+                    str_concat(res_expr->str, tmp_str);
+                    str_dispose(tmp_str);
                 } else {
                     str_concat(expr1->str, expr2->str);
                     res_expr->str = expr1->str;
