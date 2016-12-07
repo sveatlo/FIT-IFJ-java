@@ -396,7 +396,7 @@ ScannerToken* get_next_token(FILE *f) {
                 } else {
                     // next token
                     char *endptr;
-                    long i = strtol(str_get_str(token->data->str), &endptr, 8);
+                    long i = strtol(str_get_str(token->data->str), &endptr, 10);
                     if (i > INT_MAX) {
                         str_dispose(token->data->str);
                         free(token->data);

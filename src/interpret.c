@@ -150,7 +150,7 @@ void process_frame() {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
                     res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
-                    if(get_error()->type) return set_error(ERR_SEM_PARAMS);
+                    if(get_error()->type) return;
                     // printf(" = ");
                     // symbol_print(res_symbol);
                     // printf("\n");
@@ -264,7 +264,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
             if(get_error()->type) return;
 
             assign_value_to_variable(symbol, expression_evaluate(val, main_context, current_frame->context));
-            if(get_error()->type) return set_error(ERR_SEM_PARAMS);
+            if(get_error()->type) return;
             // symbol_print(symbol);
 
             list_activate_next(fn_symbol->data.fn->params_ids_list);
@@ -299,7 +299,7 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             if(expr->op == EO_CONST_INTEGER) {
                 symbol->data.var->value.i = expr->i;
             } else {
-                return set_error(ERR_OTHER_SEMANTIC);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_DOUBLE:
@@ -308,7 +308,7 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             } else if(expr->op == EO_CONST_INTEGER) {
                 symbol->data.var->value.d = (double)expr->i;
             } else {
-                return set_error(ERR_OTHER_SEMANTIC);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_BOOL:
@@ -319,14 +319,14 @@ void assign_value_to_variable(Symbol* symbol, Expression* expr) {
             } else if(expr->op == EO_CONST_DOUBLE) {
                 symbol->data.var->value.b = (bool)expr->d;
             } else {
-                return set_error(ERR_OTHER_SEMANTIC);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         case VT_STRING:
             if(expr->op == EO_CONST_STRING) {
                 symbol->data.var->value.s = expr->str;
             } else {
-                return set_error(ERR_OTHER_SEMANTIC);
+                return set_error(ERR_SEM_PARAMS);
             }
             break;
         default:

@@ -521,6 +521,11 @@ void stat_rule(bool is_void, bool can_define) {
     //return in void
     if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_RETURN ) {
         next_token();
+        if((current_token->type == STT_SEMICOLON && !is_void) || (is_void && current_token->type != STT_SEMICOLON)) {
+            //semicolon right after return in non-void fn OR in void fn, but there is some expression after return => error
+            set_error(ERR_RUN_NON_INIT_VAR);
+            return NULL;
+        }
         Expression* expr = expression_rule();
         if(second_run) {
             instruction_insert_to_list(current_instructions, instruction_generate(IC_RETURN, expr, NULL, NULL));
