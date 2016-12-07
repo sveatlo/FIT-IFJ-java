@@ -32,37 +32,29 @@ typedef enum
 } ExpressionOperationSign;
 
 typedef enum {
-    EO_SYMBOL, ///< when operand is a symbol
+    EO_SYMBOL = 0, ///< when operand is a symbol
     // NOTE: possibly redundant data - if EO_SYMBOL and symbol->type === FN => EO_SYMBOL_CALL
     //  con: redundancy
     //  pro: structure has different set of members set => simple to use
-    EO_SYMBOL_CALL, ///< when operand is a symbol, but also a function
-    EO_CONST_INTEGER, ///< when operand is an integer constant
-    EO_CONST_DOUBLE, ///< when operand is a double constant
-    EO_CONST_STRING, ///< when operand is a string constant
-    EO_CONST_BOOL, ///< when operand is a boolean constant
+    EO_SYMBOL_CALL = 1, ///< when operand is a symbol, but also a function
+    EO_CONST_INTEGER = 2, ///< when operand is an integer constant
+    EO_CONST_DOUBLE = 3, ///< when operand is a double constant
+    EO_CONST_STRING = 4, ///< when operand is a string constant
+    EO_CONST_BOOL = 5, ///< when operand is a boolean constant
 
-    EO_PLUS,
-    EO_MINUS,
-    EO_MULTIPLY,
-    EO_DIVIDE,
-    EO_LESS,
-    EO_GREATER,
-    EO_LESS_EQUALS,
-    EO_GREATER_EQUALS,
-    EO_LOGIC_EQUAL,
-    EO_LOGIC_NOT_EQUAL,
-    EO_AND,
-    EO_OR,
-    EO_NEGATE,
-    EO_LOGIC_AND, ///< when operation is &&
-    EO_LOGIC_OR, ///< when operation is ||
-    EO_LOGIC_LESS, ///< when operation is <
-    EO_LOGIC_LESS_EQUAL, ///< when operation is <=
-    EO_LOGIC_GREATER, ///< when operation is >
-    EO_LOGIC_GREATER_EQUAL, ///< when operation is =>
-    EO_LEFT_PARENTHESE,
-    EO_RIGHT_PARENTHESE,
+    EO_PLUS = 6,
+    EO_MINUS = 7,
+    EO_MULTIPLY = 8,
+    EO_DIVIDE = 9,
+    EO_LESS = 10,
+    EO_GREATER = 11,
+    EO_LESS_EQUALS = 12,
+    EO_GREATER_EQUALS = 13,
+    EO_LOGIC_EQUAL = 14,
+    EO_LOGIC_NOT_EQUAL = 15,
+    EO_AND = 16,
+    EO_OR = 17,
+    EO_NEGATE = 18
 } ExpressionOperation;
 
 /**

@@ -13,142 +13,146 @@ int line;
 char* name_of_file;
 
 void key_or_ident(ScannerToken *token) {
-    if (str_cmp_const(token->data->id->name, "boolean") == 0) {
-        token->type = STT_KEYWORD_TYPE;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
+    if ((token->data->id->name->str[0] != '$') && (token->data->id->name->str[0] != '_')) {
+        if (str_cmp_const(token->data->id->name, "boolean") == 0) {
+            token->type = STT_KEYWORD_TYPE;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_BOOLEAN;
+        } else if (str_cmp_const(token->data->id->name, "break") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_BREAK;
+        } else if (str_cmp_const(token->data->id->name, "class") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_CLASS;
+        } else if (str_cmp_const(token->data->id->name, "continue") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_CONTINUE;
+        } else if (str_cmp_const(token->data->id->name, "do") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_DO;
+        } else if (str_cmp_const(token->data->id->name, "double") == 0) {
+            token->type = STT_KEYWORD_TYPE;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_DOUBLE;
+        } else if (str_cmp_const(token->data->id->name, "else") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_ELSE;
+        } else if (str_cmp_const(token->data->id->name, "false") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_FALSE;
+        } else if (str_cmp_const(token->data->id->name, "for") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_FOR;
+        } else if (str_cmp_const(token->data->id->name, "if") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_IF;
+        } else if (str_cmp_const(token->data->id->name, "int") == 0) {
+            token->type = STT_KEYWORD_TYPE;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_INT;
+        } else if (str_cmp_const(token->data->id->name, "return") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_RETURN;
+        } else if (str_cmp_const(token->data->id->name, "String") == 0) {
+            token->type = STT_KEYWORD_TYPE;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_STRING;
+        } else if (str_cmp_const(token->data->id->name, "static") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_STATIC;
+        } else if (str_cmp_const(token->data->id->name, "true") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_TRUE;
+        } else if (str_cmp_const(token->data->id->name, "void") == 0) {
+            token->type = STT_KEYWORD_TYPE;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_VOID;
+        } else if (str_cmp_const(token->data->id->name, "while") == 0) {
+            token->type = STT_KEYWORD;
+            if(token->data->id->class != NULL) {
+                str_dispose(token->data->id->class);
+            }
+            str_dispose(token->data->id->name);
+            free(token->data->id);
+            token->data->keyword_type = KW_WHILE;
+        } else {
+            token->type = STT_IDENT;
         }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_BOOLEAN;
-    } else if (str_cmp_const(token->data->id->name, "break") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_BREAK;
-    } else if (str_cmp_const(token->data->id->name, "class") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_CLASS;
-    } else if (str_cmp_const(token->data->id->name, "continue") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_CONTINUE;
-    } else if (str_cmp_const(token->data->id->name, "do") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_DO;
-    } else if (str_cmp_const(token->data->id->name, "double") == 0) {
-        token->type = STT_KEYWORD_TYPE;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_DOUBLE;
-    } else if (str_cmp_const(token->data->id->name, "else") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_ELSE;
-    } else if (str_cmp_const(token->data->id->name, "false") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_FALSE;
-    } else if (str_cmp_const(token->data->id->name, "for") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_FOR;
-    } else if (str_cmp_const(token->data->id->name, "if") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_IF;
-    } else if (str_cmp_const(token->data->id->name, "int") == 0) {
-        token->type = STT_KEYWORD_TYPE;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_INT;
-    } else if (str_cmp_const(token->data->id->name, "return") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_RETURN;
-    } else if (str_cmp_const(token->data->id->name, "String") == 0) {
-        token->type = STT_KEYWORD_TYPE;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_STRING;
-    } else if (str_cmp_const(token->data->id->name, "static") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_STATIC;
-    } else if (str_cmp_const(token->data->id->name, "true") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_TRUE;
-    } else if (str_cmp_const(token->data->id->name, "void") == 0) {
-        token->type = STT_KEYWORD_TYPE;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_VOID;
-    } else if (str_cmp_const(token->data->id->name, "while") == 0) {
-        token->type = STT_KEYWORD;
-        if(token->data->id->class != NULL) {
-            str_dispose(token->data->id->class);
-        }
-        str_dispose(token->data->id->name);
-        free(token->data->id);
-        token->data->keyword_type = KW_WHILE;
     } else {
         token->type = STT_IDENT;
     }
@@ -199,7 +203,7 @@ ScannerToken* get_next_token(FILE *f) {
                 if (isspace(c)) {
                     //ignore space
                     current_state = SS_EMPTY;
-                } else if (isalpha(c)) {
+                } else if ((isalpha(c)) || (c == '_') || (c == '$')) {
                     //keyword or ident
                     token->data = (ScannerTokenData*)malloc(sizeof(ScannerTokenData));
                     if (token->data == NULL) {
@@ -222,29 +226,6 @@ ScannerToken* get_next_token(FILE *f) {
                     token->data->id->class = NULL;
                     str_append(token->data->id->name, c);
                     current_state = SS_KEYWORD_IDENT;
-                } else if ( c == '_' || c == '$') {
-                    //ident
-                    token->data = (ScannerTokenData*)malloc(sizeof(ScannerTokenData));
-                    if (token->data == NULL) {
-                        set_error(ERR_INTERPRET);
-                        return NULL;
-                    }
-                    token->data->id = (Ident*) malloc(sizeof(Ident));
-                    if (token->data->id == NULL) {
-                        set_error(ERR_INTERPRET);
-                        free(token->data);
-                        return NULL;
-                    }
-                    token->data->id->name = str_init();
-                    if (token->data->id->name == NULL) {
-                        set_error(ERR_INTERPRET);
-                        free(token->data->id);
-                        free(token->data);
-                        return NULL;
-                    }
-                    token->data->id->class = NULL;
-                    str_append(token->data->id->name, c);
-                    current_state = SS_IDENT;
                 } else if (isdigit(c)) {
                     //number
                     token->data = (ScannerTokenData*)malloc(sizeof(ScannerTokenData));
@@ -326,7 +307,7 @@ ScannerToken* get_next_token(FILE *f) {
                 //load whole string
                 if (!isspace(c)) {
                     // is not alnum and is identificator without . => compare
-                    if (!isalnum(c)) {
+                    if ((!isalnum(c)) && (c != '_') && (c != '$')) {
                         if (c == '.') {
                             key_or_ident(token);
                             if (token->type != STT_IDENT) {
@@ -365,7 +346,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_CLASS_AND_FUNCTION_1:
-                if (isalpha(c)) {
+                if (isalpha(c) || (c == '_') || (c == '$')) {
                     str_append(token->data->id->name, c);
                     current_state = SS_CLASS_AND_FUNCTION_2;
                 } else {
@@ -381,7 +362,7 @@ ScannerToken* get_next_token(FILE *f) {
 
             case SS_CLASS_AND_FUNCTION_2:
                 // append alpha chars for 2. identificator - member
-                if (isalnum(c)) {
+                if (isalnum(c) || (c == '_') || (c == '$')) {
                     str_append(token->data->id->name, c);
                     current_state = SS_CLASS_AND_FUNCTION_2;
                 } else {
@@ -547,22 +528,6 @@ ScannerToken* get_next_token(FILE *f) {
                         token->type = STT_DOUBLE;
                         return token;
                     }
-                }
-
-                break;
-
-            case SS_IDENT:
-                //is identificator
-                //load whole string
-                if (!isspace(c)) {
-                    //not space => append
-                    str_append(token->data->id->name, c);
-                    current_state = SS_IDENT;
-                } else {
-                    //next token
-                    ungetc(c, f);
-                    token->type = STT_IDENT;
-                    return token;
                 }
 
                 break;
