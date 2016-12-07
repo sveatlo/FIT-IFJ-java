@@ -283,7 +283,7 @@ void class_rule() {
     Symbol* new_class = NULL;
     if(!second_run) {
         if(table_find_symbol(main_context->symbol_table, current_token->data->id->name) != NULL) {
-            set_error(ERR_OTHER_SEMANTIC);
+            set_error(ERR_SEMANTIC);
             return;
         }
         new_class = table_insert_class(main_context->symbol_table, current_token->data->id->name, main_context);
@@ -525,10 +525,14 @@ void stat_rule(bool is_void, bool can_define) {
             //semicolon right after return in non-void fn OR in void fn, but there is some expression after return => error
             set_error(ERR_RUN_NON_INIT_VAR);
             return NULL;
-        }
-        Expression* expr = expression_rule();
-        if(second_run) {
-            instruction_insert_to_list(current_instructions, instruction_generate(IC_RETURN, expr, NULL, NULL));
+        } else {
+            Expression* expr = NULL;
+            if(current_token->type != STT_SEMICOLON) {
+                expr = expression_rule();
+            }
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_RETURN, expr, NULL, NULL));
+            }
         }
     } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_IF) {// IF
         // (
@@ -704,8 +708,8 @@ void stat_rule(bool is_void, bool can_define) {
         }
     } else if(current_token->type == STT_KEYWORD_TYPE) {
         if(!can_define) {
-            //fprintf(stderr, "Variable definition is not allowed here\n");
-            return set_error(ERR_SEMANTIC);
+            // fprintf(stderr, "Variable definition is not allowed here\n");
+            return set_error(ERR_SYNTAX);
         }
 
         // variable definition

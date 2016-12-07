@@ -19,8 +19,11 @@ static Instruction* current_instruction;
 static Context* main_context;
 static Stack* callstack;
 
+static bool return_called;
+
 //prepares data for parsing
 void interpret(Context* _main_context, List* instructions) {
+    return_called = false;
     main_context = _main_context;
     callstack = stack_init();
 
@@ -44,6 +47,7 @@ void interpretation_loop() {
 
         //start interpreting instructions
         process_frame();
+        return_called = false;
         if(get_error()->type) return;
     }
 }
@@ -59,25 +63,28 @@ void process_frame() {
                 break;
             case IC_RETURN:
             {
-                // printf("IC_RETURN: ");
                 // expression_print((Expression*)current_instruction->op1);
                 // printf(" = ");
-                Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
-                if(get_error()->type) return;
-
-                // expression_print(res);
-                // printf("\n");
-                if(current_frame->return_symbol != NULL) {
-                    assign_value_to_variable(current_frame->return_symbol, res);
+                return_called = true;
+                if((Expression*)current_instruction->op1 != NULL) {
+                    Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                     if(get_error()->type) return;
+
+                    // expression_print(res);
+                    // printf("\n");
+                    if(current_frame->return_symbol != NULL) {
+                        assign_value_to_variable(current_frame->return_symbol, res);
+                        if(get_error()->type) return;
+                    }
                 }
+
                 current_frame->instructions->active = NULL;
                 break;
             }
             case IC_CALL:
             {
-                call((Symbol*)current_instruction->op1, (List*)current_instruction->op2, (Symbol*)current_instruction->res, false);
-                continue; //start new loop immediatelly (do not call next at the end of the loop)
+                call((Symbol*)current_instruction->op1, (List*)current_instruction->op2, (Symbol*)current_instruction->res, true);
+                // continue; //start new loop immediatelly (do not call next at the end of the loop)
                 break;
             }
             case IC_JMP:
@@ -274,9 +281,12 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 
     // printf("\n");
     // printf("new current_context: %d %d\n", current_frame->context, __LINE__);
-
     if(manage_frames) {
         process_frame();
+
+        if(fn_symbol->data.fn->return_type != VT_VOID && !return_called) {
+            return set_error(ERR_RUN_NON_INIT_VAR);
+        }
         // printf("post call process_frame context: %d %d\n", current_frame->context, __LINE__);
         // stack_pop(callstack);
         // if(!stack_empty(callstack)) {
