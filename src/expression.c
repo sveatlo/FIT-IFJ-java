@@ -47,10 +47,10 @@ Expression *expression_init() {
 void expression_dispose(Expression *expr) {
     if (expr != NULL) {
         if (expr->expr1 != NULL) {
-            free(expr->expr1);
+            expression_dispose(expr->expr1);
         }
         if (expr->expr2 != NULL) {
-            free(expr->expr2);
+            expression_dispose(expr->expr2);
         }
         if (expr->symbol != NULL) {
             symbol_dispose(expr->symbol);
@@ -58,7 +58,8 @@ void expression_dispose(Expression *expr) {
         if (expr->str != NULL) {
             str_dispose(expr->str);
         }
-    free(expr);
+
+        free(expr);
     }
 }
 

@@ -781,6 +781,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->b = current_token->data->keyword_type == KW_TRUE ? true : false;
                 } else {
                     set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
                     return NULL;
                 }
                 break;
@@ -867,6 +868,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 is_term = true;
                 expression_dispose(data.expression);
                 next_token();
+                // printf("recursive calling general_expression_rule\n");
                 data.expression = general_expression_rule(end_token, or_end_token);
                 break;
             case STT_AND:
@@ -895,6 +897,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             default:
                 set_error(ERR_SYNTAX);
+                expression_dispose(data.expression);
+                return NULL;
                 break;
         }
 
@@ -915,6 +919,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 StackItemData* term_top2 = stack_top(term_stack);
                 if(term_top2 == NULL) {
                     set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
                     return NULL;
                 }
                 stack_pop(term_stack);
@@ -922,6 +927,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 StackItemData* term_top1 = stack_top(term_stack);
                 if(term_top1 == NULL) {
                     set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
                     return NULL;
                 }
                 stack_pop(term_stack);
@@ -986,8 +992,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     if(stack_pop(term_stack) != NULL) {
         //fprintf(stderr, "Cannot parse expression\n");
         set_error(ERR_SYNTAX);
+        expression_dispose(res->data.expression);
         return NULL;
     }
 
+    // printf("general_expression_rule return\n");
     return res->data.expression;
 }
