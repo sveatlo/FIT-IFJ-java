@@ -2,3 +2,4 @@ dist/
 docs/
 src/*.gch
 vgcore.*
+ifj_tester/

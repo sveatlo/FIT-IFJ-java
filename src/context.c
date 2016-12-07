@@ -37,7 +37,7 @@ Symbol* context_find_symbol(Context* context, SymbolName name) {
 
 Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
     if(table_find_symbol(context->symbol_table, id->name) != NULL) {
-        //fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
+        fprintf(stderr, "Symbol \"%s.%s\" already defined\n", str_get_str(id->class), str_get_str(id->name));
         set_error(ERR_SEMANTIC);
         return NULL;
     }

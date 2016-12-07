@@ -30,9 +30,7 @@ char operations_char[][255] = {
     [EO_LOGIC_NOT_EQUAL] = "EO_LOGIC_NOT_EQUAL",
     [EO_AND] = "EO_AND",
     [EO_OR] = "EO_OR",
-    [EO_NEGATE] = "EO_NEGATE",
-    [EO_LEFT_PARENTHESE] = "EO_LEFT_PARENTHESE",
-    [EO_RIGHT_PARENTHESE] = "EO_RIGHT_PARENTHESE"
+    [EO_NEGATE] = "EO_NEGATE"
 };
 
 
@@ -49,10 +47,10 @@ Expression *expression_init() {
 void expression_dispose(Expression *expr) {
     if (expr != NULL) {
         if (expr->expr1 != NULL) {
-            free(expr->expr1);
+            expression_dispose(expr->expr1);
         }
         if (expr->expr2 != NULL) {
-            free(expr->expr2);
+            expression_dispose(expr->expr2);
         }
         if (expr->symbol != NULL) {
             symbol_dispose(expr->symbol);
@@ -60,12 +58,14 @@ void expression_dispose(Expression *expr) {
         if (expr->str != NULL) {
             str_dispose(expr->str);
         }
-    free(expr);
+
+        free(expr);
     }
 }
 
 void expression_print (Expression* expr) {
     printf("%s(", operations_char[expr->op]);
+    fflush(stdout);
     switch (expr->op) {
         case EO_CONST_INTEGER:
             printf("%d", expr->i);
@@ -80,10 +80,18 @@ void expression_print (Expression* expr) {
             printf("%s", expr->b ? "true" : "false");
             break;
         case EO_SYMBOL:
-            symbol_print(expr->symbol);
+            if(expr->symbol != NULL) {
+                symbol_print(expr->symbol);
+            } else {
+                printf("SYMBOL");
+            }
             break;
         case EO_SYMBOL_CALL:
-            symbol_print(expr->symbol);
+            if(expr->symbol != NULL) {
+                symbol_print(expr->symbol);
+            } else {
+                printf("SYMBOL_CALL");
+            }
             break;
         case EO_PLUS:
             expression_print(expr->expr1);
@@ -145,21 +153,10 @@ void expression_print (Expression* expr) {
             printf(", ");
             expression_print(expr->expr2);
             break;
-        case EO_LOGIC_GREATER:
-            expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
-            break;
         case EO_NEGATE:
             expression_print(expr->expr1);
             printf(", ");
             expression_print(expr->expr2);
-            break;
-        case EO_LEFT_PARENTHESE:
-            printf("(");
-            break;
-        case EO_RIGHT_PARENTHESE:
-            printf(")");
             break;
         default:
             printf("???\n");
@@ -654,7 +651,7 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             }
 
             expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
-            // printf("EO_SYMBOL_CALL 1\n");
+            // printf("EO_SYMBOL_CALL 1 %s\n", str_get_str(expr->symbol->id->name));
             if(expr->symbol == NULL) {
                 set_error(ERR_INTERPRET);
                 return NULL;
@@ -671,6 +668,7 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
 
             if(expr->symbol->id->class != NULL  && str_cmp_const(expr->symbol->id->class, "ifj16") == 0) {
                 //builtin fn call
+                // printf("EO_SYMBOL_CALL builtin fn\n");
 
                 Expression* res_expr = expression_init();
                 if(str_cmp_const(expr->symbol->id->name, "readInt") == 0) {
@@ -738,7 +736,6 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                         return NULL;
                     }
                 } else if(str_cmp_const(expr->symbol->id->name, "compare") == 0) {
-                    res_expr->op = EO_CONST_INTEGER;
                     res_expr->op = EO_CONST_INTEGER;
                     Expression* s1 = expression_evaluate(expr->call_params->first->data.expression, main_context, context);
                     Expression* s2 = expression_evaluate(expr->call_params->first->next->data.expression, main_context, context);

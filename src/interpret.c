@@ -140,7 +140,7 @@ void process_frame() {
             {
                 // printf("IC_EVAL: ");
                 // expression_print((Expression*)current_instruction->op1);
-                // printf(" = ");
+                // printf(" = \n");
                 // fflush(stdout);
                 Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
@@ -150,6 +150,7 @@ void process_frame() {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
                     res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
+                    if(get_error()->type) return set_error(ERR_SEM_PARAMS);
                     // printf(" = ");
                     // symbol_print(res_symbol);
                     // printf("\n");
@@ -264,7 +265,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 
             assign_value_to_variable(symbol, expression_evaluate(val, main_context, current_frame->context));
             if(get_error()->type) return set_error(ERR_SEM_PARAMS);
-            symbol_print(symbol);
+            // symbol_print(symbol);
 
             list_activate_next(fn_symbol->data.fn->params_ids_list);
             list_activate_next(params);

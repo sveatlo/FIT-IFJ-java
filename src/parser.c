@@ -442,23 +442,31 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
         return;
     }
 
-    if(fn_params_list->active == NULL) {
-        //no more fn params, but more call params => error
-        return set_error(ERR_SEMANTIC);
+    if(second_run) {
+        if(fn_params_list->active == NULL) {
+            //no more fn params, but more call params => error
+            return set_error(ERR_SEM_PARAMS);
+        }
     }
 
 
+
     // VariableType type = fn_params_list->active->data.var_type;
+    // printf("call_params_list before general_expression_rule call\n");
     Expression* expr = general_expression_rule(STT_COMMA, STT_RIGHT_PARENTHESE);
     //insert the expr to call_params_list
     if(second_run) {
         ListItemData data = {
             .expression = expr
         };
-        list_insert_last(call_params_list, data);
+        if(second_run) {
+            list_insert_last(call_params_list, data);
+        }
     }
 
-    list_activate_next(fn_params_list);
+    if(second_run) {
+        list_activate_next(fn_params_list);
+    }
     if(current_token->type == STT_COMMA) {
         next_token();
         call_params_list_rule(fn_params_list, call_params_list);
@@ -537,6 +545,7 @@ void stat_rule(bool is_void, bool can_define) {
         // statements inside IF
         next_token();
         stat_list_rule(is_void, false);
+        if(get_error()->type) return;
         Instruction* jmp_after_else = NULL;
         Instruction* nop_before_else = NULL;
         Instruction* nop_after_else = NULL;
@@ -613,7 +622,10 @@ void stat_rule(bool is_void, bool can_define) {
 
         next_token();
         if(current_token->type == STT_LEFT_PARENTHESE) {
-            if(second_run) {
+            if(!second_run) {
+                next_token();
+                call_params_list_rule(NULL, NULL);
+            } else {
                 //function call
                 if(symbol->type != ST_FUNCTION) return set_error(ERR_OTHER_SEMANTIC);
 
@@ -625,7 +637,7 @@ void stat_rule(bool is_void, bool can_define) {
                 if(symbol->data.fn->params_types_list->active != NULL) {
                     //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
-                    return set_error(ERR_SEMANTIC);
+                    return set_error(ERR_SEM_PARAMS);
                 }
                 if(get_error()->type) return;
 
@@ -666,13 +678,10 @@ void stat_rule(bool is_void, bool can_define) {
                     //just general fn call
                     instruction_insert_to_list(current_instructions, instruction_generate(IC_CALL, symbol, call_params_list, NULL));
                 }
-            } else {
-                while(current_token->type != STT_RIGHT_PARENTHESE) {
-                    next_token();
-                }
             }
             if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
-            if(next_token()->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
+            next_token();
+            if(current_token->type != STT_SEMICOLON) return set_error(ERR_SYNTAX);
             //generate CALL instruction
         } else if(current_token->type == STT_EQUALS) {
             if(second_run) {
@@ -721,84 +730,21 @@ void stat_rule(bool is_void, bool can_define) {
 }
 
 Expression* bool_expression_rule() {
-    if(!second_run) {
-        while(current_token->type != STT_RIGHT_PARENTHESE) {
-            // detect unwanted tokens even in 1st run
-            if(
-                current_token->type == STT_INT ||
-                current_token->type == STT_DOUBLE ||
-                current_token->type == STT_STRING ||
-                current_token->type == STT_KEYWORD ||
-                current_token->type == STT_IDENT ||
-                current_token->type == STT_PLUS ||
-                current_token->type == STT_MINUS ||
-                current_token->type == STT_MULTIPLY ||
-                current_token->type == STT_DIVIDE ||
-                current_token->type == STT_LEFT_PARENTHESE ||
-                current_token->type == STT_RIGHT_PARENTHESE ||
-                current_token->type == STT_AND ||
-                current_token->type == STT_OR ||
-                current_token->type == STT_LESS ||
-                current_token->type == STT_GREATER ||
-                current_token->type == STT_LESS_EQUALS ||
-                current_token->type == STT_GREATER_EQUALS ||
-                current_token->type == STT_LOGIC_EQUAL ||
-                current_token->type == STT_LOGIC_NOT_EQUAL
-            ) {
-                next_token();
-            } else {
-                set_error(ERR_SYNTAX);
-                return NULL;
-            }
-        }
-
+    if(current_token->type == STT_RIGHT_PARENTHESE) {
+        set_error(ERR_SYNTAX);
         return NULL;
-    } else {
-        return general_expression_rule(STT_RIGHT_PARENTHESE, STT_EOF);
     }
 
+    return general_expression_rule(STT_RIGHT_PARENTHESE, STT_EOF);
 }
 
 Expression* expression_rule() {
     if(current_token->type == STT_SEMICOLON) {
+        set_error(ERR_SYNTAX);
         return NULL;
     }
 
-    if(!second_run) {
-        while(current_token->type != STT_SEMICOLON) {
-            // detect unwanted tokens even in 1st run
-            if(
-                current_token->type == STT_INT ||
-                current_token->type == STT_DOUBLE ||
-                current_token->type == STT_STRING ||
-                current_token->type == STT_KEYWORD ||
-                current_token->type == STT_IDENT ||
-                current_token->type == STT_PLUS ||
-                current_token->type == STT_MINUS ||
-                current_token->type == STT_MULTIPLY ||
-                current_token->type == STT_DIVIDE ||
-                current_token->type == STT_LEFT_PARENTHESE ||
-                current_token->type == STT_RIGHT_PARENTHESE ||
-                current_token->type == STT_AND ||
-                current_token->type == STT_OR ||
-                current_token->type == STT_LESS ||
-                current_token->type == STT_GREATER ||
-                current_token->type == STT_LESS_EQUALS ||
-                current_token->type == STT_GREATER_EQUALS ||
-                current_token->type == STT_LOGIC_EQUAL ||
-                current_token->type == STT_LOGIC_NOT_EQUAL
-            ) {
-                next_token();
-            } else {
-                set_error(ERR_SYNTAX);
-                return NULL;
-            }
-        }
-
-        return NULL;
-    } else {
-        return general_expression_rule(STT_SEMICOLON, STT_EOF);
-    }
+    return general_expression_rule(STT_SEMICOLON, STT_EOF);
 }
 
 Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType or_end_token) {
@@ -806,6 +752,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     Stack* nonterm_stack = stack_init();
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
+        // printf("general_expression_rule %s\n", token_to_string(current_token));
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
@@ -834,51 +781,74 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->b = current_token->data->keyword_type == KW_TRUE ? true : false;
                 } else {
                     set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
                     return NULL;
                 }
                 break;
             case STT_IDENT:
             {
+                // printf("general_expression_rule IDENT 0\n");
                 is_term = true;
                 Ident* current_ident = current_token->data->id;
-                Symbol* symbol = context_find_ident(current_context, main_context, current_token->data->id);
+                Symbol* symbol = NULL;
+                if(second_run) {
+                    symbol = context_find_ident(current_context, main_context, current_token->data->id);
+                }
+                // printf("general_expression_rule IDENT 1\n");
                 if(get_error()->type) return NULL;
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
+                    // printf("general_expression_rule IDENT 2\n");
                     //function call
-                    if(symbol->type != ST_FUNCTION) {
-                        set_error(ERR_OTHER_SEMANTIC);
-                        return NULL;
+                    if(second_run) {
+                        // printf("general_expression_rule IDENT 2.5\n");
+                        if(symbol->type != ST_FUNCTION) {
+                            set_error(ERR_OTHER_SEMANTIC);
+                            return NULL;
+                        }
                     }
 
+                    // printf("general_expression_rule IDENT 2.75\n");
+                    data.expression->op = EO_SYMBOL_CALL;
+                    // printf("general_expression_rule IDENT 3\n");
+
                     //list for params types
-                    list_activate_first(symbol->data.fn->params_types_list);
-                    next_token();
-                    List *call_params_list = list_init();
-                    call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
-                    if(symbol->data.fn->params_types_list->active != NULL) {
-                        //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
-                        //fn params but call params ended
-                        set_error(ERR_SEMANTIC);
-                        return NULL;
+                    if(!second_run) {
+                        // printf("general_expression_rule IDENT 4\n");
+                        next_token();
+                        call_params_list_rule(NULL, NULL);
+                        // printf("general_expression_rule IDENT 5\n");
+                    } else {
+                        list_activate_first(symbol->data.fn->params_types_list);
+                        next_token();
+                        List *call_params_list = list_init();
+                        call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                        if(symbol->data.fn->params_types_list->active != NULL) {
+                            //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                            //fn params but call params ended
+                            set_error(ERR_SEM_PARAMS);
+                            return NULL;
+                        }
+
+
+                        data.expression->symbol = symbol;
+                        data.expression->symbol->id = current_ident;
+                        data.expression->call_params = call_params_list;
                     }
                     if(get_error()->type) return NULL;
                     if(current_token->type != STT_RIGHT_PARENTHESE) {
                         set_error(ERR_SYNTAX);
                         return NULL;
                     }
-
-                    data.expression->op = EO_SYMBOL_CALL;
-                    data.expression->symbol = symbol;
-                    data.expression->call_params = call_params_list;
-                    data.expression->symbol->id = current_ident;
                 } else {
                     prev_token();
-                    if(symbol->type != ST_VARIABLE) {
-                        set_error(ERR_OTHER_SEMANTIC);
-                        return NULL;
-                    }
                     data.expression->op = EO_SYMBOL;
-                    data.expression->symbol = symbol;
+                    if(second_run) {
+                        if(symbol->type != ST_VARIABLE) {
+                            set_error(ERR_OTHER_SEMANTIC);
+                            return NULL;
+                        }
+                        data.expression->symbol = symbol;
+                    }
                 }
                 break;
             }
@@ -895,10 +865,11 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 data.expression->op = EO_DIVIDE;
                 break;
             case STT_LEFT_PARENTHESE:
-                data.expression->op = EO_LEFT_PARENTHESE;
-                break;
-            case STT_RIGHT_PARENTHESE:
-                data.expression->op = EO_RIGHT_PARENTHESE;
+                is_term = true;
+                expression_dispose(data.expression);
+                next_token();
+                // printf("recursive calling general_expression_rule\n");
+                data.expression = general_expression_rule(end_token, or_end_token);
                 break;
             case STT_AND:
                 data.expression->op = EO_AND;
@@ -926,95 +897,56 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             default:
                 set_error(ERR_SYNTAX);
+                expression_dispose(data.expression);
+                return NULL;
                 break;
         }
 
         if(is_term) {
+            // printf("pushing term\n");
             stack_push(term_stack, data);
         } else {
             StackItemData* top = stack_top(nonterm_stack);
-            if(data.expression->op == EO_RIGHT_PARENTHESE) {
-                //treat "(" and ")"
-                // TODO: expression_dispose data.expression
-                while(top != NULL && top->expression->op != EO_LEFT_PARENTHESE) {
-                    //reduce
+            // printf("pushing nonterm\n");
 
-                    // first to ->expr2
-                    StackItemData* term_top2 = stack_top(term_stack);
-                    if(term_top2 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-                    // second to ->expr1
-                    StackItemData* term_top1 = stack_top(term_stack);
-                    if(term_top1 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
+            //while there are ops on stack with priority equal or higher than current op => reduce
+            while(top != NULL && precedence_table[top->expression->op][data.expression->op] > E) {
+                // reducing nonterm array means poping 2 (or generally x) values from term stack
+                // and assigning them to the top expr
+                // the top expr will then be poped from nonterm stack and pushed to term stack
 
-                    //set terms for current top
-                    top->expression->expr2 = term_top2->expression;
-                    top->expression->expr1 = term_top1->expression;
-
-                    //push the top to term
-                    stack_push(term_stack, *top);
-                    //pop it from nonterm
-                    stack_pop(nonterm_stack);
-
-
-                    // set new top
-                    top = stack_top(nonterm_stack);
-                }
-
-                if(top->expression->op == EO_LEFT_PARENTHESE) {
-                    // TODO: expression_dispose top.expression
-                    // pop the "("
-                    stack_pop(nonterm_stack);
-                } else {
-                    // missing "(" => SYNTAX error
+                // first to ->expr2
+                StackItemData* term_top2 = stack_top(term_stack);
+                if(term_top2 == NULL) {
                     set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
                     return NULL;
                 }
-            } else {
-                //while there are ops on stack with priority equal or higher than current op => reduce
-                while(top != NULL && precedence_table[top->expression->op][data.expression->op] > E) {
-                    // reducing nonterm array means poping 2 (or generally x) values from term stack
-                    // and assigning them to the top expr
-                    // the top expr will then be poped from nonterm stack and pushed to term stack
-
-                    // first to ->expr2
-                    StackItemData* term_top2 = stack_top(term_stack);
-                    if(term_top2 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-                    // second to ->expr1
-                    StackItemData* term_top1 = stack_top(term_stack);
-                    if(term_top1 == NULL) {
-                        set_error(ERR_SYNTAX);
-                        return NULL;
-                    }
-                    stack_pop(term_stack);
-
-                    //set terms for current top
-                    top->expression->expr2 = term_top2->expression;
-                    top->expression->expr1 = term_top1->expression;
-
-                    //push the top to term
-                    stack_push(term_stack, *top);
-                    //pop it from nonterm
-                    stack_pop(nonterm_stack);
-
-
-                    // set new top
-                    top = stack_top(nonterm_stack);
+                stack_pop(term_stack);
+                // second to ->expr1
+                StackItemData* term_top1 = stack_top(term_stack);
+                if(term_top1 == NULL) {
+                    set_error(ERR_SYNTAX);
+                    expression_dispose(data.expression);
+                    return NULL;
                 }
+                stack_pop(term_stack);
 
-                stack_push(nonterm_stack, data);
+                //set terms for current top
+                top->expression->expr2 = term_top2->expression;
+                top->expression->expr1 = term_top1->expression;
+
+                //push the top to term
+                stack_push(term_stack, *top);
+                //pop it from nonterm
+                stack_pop(nonterm_stack);
+
+
+                // set new top
+                top = stack_top(nonterm_stack);
             }
+
+            stack_push(nonterm_stack, data);
         }
 
         next_token();
@@ -1060,8 +992,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     if(stack_pop(term_stack) != NULL) {
         //fprintf(stderr, "Cannot parse expression\n");
         set_error(ERR_SYNTAX);
+        expression_dispose(res->data.expression);
         return NULL;
     }
 
+    // printf("general_expression_rule return\n");
     return res->data.expression;
 }

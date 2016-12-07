@@ -98,7 +98,8 @@ void str_copy_string(String* dest, String* str) {
 }
 
 int str_cmp(String* s1, String* s2) {
-    return strcmp(s1->str, s2->str);
+    int i = strcmp(s1->str, s2->str);
+    return i == 0 ? 0 : (i > 0 ? 1 : -1);
 }
 
 int str_cmp_const(String* s1, char *s2) {
