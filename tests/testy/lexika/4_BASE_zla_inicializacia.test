@@ -1,0 +1,6 @@
+/* base rozsirenie hexa musi byt P/p chyba 1*/
+class Main {
+    static void run(){
+        double a = 0xFF.FF;
+    }
+}
