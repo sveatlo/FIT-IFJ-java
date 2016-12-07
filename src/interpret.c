@@ -140,16 +140,17 @@ void process_frame() {
             {
                 // printf("IC_EVAL: ");
                 // expression_print((Expression*)current_instruction->op1);
-                // printf(" = ");
+                // printf(" = \n");
                 // fflush(stdout);
                 Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
-                // expression_print(res);
+                expression_print(res);
 
                 if(current_instruction->res != NULL) {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
                     res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
+                    if(get_error()->type) return set_error(ERR_SEM_PARAMS);
                     // printf(" = ");
                     // symbol_print(res_symbol);
                     // printf("\n");

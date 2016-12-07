@@ -751,6 +751,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     Stack* nonterm_stack = stack_init();
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
+        // printf("general_expression_rule %s\n", token_to_string(current_token));
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
