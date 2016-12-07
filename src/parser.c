@@ -67,13 +67,13 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readInt")
         };
-        Symbol* fn_read_int = context_add_function(current_context, KW_INT, &fn_read_int_id);
+        /*Symbol* fn_read_int = */context_add_function(current_context, KW_INT, &fn_read_int_id);
 
         Ident fn_read_double_id = {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readDouble")
         };
-        Symbol* fn_read_double = context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
+        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
         Ident fn_read_string_id = {
             .class = str_init_const("ifj16"),
             .name = str_init_const("readString")

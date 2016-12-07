@@ -195,7 +195,7 @@ ScannerToken* get_next_token(FILE *f) {
             }
         }
 
-        String *number;
+        String *number = NULL;
 
         switch (current_state) {
             //default state => every token starts here
