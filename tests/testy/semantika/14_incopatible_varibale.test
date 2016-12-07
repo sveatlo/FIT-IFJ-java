@@ -1,0 +1,10 @@
+/* IDE vracia chybu 4 */
+class Main {
+    static void run(){
+        //String a = "ahojkawaawda";
+        //String c = "kaw";
+        String x;
+            x = ifj16.find("ahojakosamas","jak");
+            ifj16.print(x + "\n");
+    }
+}

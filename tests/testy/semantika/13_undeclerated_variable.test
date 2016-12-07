@@ -1,0 +1,10 @@
+/* IDE VRacia chybu 3 nedeklerovana prememenna */
+class Main {
+    static void run(){
+        if (ifj16.length("ahoj1") == 5) {
+            ifj16.print(a);
+        } else {
+            ifj16.print(b);
+        }
+    }
+}
