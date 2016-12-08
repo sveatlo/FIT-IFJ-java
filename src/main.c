@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
         return get_error()->type;
     }
 
-    list_dispose(token_list);
+    //list_dispose(token_list);
     fclose(f);
 
     return 0;
