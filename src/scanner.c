@@ -819,6 +819,7 @@ ScannerToken* get_next_token(FILE *f) {
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_P_2;
                 } else if ((c == '-') || (c == '+')) {
+                    str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_P_SIGN;
                 } else {
                     //error
