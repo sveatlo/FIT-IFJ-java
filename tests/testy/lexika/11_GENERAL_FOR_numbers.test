@@ -1,5 +1,5 @@
 class Main {
     static void run(){
-        int b = 05_4; //osmickova
+        int c = _10_000;
     }
 }
