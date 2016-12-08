@@ -324,15 +324,34 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
 
         case EO_DIVIDE:
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
+                if(expr2->i == 0) {
+                    set_error(ERR_RUN_DIV_NULL);
+                    return NULL;
+                }
                 res_expr->op = EO_CONST_INTEGER;
                 res_expr->i = expr1->i / expr2->i;
             } else if (OperationTableOthers[expr1->op][expr2->op] == D) {
                 res_expr->op = EO_CONST_DOUBLE;
                 if (expr1->op == EO_CONST_INTEGER) {
+                    if(expr2->d == 0) {
+                        set_error(ERR_RUN_DIV_NULL);
+                        return NULL;
+                    }
+
                     res_expr->d  = expr1->i / expr2->d;
                 } else if (expr2->op == EO_CONST_DOUBLE) {
+                    if(expr2->d == 0) {
+                        set_error(ERR_RUN_DIV_NULL);
+                        return NULL;
+                    }
+
                     res_expr->d = expr1->d / expr2->d;
                 } else {
+                    if(expr2->i == 0) {
+                        set_error(ERR_RUN_DIV_NULL);
+                        return NULL;
+                    }
+
                     res_expr->d = expr1->d / expr2->i;
                 }
             } else {
