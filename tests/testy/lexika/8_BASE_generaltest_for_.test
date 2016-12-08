@@ -3,7 +3,7 @@ class Main {
         double a = 0xF_F.F_Fp-1; //hexa
         int b = 05_4; //osmickova
         int d = 0_77;
-        int d = 0_7_7;
+        int e = 0_7_7;
         int c = 0b1_1; //dvojkova
         int x = 10_000;
     }
