@@ -129,3 +129,5 @@ case $testgroup in
         ;;
 
 esac
+
+rm -rf "$tmp_dir"
