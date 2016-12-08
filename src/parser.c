@@ -997,8 +997,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     }
 
     StackItem* res = stack_pop(term_stack);
-    if(stack_pop(term_stack) != NULL) {
-        //fprintf(stderr, "Cannot parse expression\n");
+    if(stack_top(term_stack) != NULL) {
+        // fprintf(stderr, "Cannot parse expression\n");
         set_error(ERR_SYNTAX);
         expression_dispose(res->data.expression);
         return NULL;

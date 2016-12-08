@@ -186,6 +186,8 @@ ScannerToken* get_next_token(FILE *f) {
         return NULL;
     }
 
+    String *number = NULL;
+
     while (69) {
         //get next char from file
         if (current_state != SS_LEX_ERROR) {
@@ -194,8 +196,6 @@ ScannerToken* get_next_token(FILE *f) {
                 line++;
             }
         }
-
-        String *number = NULL;
 
         switch (current_state) {
             //default state => every token starts here
