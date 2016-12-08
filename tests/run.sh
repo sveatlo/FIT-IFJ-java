@@ -30,7 +30,7 @@ run_tests() {
         # 2&>1 takes STDERR into equation
         file=${file%.*}
 
-        if [[ -e "$file.input" ]]; then
+        if [ -e "$file.input" ]; then
             cat "$file.input" | "$intepret" "$file.test" > "$test_tmp/$(basename $file).test.out" 2>&1
         else
             "$intepret" "$file.test" > "$test_tmp/$(basename $file).test.out" 2>&1
@@ -39,17 +39,17 @@ run_tests() {
         expected=$(cat "$file".code)
 
         diiff=""
-        if [[ -e "$file.output" ]]; then
+        if [ -e "$file.output" ]; then
             diiff=$(diff "$file.output" "$test_tmp/$(basename $file).test.out")
         fi
 
-        if [[ "$returned" -eq "$expected" && "$diiff" = "" ]]; then
+        if [ "$returned" -eq "$expected" ] && [ "$diiff" = "" ]; then
             passed=$((passed + 1))
             echo "(${GREEN}successful${RESET})"
         else
             failed=$((failed + 1))
             echo "(${RED}failed${RESET})"
-            if ! [[ "$returned" -eq "$expected" ]]; then
+            if ! [ "$returned" -eq "$expected" ]; then
                 echo "    EXPECTED: ${GREEN} $expected ${RESET}"
                 echo "    RETURNED: ${RED} $returned ${RESET}"
             fi
