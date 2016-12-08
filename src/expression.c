@@ -267,14 +267,11 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(res_expr->str, tmp_str);
                     str_dispose(tmp_str);
                 } else {
-                    str_concat(expr1->str, expr2->str);
-                    res_expr->str = expr1->str;
+                    str_concat(res_expr->str, expr1->str);
+                    str_concat(res_expr->str, expr2->str);
                 }
             } else {
                 set_error(ERR_SEM_PARAMS);
-                // expression_dispose(expr1);
-                // expression_dispose(expr2);
-                // return NULL;
 
             }
             break;
@@ -295,9 +292,6 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                 set_error(ERR_SEM_PARAMS);
-                // expression_dispose(expr1);
-                // expression_dispose(expr2);
-                // return NULL;
             }
             break;
 
@@ -316,9 +310,6 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             } else {
                 set_error(ERR_SEM_PARAMS);
-                // expression_dispose(expr1);
-                // expression_dispose(expr2);
-                // return NULL;
             }
             break;
 
