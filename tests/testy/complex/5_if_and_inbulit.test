@@ -1,0 +1,36 @@
+class Main {
+    static void run(){
+        String a = "je";
+        String b = "nie je";
+        if (ifj16.length("ahoj") <= 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+        if (ifj16.length("ahoj4") == 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+        if (ifj16.length("ahojkewad") < 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+        if (ifj16.length("ahojkewad") > 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+        if (ifj16.length("ahojkewad") >= 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+        if (ifj16.length("ahojkewad") != 5) {
+            ifj16.print(a + "\n");
+        } else {
+            ifj16.print(b + "\n");
+        }
+    }
+}

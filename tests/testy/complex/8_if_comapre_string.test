@@ -1,0 +1,18 @@
+class Main {
+    static void run(){
+        String a = "ano";
+        String c = "ano";
+        String x = "nie";
+            if (ifj16.compare(a,c) == 0 ) {
+                ifj16.print(a + "\n");
+            } else {
+                ifj16.print(x + "\n");
+            }
+        String e = "a";
+            if (ifj16.compare(a,e) == 1 ) {
+                ifj16.print(a + "\n");
+            } else {
+                ifj16.print(x + "\n");
+            }
+    }
+}

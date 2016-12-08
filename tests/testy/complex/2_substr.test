@@ -1,0 +1,9 @@
+/* IDE vzpisuje hoj */
+class Main {
+    static void run(){
+        String a = "ahojkawaawda";
+        String c ;
+        c = ifj16.substr(a, 1, 2);
+        ifj16.print(c + "\n");
+    }
+}

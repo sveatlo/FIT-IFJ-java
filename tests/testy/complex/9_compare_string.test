@@ -1,0 +1,14 @@
+class Main {
+    static void run(){
+        String a = "ano";
+        String x = "nie";
+        String d = "ahojjjj";
+        int e= ifj16.compare(a,d);
+        //ifj16.print(e);
+            if (e  < 0 ) {
+                ifj16.print(a + "\n");
+            } else {
+                ifj16.print(x + "\n");
+            }
+    }
+}

@@ -1,0 +1,26 @@
+/* IDE pre vstup cez premenne aj praimo vo funkciu vracia spravne hodnoty indexovanie od 0 nenajdeny -1 prazdny retazec 0 */
+class Main {
+    static void run(){
+        String a = "ahojkawaawda";
+        String c = "kaw";
+        int x;
+            x = ifj16.find(a,c);
+            ifj16.print(x + "\n");
+
+        String d = "ahojkawaawda";
+        String e = "xa";
+        int f;
+            f = ifj16.find(d,e);
+            ifj16.print(f + "\n");
+
+        String g = "ahojkawaawda";
+        String h = "";
+        int k;
+            k = ifj16.find(g,h);
+            ifj16.print(k+ "\n");
+
+        int p;
+            p = ifj16.find("ahojakosamas","jak");
+            ifj16.print(p + "\n");
+    }
+}

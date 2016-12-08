@@ -1,0 +1,14 @@
+class Main {
+    static void run(){
+        int a = 0;
+        int b = 4;
+        int c;
+        c = a/b;
+        ifj16.print(c + "\n");
+        double d = 0.0;
+        double e = 5.1;
+        double x;
+        x = d/e;
+        ifj16.print(x + "\n");
+    }
+}

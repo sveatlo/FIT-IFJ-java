@@ -1,0 +1,7 @@
+class Main {
+    static void run(){
+        String c;
+        c = ifj16.sort("bcadax");
+        ifj16.print(c + "\n");
+    }
+}
