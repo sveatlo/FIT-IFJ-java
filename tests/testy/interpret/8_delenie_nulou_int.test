@@ -1,0 +1,8 @@
+class Main {
+    static void run(){
+        int a = 8;
+        int b = 0;
+        double c;
+        c = a/b;
+    }
+}
