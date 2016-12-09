@@ -876,8 +876,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 is_term = true;
                 expression_dispose(data.expression);
                 next_token();
-                // printf("recursive calling general_expression_rule\n");
-                data.expression = general_expression_rule(end_token, or_end_token);
+                data.expression = general_expression_rule(STT_RIGHT_PARENTHESE, end_token);
+                if(get_error()->type) return NULL;
                 break;
             case STT_AND:
                 data.expression->op = EO_AND;
@@ -904,6 +904,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 data.expression->op = EO_LOGIC_NOT_EQUAL;
                 break;
             default:
+                // printf(" Unexpected token %s\n", token_to_string(current_token));
                 set_error(ERR_SYNTAX);
                 expression_dispose(data.expression);
                 return NULL;
