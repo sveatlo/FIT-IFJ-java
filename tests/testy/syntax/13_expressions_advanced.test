@@ -1,0 +1,18 @@
+class Main {
+    static void run() {
+        double c = 3.141459265358979;
+
+        foo((c-5)*20, 5);
+        foo(5, 20*(c-5));
+        foo1((c-5)*20);
+        foo1(20*(c-5));
+	}
+
+    static void foo(double a, double b) {
+
+    }
+
+    static void foo1(double a) {
+
+    }
+}
