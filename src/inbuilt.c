@@ -1,4 +1,7 @@
 #include <ctype.h>
+#include <errno.h>
+#include <float.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "error.h"
@@ -39,7 +42,7 @@ int read_int() {
     char *err;
     int base = get_base(number);
     int i = strtol((base == 2 || base == 16) ? substr(number, 2, str_length(number) - 2)->str : number->str, &err, base);
-    if (*err != 0) {
+    if (*err != 0 || errno == ERANGE || i >= INT_MAX || i <= INT_MIN) {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
         return -1;
     }
@@ -56,7 +59,7 @@ double read_double() {
     }
     char *err;
     double d = strtod(number->str, &err);
-    if (*err != 0) {
+    if (*err != 0 || errno == ERANGE || d >= DBL_MAX || d <= DBL_MIN) {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
         return -1;
     }
