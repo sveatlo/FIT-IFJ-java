@@ -8,6 +8,27 @@
 
 extern Error last_error;
 
+int get_base(String* str) {
+    char* cstring = str_get_str(str);
+    if(cstring == NULL) {
+        return 0;
+    }
+
+    if(str_length(str) == 1) {
+        return 0;
+    }
+
+    if(cstring[0] == '0') {
+        if(cstring[1] == 'b') {
+            return 2;
+        } else if(cstring[1] == 'x') {
+            return 16;
+        }
+    }
+
+    return 0;
+}
+
 int read_int() {
     String* number = str_init();
     int c = getchar();
@@ -16,7 +37,8 @@ int read_int() {
         c = getchar();
     }
     char *err;
-    int i = strtol(number->str, &err, 0);
+    int base = get_base(number);
+    int i = strtol((base == 2 || base == 16) ? substr(number, 2, str_length(number) - 2)->str : number->str, &err, base);
     if (*err != 0) {
         set_error(ERR_READ_NUM_FROM_STDIN); //error from stdin
         return -1;
