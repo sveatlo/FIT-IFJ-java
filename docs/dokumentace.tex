@@ -2,6 +2,9 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[slovak]{babel}
+\usepackage[letterpaper, margin=2cm]{geometry}
+
+
 
 
 \title{Dokumentácia projektu IFJ}
@@ -41,13 +44,44 @@
 		\newpage
 	\section{Práca v tíme}
         \subsection{Komunikácia v tíme}
+	        Zo začiatku projektu bola v našom tíme snaha o pravidelne stretnutia 1-2-krát týždenne. To sa však postupne ukázalo ako neefektívne vzhľadom na malé množstvo užitočných informácii, ktoré sa prebrali počas týchto stretnutí a tak sa celá komunikácia presunula na Slack a skôr sa rozdelila medzi ľudí spolupracujúcich na jednotlivých častiach projektu.\\
+	        Rozhodnutia o smerovaní projektu boli síce centralizované, ale zároveň otvorené k diskusii.
         \subsection{Verzovací systém}
+			Ako nástroj na správu verzií a zdielanie kódu sme zvolili GIT, pričom vzdialený ako vzdialený repozitár bol zvolený privátny server GitLab, ktorý zároveň slúžil na zadávanie tzv. , teda problémov, ktoré treba vyriešiť.
+		\subsection{Rozdelenie práce}
         \subsection{Automatizované testy}
 	\section{Riešenie interpretu}
 		\subsection{Lexikálna analýza}
 		\subsection{Syntaktická a sémantická analýza}
 		\subsection{Interpretácia}
 		\subsection{Algoritmy}
+			\subsubsection{Knuth-Morris-Prattův algoritmus}
+				Jedná se o algoritmus pro vyhledání podřetězce v řetězci. Klasické (triviální) vyhledávání podřetězce – tedy když postupně procházíme řetězec a u každého znaku zjišťujeme, zda se shoduje s podřetězcem, a v případě neshody se posuneme na další znak a musíme porovnávat s podřetězcem zase od začátku – vede v nejhorším případě až na časovou složitost \textbf{O(m·n)}, kde \textbf{m} je délka řetězce a \textbf{n} délka hledaného podřetězce. Tento algoritmus je tedy velmi neefektivní. O(m+n), tedy je mnohem rychlejší. KMP algoritmus dokáže sledovat, zda se v hledaném podřetězci opakují určité skupiny znaků (podřetězce). Při procházení textu pak při neshodě zjistí, zda se v části podřetězce, která už byla zkontrolována (dokud nedošlo k neshodě), nachází sufix, který je shodný s prefixem.\\
+				\textbf{Př.:}\\
+				Hledaný podřetězec je \textbf{abcxyabcijk}. Uvažujme, že při procházení textu nastane neshoda až na znaku \textbf{c}. Část podřetězce, která podmínkou prošla, je tedy \textbf{abcxyabc}. V této části je skupina znaků \textbf{abc}, která se opakuje, a to tak, že je zároveň jejím prefixem i sufixem.
+				Pokud se v podřetězci nachází taková skupina znaků, při neshodě se pak nemusí začínat znovu od začátku podřetězce a v řetězci se nemusíme vracet zpět ke znaku, od kterého jsme začínali kontrolovat. Protože (opět uvažujme uvedený příklad) pokud jsme prošli podřetězcem bez problému až po \textbf{i}, jsme si jistí, že v procházeném textu jsou předchozí tři znaky \textbf{abc}, což se shoduje s prvními třemi znaky, které bychom hledali, pokud bychom procházeli podřetězec znovu od začátku. Můžeme tedy tyto tři znaky přeskočit a pokračovat dále.
+				Nejdříve je nutné projít podřetězec a vytvořit pole (v naší funkci pojmenované fail), do kterého se zapíšou hodnoty podle toho, kolika-znakové skupiny se v podřetězci opakují. Tyto hodnoty pak určují, na kterou pozici v podřetězci se musíme vrátit v případě neshody (tedy i kolik znaků v řetězci již můžeme přeskočit).\\
+				\textbf{Př.:}\\\\
+				\begin{center}
+					\begin{tabular}{|c|c|c|c|c|c|c|c|}
+						\hline 
+						a & b & c & d & a & b & c & a \\ 
+						\hline 
+						0 & 0 & 0 & 0 & 1 & 2 & 3 & 1 \\ 
+						\hline 
+					\end{tabular}\\
+				\end{center}
+				Algoritmus KMP pak prochází postupně řetězec a porovnává jednotlivé znaky se znaky podřetězce. V případě neshody se pak podle hodnoty v tabulce fail posune na určitou pozici v podřetězci a znaky před touto pozicí již nemusí znovu kontrolovat.
+				Výsledkem je algoritmus pracující se složitostí \textbf{O(m+n)}, jelikož při porovnání textu se algoritmus nikdy nevrací, celý ho tedy projde se složitostí O(m), ale předtím je nutné tzv. Předzpracování – vytvoření tabulky fail, což znamená projít podřetězec se složitostí O(n).
+				
+			\subsubsection{Heapsort algoritmus}
+				Řazení haldou/hromadou je velmi efektivní řadící algoritmus, který pracuje s časovou složitostí \textbf{O(n·logn)}, která je však zaručená. Jeho použití je tedy někdy vhodnější než použití quicksortu, který může být v některých případech rychlejší, ale v nejhorších případech dosahuje až složitosti \(O(n^2)\).
+				Tento algoritmus řadí pole, které má strukturu binární hromady. Hromada je struktura stromového typu, pro kterou platí, že mezi otcovským uzlem a všemi jeho synovskými uzly je vždy stejná relace (např. otec vždy větší než jeho synové). Binární hromada je založena na binárním stromu.
+				Pro hromadu implementovanou jako pole (tedy v našem případě řetězec) platí, že otcovský uzel na indexu i má vždy levého syna na indexu \textbf{2i} a pravého syna na indexu \textbf{2i+1}.
+				V každém kroku řazení dojde k porušení struktury a je potřeba se stromem tzv. „zatřást“ (shiftdown), čímž se struktura hromady obnoví.
+				Tím se dostane na vrchol hromady prvek podle určitého pravidla (např. největší nebo nejmenší). Pokračujeme tak, že vrchol haldy „utrhneme“ a vložíme ho na další pozici již seřazeného řetězce. Poté pracujeme s haldou o jeden prvek menší, musíme ji znovu opravit (pomocí siftdown) a tento postup opakujeme, dokud má halda nějaké prvky.
+				Výsledkem je algoritmus se složitostí \textbf{O(n·logn)}. Operace shiftdown, neboli rekonstrukce hromady, totiž pracuje se složitostí O(logn), je tedy schopná rychle najít extrém v daném poli. Heapsort je algoritmus nestabilní, což znamená, že může dojít k prohození prvků se stejnou hodnotou a že dochází k přesouvání prvků velkými skoky, a je nepřirozený, což znamená, že nehraje žádnou roli fakt, zda bylo pole před začátkem řazení již částečně seřazené.
+				
 	\section{Prílohy}
 		\subsection{Štruktúra lexikálneho analyzátora}
 		\subsection{LL gramatika}

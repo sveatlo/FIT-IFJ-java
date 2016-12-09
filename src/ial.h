@@ -140,7 +140,7 @@ SymbolTableNode* table_find_symbol(SymbolTableNode*, String*);
 void tree_init(SymbolTableNode*);
 
 /**
- * Function for searching in tree ussing key
+ * Function for searching in tree using key
  *
  * @return node When finding word is equal to key
  * @ingroup IAL
@@ -148,7 +148,7 @@ void tree_init(SymbolTableNode*);
 SymbolTableNode* tree_search(SymbolTableNode*, String*);
 
 /**
- * Function for insert into tree ussing key and content for insert
+ * Function for insert into tree using key and content for insert
  *
  * @return node with inserted
  * @ingroup IAL

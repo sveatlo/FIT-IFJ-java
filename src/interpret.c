@@ -114,7 +114,7 @@ void process_frame() {
                         current_frame->instructions->active = (ListItem*)current_instruction->res;
                     }
                 } else {
-                    return set_error(ERR_INTERPRET);
+                    return set_error(ERR_SEM_PARAMS);
                 }
                 break;
             }
@@ -140,7 +140,7 @@ void process_frame() {
                         current_frame->instructions->active = (ListItem*)current_instruction->res;
                     }
                 } else {
-                    return set_error(ERR_INTERPRET);
+                    return set_error(ERR_SEM_PARAMS);
                 }
 
                 break;
