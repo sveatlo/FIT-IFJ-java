@@ -155,7 +155,7 @@ String* substr(String* s, int i, int n) {
         return NULL;
     }
     int sublen = n - i + 1;
-    String* ret = str_init_n(sublen + 1);
+    String* ret = str_init_n(sublen);
     for (int j = 0; j <= sublen; j++) {
         ret->str[j] = s->str[j+i];
     }

@@ -225,11 +225,11 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
 
     if(get_error()->type) return;
 
-    Ident* id = (Ident*)malloc(sizeof(Ident));
-    id->class = str_init_const("Main");
-    id->name = str_init_const("run");
+    Ident* main_run_id = (Ident*)malloc(sizeof(Ident));
+    main_run_id->class = str_init_const("Main");
+    main_run_id->name = str_init_const("run");
 
-    Symbol* main_run_fn = context_find_ident(main_context, main_context, id);
+    Symbol* main_run_fn = context_find_ident(main_context, main_context, main_run_id);
     if(get_error()->type) return;
     instruction_insert_to_list(main_instructions, instruction_generate(IC_CALL, main_run_fn, NULL, NULL));
 
@@ -395,6 +395,7 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
         ListItemData data2 = {
             .id = (Ident*)malloc(sizeof(Ident))
         };
+        data2.id->class = NULL;
         data2.id->name = str_init_str(current_token->data->id->name);
         if(current_token->data->id->class) {
             data2.id->class = str_init_str(current_token->data->id->class);
@@ -791,6 +792,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 is_term = true;
                 Ident* current_ident = (Ident*)malloc(sizeof(Ident));
                 current_ident->name = str_init_str(current_token->data->id->name);
+                current_ident->class = NULL;
                 if(current_token->data->id->class != NULL) {
                     current_ident->class = str_init_str(current_token->data->id->class);
                 }

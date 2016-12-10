@@ -65,7 +65,6 @@ void expression_dispose(Expression *expr) {
 
 void expression_print (Expression* expr) {
     printf("%s(", operations_char[expr->op]);
-    fflush(stdout);
     switch (expr->op) {
         case EO_CONST_INTEGER:
             printf("%d", expr->i);

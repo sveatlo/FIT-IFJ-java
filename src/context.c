@@ -126,7 +126,7 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
         if(class_symbol == NULL) {
             set_error(ERR_SEMANTIC);
             if(str_cmp_const(token_ident->class, "ifj16")) {
-                //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
+                // fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
             }
             return NULL;
         }
@@ -137,9 +137,9 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
     if(symbol == NULL) {
         set_error(ERR_SEMANTIC);
         if(token_ident->class != NULL) {
-            //fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
+            // fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
         } else {
-            //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
+            // fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
         }
         return NULL;
     } else {
