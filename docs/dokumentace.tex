@@ -1,63 +1,83 @@
-\documentclass[12pt]{article}
-
+\documentclass[12pt, a4paper]{article} 
 \usepackage[utf8]{inputenc}
+\pagestyle{plain} 
+\usepackage{pdflscape}
 \usepackage[slovak]{babel}
-\usepackage[letterpaper, margin=2cm]{geometry}
-
-
-
-
+\usepackage[dvipdf]{graphicx}
 \title{Dokumentácia projektu IFJ}
-\author{Svätopluk Hanzel}
-\date{09.12.2016}
+\author{Svätopluk Hanzel, Samuel Hulla, Tomáš Haas}
+\date{9.12.2016}
+
 
 \begin{document}
-	\begin{titlepage}
-		\begin{center}
-		{\scshape\LARGE Vysoké učení technické v Brně \par}
-		{\Large Fakulta informačních technologií\par}
-
-
-		\vspace{3cm}
-
-		{\scshape\LARGE Dokumentácia projektu IFJ\par}
-		{\Large Interpret jazyka IFJ16 \par}
-
-
-		\vfill
-
-		Svätopluk Hanzel (xhanze10) - vedúci\\
-		Matúš Juhász (xjuhas02)\\
-		Dominik Križka (xkrizk02)\\
-		Tomáš Haas (xhaast00)\\
-		Samuel Hulla (xhulla00)\\
-		\vspace{1cm}
-
-		{\hfill Brno, 22.12.2016}
-	\end{center}
-	\end{titlepage}
-	\tableofcontents{}
-	\newpage
-
-	\section{Úvod}
-		Táto dokumentácia slúži ako textová časť riešenia projektu z predmetu IFJ pre rok 2016/2017. Celý dokument sa delí do niekoľkých kapitol a príloh. Postupne sú rozobrané všetky dôležié prvky implementácie jednotlivých častí interpretu.
-		\newpage
-	\section{Práca v tíme}
-        \subsection{Komunikácia v tíme}
-	        Zo začiatku projektu bola v našom tíme snaha o pravidelne stretnutia 1-2-krát týždenne. To sa však postupne ukázalo ako neefektívne vzhľadom na malé množstvo užitočných informácii, ktoré sa prebrali počas týchto stretnutí a tak sa celá komunikácia presunula na Slack a skôr sa rozdelila medzi ľudí spolupracujúcich na jednotlivých častiach projektu.\\
-	        Rozhodnutia o smerovaní projektu boli síce centralizované, ale zároveň otvorené k diskusii.
+    \begin{titlepage}
+        \begin{center}
+        {\scshape\LARGE Vysoké učení technické v Brně \par}
+        {\Large Fakulta informačních technologií\par}
+        \vspace{3cm}
+        {\scshape\LARGE Dokumentácia projektu IFJ\par}
+        {\Large Interpret Jazyka IFJ16 \par}
+        \vfill
+        {\Large Tým 003, Varianta a/2/I}\\
+        Rozšírenia: FUNEXP, BASE, BOOLEAN\\
+        \vspace{1cm}
+        \textbf{Svätoplik Hanzel(xhanze10)} - 20b.\\
+        Tomáš Haas(xhaast00) - 20b.\\
+        Samuel Hulla(xhulla00) - 20b. \\
+        Matúš Juhász(xjuhas02) - 20b.\\
+        Dominik Križka(xkrizk02) - 20b.\\
+        \vspace{1cm}
+        {\hfill Brno, 22.12.2016}
+        \end{center}
+    \end{titlepage}
+    
+    \tableofcontents{}
+    \newpage
+    \setcounter{page}{1}
+    \section{Úvod}
+    Táto dokumentácia slúži ako textová časť riešenia projektu z predmetu IFJ pre rok 2016/2017. Celý dokument sa delí do niekoľkých kapitol a príloh. Postupne sú rozoberané všetky dôležité prvky implementácie jednotlivých častí interpretu
+    \newpage
+    \section{Práca v tíme}
+     Zo začiatku projektu bola v našom tíme snaha o pravidelne stretnutia 1-2-krát týždenne. To sa však postupne ukázalo ako neefektívne vzhľadom na malé množstvo užitočných informácii, ktoré sa prebrali počas týchto stretnutí a tak sa celá komunikácia presunula na Slack a skôr sa rozdelila medzi ľudí spolupracujúcich na jednotlivých častiach projektu.Tým pádom sa často stalo, že na jednotlivých častiach projektu sa pracovalo skôr skupinovo ako individuálne \\
+	 Rozhodnutia o smerovaní projektu boli síce centralizované, ale zároveň otvorené k diskusii.        
         \subsection{Verzovací systém}
-			Ako nástroj na správu verzií a zdielanie kódu sme zvolili GIT, pričom vzdialený ako vzdialený repozitár bol zvolený privátny server GitLab, ktorý zároveň slúžil na zadávanie tzv. , teda problémov, ktoré treba vyriešiť.
+			Ako nástroj na správu verzií a zdielanie kódu sme zvolili GIT, pričom vzdialený ako vzdialený repozitár bol zvolený privátny server GitLab, ktorý zároveň slúžil na zadávanie tzv. \texttt{issues} , teda problémov, ktoré treba vyriešiť.
 		\subsection{Rozdelenie práce}
 			Vzhľadom na agilný vývoj interpretu sme v našom tíme nemali presne stanované rozdelenie práce podľa rozdelenia interpretu. Na správu úloh sme používali tzv. \texttt{issue tracking} systém, ktorý je súčasťou GitLab serveru.
         \subsection{Automatizované testy}
 	        Nevyhnutnou súčasťou takéhoto projektu sú automatizované testy. Napriek iniciatíve a snahe o ich včasné napísanie sa tak bohužial stalo až v poslednej tretine riešenia projektu. Napriek tomu nám však veľmi pomohli pri odhaľovaní chýb.\\
 	        Okrem automatizovaných testov sme pre odhaľovanie chýb používali aj nástroje na statickú analýzu kódu.
+	\newpage
 	\section{Riešenie interpretu}
-		\subsection{Lexikálna analýza}
-		\subsection{Syntaktická a sémantická analýza}
-		\subsection{Interpretácia}
-		\subsection{Algoritmy}
+    V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interprétu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať. 
+    
+        \subsection{Lexikálna analýza}
+        Keď sme začali riešiť lexikálnu analýzu, museli sme si najprv uvedomiť, ako budeme rozlišovať jednotlivé znaky. Rozhodli sme sa, že najpraktickejśie riešenie bude implementovať  \textbf{scanner}. Ten spracúvava jednotlivé znaky - \textbf{tokeny} a rozdeľuje ich do jednotlivých \textbf{stavov} ktoré môžu nastať. 
+        
+        Aj keď z hľadiska samotnej funkčnosti spracúvavame celý súbor a až potom vyhodnocujeme chyby, z lexikálneho hľadiska by sme mohli naraziť na syntaktickú chybu predtým ako by sme narazili ešte na lexikálnu.Z tohoto dôvodu prioritizujeme postup, kde ideme po jednolitvých tokenoch a skúmame, či je lexikálne všetko v poriadku. V prípade, že nie, dostaneme sa do stavu \verb|SS_LEX_ERROR|.
+        
+        Presný postup samotného vyhodnocovania je relatívne komplikovaný a zdĺhavý a z toho dôvodu je aj spracovaný vo forme konečného automatu (\ref{sec:KA}) na strane \pageref{sec:KA}
+        
+        \subsection{Syntaktická a semantiacká analýza}
+        Pri tejto časti projektu sme sa musely vysporiadať s tým, že časť určená na túto analýzu - \textbf{parser} bolo nutné implementovať v jazyku C, ktorý neobsahuje možnosti objektovo orientovaného programovania, čo nám značne skomplikovalo implementáciu.
+        
+        Snytaktická analýza je jadrom celého projektu, keďže riadi všetky ostatné časti. Rozhodli sme sa ju riešiť metódou \textbf{rekúrzivneho zostupu}. Akcie vyhodnocujeme pomocou precedenčnej analýzy. Tá si ukladá jednotlivé tokeny na zásobník a pomocou \textbf{precedenčnej tabuľky} (\ref{sec:tab}) určuje ako s nimi bude zaobchádzať.
+        
+        Semantická analýza prebieha súbežne so syntaktickou, keďže semantická chyba nastane, aj keď je syntakticky program v poriadku, tak kontrolujeme semantické chyby samostatne - napríklad deklarácia funkcií, premenných, kompatibilita dátových typov atď.
+        
+        Zároveň generujeme inštrukcie pre náš interprét počas rekurzívneho zostupu, prípadne počas precedenčnej analýzy.
+        
+        \newpage
+        \subsection{Interpretácia}
+        Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.
+        
+        Pomocou troj-adresového kódu, ktorý využíva  vytvorenú \textbf{sadu inštrukcií} zisťujeme chovanie nášho interpréta. Pri cykloch sme namiesto jednotlivých inštrukcií využila skoky, aby sme zlepšili efektivitu programu. 
+        
+        Dostávame inštrukciu \verb|IC_EVAL| ktorá volá funckiu \verb|evaluate_expression()|, kde následne rozlišujeme aritmetické a logické operácie a určí výslednú hodnotu výrazu. 
+        
+        Je dôležité upozoniť, že samotná interpretácia prebieha za behu. Interprét spracúva jednotlivé inštrukcie lineárne a vyhodnocuje ich, až kým všetko neprejdeme a dostaneme náš žiadaný výsledok
+        
+        \subsection{Algoritmy}
 			\subsubsection{Knuth-Morris-Prattův algoritmus}
 				Jedná se o algoritmus pro vyhledání podřetězce v řetězci. Klasické (triviální) vyhledávání podřetězce – tedy když postupně procházíme řetězec a u každého znaku zjišťujeme, zda se shoduje s podřetězcem, a v případě neshody se posuneme na další znak a musíme porovnávat s podřetězcem zase od začátku – vede v nejhorším případě až na časovou složitost \textbf{O(m·n)}, kde \textbf{m} je délka řetězce a \textbf{n} délka hledaného podřetězce. Tento algoritmus je tedy velmi neefektivní. O(m+n), tedy je mnohem rychlejší. KMP algoritmus dokáže sledovat, zda se v hledaném podřetězci opakují určité skupiny znaků (podřetězce). Při procházení textu pak při neshodě zjistí, zda se v části podřetězce, která už byla zkontrolována (dokud nedošlo k neshodě), nachází sufix, který je shodný s prefixem.\\
 				\textbf{Př.:}\\
@@ -92,9 +112,63 @@
 				svojej velkosti patrí.
 				
 				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy} .
+    \newpage
 	\section{Prílohy}
-		\subsection{Štruktúra lexikálneho analyzátora}
-		\subsection{LL gramatika}
-		\subsection{Algoritmy}
-
+        \subsection{Konečný automat lexikálneho analyzátora} \label{sec:KA}
+        Náš samotný lexiálny analyzátor \texttt{scanner} sa prepína medzi rozlišnými stavmi, podľa toho aké tokeny postupne číta a rozhoduje sa medzi nimi. Po každom možnom stave vyhodnocujeme aký ďaľší môže nastať, prípadne hlásime lexikálnu chybu, keďže sme prečítal znak, ktorý za žiadnych okolností nesmieme dostať v danom stave. 
+        
+        Týmto spôsobom postupne eliminujeme všetkz možnosti a zo začiatočného bodu \textbf{start} sa postupne dostaneme až do finálneho stavu, ktorý je vyhodnotením a spracovaním spracovaného vstupu, prípadne hlásenie lexikálnej chyby \verb|SS_LEX_ERROR|. Vďaka daným vlastnostiam ho môžeme zakresliť aj vo forme konečného automatu.
+        
+        \vfill
+        Konečný automat je pätica $M=(Q, \Sigma, R, s, F)$, kde:
+        $Q$ je konečná množina stavov.\\
+        $\Sigma$ je vstupná abeceda\\
+        $R$ je konečná množina pravidiel\\
+        $s$ je počiatočný stav\\
+        $F$ je množina koncových stavov \\
+        
+            \begin{center}
+            \includegraphics[width=\paperwidth,height=\textheight,keepaspectratio]{ka_scanner_diagram.pdf}
+            \end{center}
+            
+        \subsection{LL gramatika}
+        
+        \subsection{Precedenčná tabuľka} \label{sec:tab}
+        Precedenčná tabuľka slúži na určenie priority tokenov.
+        
+        \textbf{L} znamená, že token na vrchole zásobníka má menšiu prioritu ako ten vstupný
+        
+        \textbf{H} naopak znamená, źe je mu nadriadený (má väčšiu prioritu)
+        
+        \begin{center}
+            \begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c | c | c |}
+            \hline
+            SYMBOL & $+$ & $-$ & $*$ & $/$ & $<$ & $>$ & $<=$ & $>=$ & $==$ & $!=$ & $\&\&$ & $||$ & $!$\\
+            \hline
+            $+$ & H & H & L & L & H & H & H & H & H & H & H & H & L\\
+            $-$ & H & H & L & L & H & H & H & H & H & H & H & H & L\\
+            $*$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
+            $/$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
+            $<$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
+            $>$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
+            $<=$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
+            $>=$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
+            $==$ & L & L & L & L & L & L & L & L & H & H & H & H & L\\
+            $!=$ & L & L & L & L & L & L & L & L & H & H & H & H & L\\
+            $\&\&$ & L & L & L & L & L & L & L & L & L & L & H & H & L\\
+            $||$ & L & L & L & L & L & L & L & L & L & L & L & H & L\\
+            $!$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
+            \hline
+            \end{tabular}
+        \end{center}
+        \subsection{Literatúra}
+        \begin{itemize}
+            \item Prednašky, skriptá a materiály k predmetu IFJ
+        \end{itemize}
+        \newpage
+    \section{Záver}
+    Ak by sme mali zhodnotiť projekt jedným slovom, tak by to asi bolo slovom náročný. Odtestoval nie len naše programátorské schopnosti, ale okrem toho, na ktoré priam dosloval tlačil aj tímové. Celkovo ale hodnotíme projekt pozitívne, lebo nám dal veľa nových skúseností. Tématika projektu bola zaujímavá aj napriek jeho relatívnej obtiažnosti a pomohol nám nie len k lepšiemu chápaniu samotného interpréta, ale aj nám rozšíril znalosti a problematiku týkajúcu sa predmetu IFJ, či aj dokonca ako by približne vyzerala reálna tímová práca v našich potenciálnych zamestnaniach.
+    
 \end{document}
+
+
