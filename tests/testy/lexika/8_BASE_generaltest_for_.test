@@ -6,7 +6,7 @@ class Main {
         int e = 0_7_7;
         int k = 00003507;
         int g = 00314;
-        int z = 0xFFp-1;
+        double z = 0xFFp-1; // bere iba dsatinne do double v celom projekte
         int c = 0b1_1; //dvojkova
         int x = 10_000;
     }

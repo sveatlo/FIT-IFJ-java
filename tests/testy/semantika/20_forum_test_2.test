@@ -1,0 +1,11 @@
+class Main {
+  static void foo() {}
+  static void run() {
+
+/* c)  */ f2(foo); // u nas 4
+
+  }
+  static int f2(int ch) {
+    return 5;
+  }
+}
