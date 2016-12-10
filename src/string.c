@@ -140,7 +140,7 @@ void bool_to_string(String* s, bool b) {
 }
 
 String* substr(String* s, int i, int n) {
-    if (i < 0 || n < 0 || n < i || i > s->length) {
+    if (i < 0 || n < 0 || n < i || (i+n) > s->length) {
         set_error(ERR_OTHER_RUN);
         return NULL;
     }

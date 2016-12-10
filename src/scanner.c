@@ -707,7 +707,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_1:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F') ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_2;
@@ -721,7 +722,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_2:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F') ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_2;
@@ -749,7 +751,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_3:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F') ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_2;
@@ -765,7 +768,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_DOUBLE_0:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')  ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is double hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_1;
@@ -779,7 +783,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_DOUBLE_1:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')  ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is double hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_1;
@@ -798,7 +803,8 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_NUMBER_HEX_DOUBLE_2:
-                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')) {
+                if ((isdigit(c)) || (c == 'A') || (c == 'B') || (c == 'C') || (c == 'D') || (c == 'E') || (c == 'F')  ||
+                   (c == 'a') || (c == 'b') || (c == 'c') || (c == 'd') || (c == 'e') || (c == 'f')) {
                     //is double hex
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_1;
