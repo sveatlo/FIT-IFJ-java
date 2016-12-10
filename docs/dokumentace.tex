@@ -82,6 +82,13 @@
 				Tím se dostane na vrchol hromady prvek podle určitého pravidla (např. největší nebo nejmenší). Pokračujeme tak, že vrchol haldy „utrhneme“ a vložíme ho na další pozici již seřazeného řetězce. Poté pracujeme s haldou o jeden prvek menší, musíme ji znovu opravit (pomocí siftdown) a tento postup opakujeme, dokud má halda nějaké prvky.
 				Výsledkem je algoritmus se složitostí \textbf{O(n·logn)}. Operace shiftdown, neboli rekonstrukce hromady, totiž pracuje se složitostí O(logn), je tedy schopná rychle najít extrém v daném poli. Heapsort je algoritmus nestabilní, což znamená, že může dojít k prohození prvků se stejnou hodnotou a že dochází k přesouvání prvků velkými skoky, a je nepřirozený, což znamená, že nehraje žádnou roli fakt, zda bylo pole před začátkem řazení již částečně seřazené.
 				
+			\subsection{Tabulka symbolů}	
+				Je tvorená pomocou binárného vyhladávacieho stromu. Jeho výhodou je, že sú v ňom prvky zoradené tak, že klúče všetkých uzlov lavého podstromu 
+				sú menšie ako klúč uzlu a klúče pravého podstromu sú väčšie ako klúč uzlu. To ulahčuje vyhladávanie a nájdeniu prvku je rýchlejšie. 
+				Nevýhodou je, že musíme prvky udržovat usporiadané, to znamená, že ak chceme vložit nový prvok, musí být vložený presne tam, kam podla 
+				svojej velkosti patrí.
+				
+				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy} .
 	\section{Prílohy}
 		\subsection{Štruktúra lexikálneho analyzátora}
 		\subsection{LL gramatika}
