@@ -810,7 +810,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                         // printf("general_expression_rule IDENT 2.5\n");
                         if(symbol->type != ST_FUNCTION) {
                             expression_dispose(data.expression);
-                            set_error(ERR_OTHER_SEMANTIC);
+                            set_error(ERR_SEMANTIC);
                             return NULL;
                         }
                     }
@@ -854,7 +854,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     if(second_run) {
                         if(symbol->type != ST_VARIABLE) {
                             expression_dispose(data.expression);
-                            set_error(ERR_OTHER_SEMANTIC);
+                            set_error(ERR_SEMANTIC);
                             return NULL;
                         }
                         data.expression->symbol = symbol;

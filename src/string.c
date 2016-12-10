@@ -150,15 +150,14 @@ void bool_to_string(String* s, bool b) {
 }
 
 String* substr(String* s, int i, int n) {
-    if (i < 0 || n < 0 || n < i || (i+n) > s->length) {
+    if (i < 0 || n < 0 || (i+n) > s->length) {
         set_error(ERR_OTHER_RUN);
         return NULL;
     }
-    int sublen = n - i + 1;
-    String* ret = str_init_n(sublen);
-    for (int j = 0; j <= sublen; j++) {
-        ret->str[j] = s->str[j+i];
-    }
-    ret->length = sublen;
+
+    String* ret = str_init_n(n);
+    memcpy(ret->str, &(s->str[i]), n);
+    ret->str[n] = '\0';
+
     return ret;
 }

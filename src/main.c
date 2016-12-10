@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
         // parser error => exit
         // TODO: cleanup
         list_dispose(instructions);
-        // context_dispose(context);
+        context_dispose(context);
         print_error();
         return get_error()->type;
     }
