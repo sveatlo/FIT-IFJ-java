@@ -64,7 +64,14 @@ Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
             return NULL;
     }
 
-    symbol->id = id;
+
+    symbol->id = (Ident*)malloc(sizeof(Ident));
+    if(id->class != NULL) {
+        symbol->id->class = str_init_str(id->class);
+    } else {
+        symbol->id->class = NULL;
+    }
+    symbol->id->name = str_init_str(id->name);
     return symbol;
 }
 
@@ -98,11 +105,18 @@ Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
             return NULL;
     }
 
-    Symbol* sym = table_insert_function(context->symbol_table, id->name, context);
-    sym->data.fn->return_type = return_type;
-    sym->id = id;
+    Symbol* symbol = table_insert_function(context->symbol_table, id->name, context);
+    symbol->data.fn->return_type = return_type;
 
-    return sym;
+    symbol->id = (Ident*)malloc(sizeof(Ident));
+    if(id->class != NULL) {
+        symbol->id->class = str_init_str(id->class);
+    } else {
+        symbol->id->class = NULL;
+    }
+    symbol->id->name = str_init_str(id->name);
+
+    return symbol;
 }
 
 Symbol* context_find_ident(Context* context, Context* root_context, Ident* token_ident) {

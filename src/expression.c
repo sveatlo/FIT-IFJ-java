@@ -817,11 +817,12 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
 
                 // create tmp return symbol
                 Symbol* tmp = symbol_init(str_init_const("tmp_symbol"));
-                Ident id = {
-                    .class = NULL,
-                    .name = str_init_const("tmp_symbol")
-                };
-                tmp->id = &id;
+
+                Ident* id = (Ident*)malloc(sizeof(Ident));
+                id->class = NULL;
+                id->name = str_init_const("tmp_symbol");
+
+                tmp->id = id;
                 // printf("EO_SYMBOL_CALL 3\n");
                 tmp->type = ST_VARIABLE;
                 // printf("EO_SYMBOL_CALL 4: %d\n", expr->symbol->data.fn->return_type);

@@ -11,7 +11,7 @@ CallFrame* callframe_init(Context* context, List* instructions, Symbol* return_s
     table_dispose(callframe->context->symbol_table);
     callframe->context->symbol_table = tree_copy(context->symbol_table);
 
-    callframe->instructions = list_init();
+    callframe->instructions = list_init(LT_INSTRUCTION);
     callframe->instructions->first = instructions->first;
     callframe->instructions->last = instructions->last;
 

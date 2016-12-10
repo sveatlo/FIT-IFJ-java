@@ -50,6 +50,13 @@ String* str_init();
 String* str_init_const(char* src);
 
 /**
+ *  Initializes String from another String performing a copy
+ *
+ *  @ingroup String
+ */
+String* str_init_str(String* src);
+
+/**
  *  Used for all resizing operations
  *
  *  @ingroup String
@@ -60,7 +67,7 @@ void _str_resize_raw(String* s, int n);
  *  Frees the memory allocated for the string structure
  *  @ingroup String
  */
-void str_dispose(String* s);
+void str_dispose(String *s);
 
 /**
  *  Sets the string to empty string

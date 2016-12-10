@@ -216,6 +216,7 @@ ScannerToken* get_next_token(FILE *f) {
                         free(token->data);
                         return NULL;
                     }
+                    token->data->id->class = NULL;
                     token->data->id->name = str_init();
                     if (token->data->id->name == NULL) {
                         set_error(ERR_INTERPRET);
@@ -223,7 +224,6 @@ ScannerToken* get_next_token(FILE *f) {
                         free(token->data);
                         return NULL;
                     }
-                    token->data->id->class = NULL;
                     str_append(token->data->id->name, c);
                     current_state = SS_KEYWORD_IDENT;
                 } else if (isdigit(c)) {

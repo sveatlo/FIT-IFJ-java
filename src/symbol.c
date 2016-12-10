@@ -31,14 +31,24 @@ void symbol_dispose(Symbol* symbol) {
         }
 
         // free the variable structure
-        free(symbol->data.var);
     } else if(symbol->type == ST_FUNCTION) {
+        context_dispose(symbol->data.fn->context);
+        list_dispose(symbol->data.fn->instructions);
+        list_dispose(symbol->data.fn->params_types_list);
+        list_dispose(symbol->data.fn->params_ids_list);
         free(symbol->data.fn);
     } else if(symbol->type == ST_CLASS) {
+        context_dispose(symbol->data.fn->context);
         free(symbol->data.cls);
     }
 
     str_dispose(symbol->name);
+    if(symbol->id != NULL) {
+        str_dispose(symbol->id->class);
+        if(symbol->name != symbol->id->name) {
+            str_dispose(symbol->id->name);
+        }
+    }
 
     // free the symbol itself
     free(symbol);
@@ -55,9 +65,9 @@ void symbol_new_function(Symbol* symbol, Context* parent_context) {
     symbol->type = ST_FUNCTION;
     symbol->data.fn = (Function*)malloc(sizeof(Function));
     symbol->data.fn->context = context_init(parent_context);
-    symbol->data.fn->params_types_list = list_init();
-    symbol->data.fn->params_ids_list = list_init();
-    symbol->data.fn->instructions = list_init();
+    symbol->data.fn->params_types_list = list_init(LT_VAR_TYPE);
+    symbol->data.fn->params_ids_list = list_init(LT_ID);
+    symbol->data.fn->instructions = list_init(LT_INSTRUCTION);
 }
 
 void symbol_new_class(Symbol* symbol, Context* parent_context) {

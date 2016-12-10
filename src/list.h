@@ -34,12 +34,21 @@ typedef struct ListItemStruct {
     ListItemData data; ///< Data stored in ListItem (#ListItemData)
 } ListItem;
 
+typedef enum {
+    LT_TOKEN,
+    LT_EXPRESSION,
+    LT_ID,
+    LT_INSTRUCTION,
+    LT_VAR_TYPE
+} ListType;
+
 /**
  *  Structure defining doubly-linked list
  *
  *  @ingroup List
  */
 typedef struct ListStruct {
+    ListType type;
     ListItem* active;
 
     ListItem* first;
@@ -51,7 +60,7 @@ typedef struct ListStruct {
  *
  *  @ingroup List
  */
-List* list_init ();
+List* list_init (ListType type);
 
 /**
  *  Disposes List by freeing all of its items
