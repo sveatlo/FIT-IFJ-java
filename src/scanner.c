@@ -285,9 +285,11 @@ ScannerToken* get_next_token(FILE *f) {
                 } else if (c == '!') {
                     current_state = SS_NEGATE;
                 } else if (c == '+') {
-                    current_state = SS_PLUS;
+                    token->type = STT_PLUS;
+                    return token;
                 } else if (c == '-') {
-                    current_state = SS_MINUS;
+                    token->type = STT_MINUS;
+                    return token;
                 } else if (c == '&') {
                     current_state = SS_AND;
                 } else if (c == '|') {
@@ -930,42 +932,11 @@ ScannerToken* get_next_token(FILE *f) {
                     number = str_init();
                     str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MIN_1;
-                } else if ((c == '1') || (c == '2')) {
-                    number = str_init();
-                    str_append(number, c);
-                    current_state = SS_OCT_ESCAPE_1;
-                } else if (c == '3') {
+                } else if ((c == '1') || (c == '2') || (c == '3')) {
                     number = str_init();
                     str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MAX_1;
                 } else {
-                    str_dispose(token->data->str);
-                    free(token->data);
-                    current_state = SS_LEX_ERROR;
-                }
-                break;
-
-            case SS_OCT_ESCAPE_1:
-                if (isdigit(c)) {
-                    str_append(number, c);
-                    current_state = SS_OCT_ESCAPE_2;
-                } else {
-                    str_dispose(number);
-                    str_dispose(token->data->str);
-                    free(token->data);
-                    current_state = SS_LEX_ERROR;
-                }
-                break;
-
-            case SS_OCT_ESCAPE_2:
-                if (isdigit(c)) {
-                    str_append(number, c);
-                    int i = (int)strtol(str_get_str(number), NULL, 8);
-                    str_append(token->data->str, i);
-                    str_dispose(number);
-                    current_state = SS_STRING;
-                } else {
-                    str_dispose(number);
                     str_dispose(token->data->str);
                     free(token->data);
                     current_state = SS_LEX_ERROR;
@@ -1003,9 +974,9 @@ ScannerToken* get_next_token(FILE *f) {
                 if (c == '0') {
                     str_append(number, c);
                     current_state = SS_OCT_ESCAPE_MIN_2;
-                } else if (isdigit(c)) {
+                } else if (isdigit(c) && (c != '8') && (c != '9')) {
                     str_append(number, c);
-                    current_state = SS_OCT_ESCAPE_2;
+                    current_state = SS_OCT_ESCAPE_MAX_2;
                 } else {
                     str_dispose(number);
                     str_dispose(token->data->str);
@@ -1015,7 +986,7 @@ ScannerToken* get_next_token(FILE *f) {
                 break;
 
             case SS_OCT_ESCAPE_MIN_2:
-                if (isdigit(c) && (c != '0')) {
+                if (isdigit(c) && (c != '0') && (c != '8') && (c != '9')) {
                     str_append(number, c);
                     int i = (int)strtol(str_get_str(number), NULL, 8);
                     str_append(token->data->str, i);
@@ -1028,30 +999,6 @@ ScannerToken* get_next_token(FILE *f) {
                     current_state = SS_LEX_ERROR;
                 }
                 break;
-
-            case SS_PLUS:
-                //is plus
-                if (c == '=') {
-                    token->type = STT_PLUS_EQUAL;
-                    return token;
-                } else {
-                    ungetc(c, f);
-                    token->type = STT_PLUS;
-                    return token;
-                }
-
-            case SS_MINUS:
-                //is minus
-                if (c == '=') {
-                    token->type = STT_MINUS_EQUAL;
-                    return token;
-                } else {
-                    ungetc(c, f);
-                    token->type = STT_MINUS;
-                    return token;
-                }
-
-
 
             case SS_AND:
                 if (c == '&') {
