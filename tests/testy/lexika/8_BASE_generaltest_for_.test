@@ -4,6 +4,9 @@ class Main {
         int b = 05_4; //osmickova
         int d = 0_77;
         int e = 0_7_7;
+        int k = 00003507;
+        int g = 00314;
+        double z = 0xFFp-1; // bere iba dsatinne do double v celom projekte
         int c = 0b1_1; //dvojkova
         int x = 10_000;
     }

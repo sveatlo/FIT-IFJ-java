@@ -1,0 +1,12 @@
+class Main {
+  static void foo() {}
+  static void run() {
+
+
+// d) opacna situacia -  volanie premennej na mieste funkcie
+i();
+  }
+  static int f2(int ch) {
+    return 5;
+  }
+}
