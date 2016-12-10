@@ -732,6 +732,9 @@ ScannerToken* get_next_token(FILE *f) {
                 } else if (c == '.') {
                     str_append(token->data->str, c);
                     current_state = SS_NUMBER_HEX_DOUBLE_0;
+                } else if ((c == 'P') || (c == 'p')) {
+                    str_append(token->data->str, c);
+                    current_state = SS_NUMBER_HEX_DOUBLE_P_1;
                 } else {
                     // return number
                     long i = strtol(str_get_str(token->data->str), NULL, 16);
