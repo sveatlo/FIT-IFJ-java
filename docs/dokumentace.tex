@@ -4,6 +4,7 @@
 \usepackage{pdflscape}
 \usepackage[slovak]{babel}
 \usepackage[dvipdf]{graphicx}
+\usepackage[letterpaper, margin=2cm]{geometry}
 \title{Dokumentácia projektu IFJ}
 \author{Svätopluk Hanzel, Samuel Hulla, Tomáš Haas}
 \date{9.12.2016}
@@ -21,11 +22,11 @@
         {\Large Tým 003, Varianta a/2/I}\\
         Rozšírenia: FUNEXP, BASE, BOOLEAN\\
         \vspace{1cm}
-        \textbf{Svätoplik Hanzel(xhanze10)} - 20b.\\
-        Tomáš Haas(xhaast00) - 20b.\\
-        Samuel Hulla(xhulla00) - 20b. \\
-        Matúš Juhász(xjuhas02) - 20b.\\
-        Dominik Križka(xkrizk02) - 20b.\\
+        \textbf{Svätoplik Hanzel(xhanze10)} - 20\% \\
+        Tomáš Haas(xhaast00) - 20\% \\
+        Samuel Hulla(xhulla00) - 20\% \\
+        Matúš Juhász(xjuhas02) - 20\% \\
+        Dominik Križka(xkrizk02) - 20\% \\
         \vspace{1cm}
         {\hfill Brno, 22.12.2016}
         \end{center}
@@ -58,15 +59,12 @@
         
         Presný postup samotného vyhodnocovania je relatívne komplikovaný a zdĺhavý a z toho dôvodu je aj spracovaný vo forme konečného automatu (\ref{sec:KA}) na strane \pageref{sec:KA}
         
-        \subsection{Syntaktická a semantiacká analýza}
-        Pri tejto časti projektu sme sa musely vysporiadať s tým, že časť určená na túto analýzu - \textbf{parser} bolo nutné implementovať v jazyku C, ktorý neobsahuje možnosti objektovo orientovaného programovania, čo nám značne skomplikovalo implementáciu.
+        \subsection{Syntaktická a semantická analýza}
+        Naša analýza prebieha dvojfázovo, v tej prvej časti sa venujeme \textbf{syntaktickej} časti, nasledovne sa upriamime na lokálne premenné, najprv v hlavnom tele programu a potom aj v jednotlivých funkciách, ktorú riešime pomocou \textbf{tabuľky symbolov}. 
         
-        Snytaktická analýza je jadrom celého projektu, keďže riadi všetky ostatné časti. Rozhodli sme sa ju riešiť metódou \textbf{rekúrzivneho zostupu}. Akcie vyhodnocujeme pomocou precedenčnej analýzy. Tá si ukladá jednotlivé tokeny na zásobník a pomocou \textbf{precedenčnej tabuľky} (\ref{sec:tab}) určuje ako s nimi bude zaobchádzať.
+        Po bezproblémovom prechode sa môžeme presunúť na semantickú časť. Semantické chyby môžu nastať aj keď je program syntakticky v poriadku, napr. volanie neexistujúcej funkcie, alebo aj existujúcej, ale so zlým počtom parametrov, prípadne volanie neexistujúcich premenných, mylné priradenie hodnoty namiesto logického operátora atď.. 
         
-        Semantická analýza prebieha súbežne so syntaktickou, keďže semantická chyba nastane, aj keď je syntakticky program v poriadku, tak kontrolujeme semantické chyby samostatne - napríklad deklarácia funkcií, premenných, kompatibilita dátových typov atď.
-        
-        Zároveň generujeme inštrukcie pre náš interprét počas rekurzívneho zostupu, prípadne počas precedenčnej analýzy.
-        
+        Zároveň sa v druhej časti generujú inštrukcie pre interpret s ktorými bude potom narábať.
         \newpage
         \subsection{Interpretácia}
         Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.
@@ -119,14 +117,6 @@
         
         Týmto spôsobom postupne eliminujeme všetkz možnosti a zo začiatočného bodu \textbf{start} sa postupne dostaneme až do finálneho stavu, ktorý je vyhodnotením a spracovaním spracovaného vstupu, prípadne hlásenie lexikálnej chyby \verb|SS_LEX_ERROR|. Vďaka daným vlastnostiam ho môžeme zakresliť aj vo forme konečného automatu.
         
-        \vfill
-        Konečný automat je pätica $M=(Q, \Sigma, R, s, F)$, kde:
-        $Q$ je konečná množina stavov.\\
-        $\Sigma$ je vstupná abeceda\\
-        $R$ je konečná množina pravidiel\\
-        $s$ je počiatočný stav\\
-        $F$ je množina koncových stavov \\
-        
             \begin{center}
             \includegraphics[width=\paperwidth,height=\textheight,keepaspectratio]{ka_scanner_diagram.pdf}
             \end{center}
@@ -167,8 +157,9 @@
         \end{itemize}
         \newpage
     \section{Záver}
-    Ak by sme mali zhodnotiť projekt jedným slovom, tak by to asi bolo slovom náročný. Odtestoval nie len naše programátorské schopnosti, ale okrem toho, na ktoré priam dosloval tlačil aj tímové. Celkovo ale hodnotíme projekt pozitívne, lebo nám dal veľa nových skúseností. Tématika projektu bola zaujímavá aj napriek jeho relatívnej obtiažnosti a pomohol nám nie len k lepšiemu chápaniu samotného interpréta, ale aj nám rozšíril znalosti a problematiku týkajúcu sa predmetu IFJ, či aj dokonca ako by približne vyzerala reálna tímová práca v našich potenciálnych zamestnaniach.
+    Ak by sme mali zhodnotiť projekt jedným slovom, tak by to asi bolo náročný. Odtestoval nie len naše programátorské schopnosti, ale okrem toho, na ktoré priam dosloval tlačil aj tímové. Celkovo ale hodnotíme projekt pozitívne, lebo nám dal veľa nových skúseností. Tématika projektu bola zaujímavá aj napriek jeho relatívnej obtiažnosti a pomohol nám nie len k lepšiemu chápaniu samotného interpréta, ale aj nám rozšíril znalosti a problematiku týkajúcu sa predmetu IFJ, či aj dokonca ako by približne vyzerala reálna tímová práca v našich potenciálnych zamestnaniach.
     
 \end{document}
+
 
 
