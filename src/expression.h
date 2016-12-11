@@ -28,7 +28,8 @@ typedef enum
     I, ///< Type integer
     U, ///< NOT ALLOWED. Undefined
     D, ///< Type double
-    S  ///< Type string
+    S,  ///< Type string
+    B ///< Type Boolean
 } ExpressionOperationSign;
 
 typedef enum {

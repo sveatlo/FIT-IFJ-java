@@ -46,4 +46,6 @@ String* read_str();
  */
 void print_to_stdin(Expression *expr);
 
+void add_builtin_class(Context* context);
+
 #endif

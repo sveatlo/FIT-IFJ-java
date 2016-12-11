@@ -5,6 +5,7 @@
 #include "expression.h"
 #include "ial.h"
 #include "instruction.h"
+#include "inbuilt.h"
 #include "list.h"
 #include "parser.h"
 #include "precedence_table.h"
@@ -59,175 +60,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     current_instructions = main_instructions;
 
     //add builtin fns
-    String* name = str_init_const("ifj16");
-    Symbol* new_class = table_insert_class(main_context->symbol_table, name, main_context);
-    str_dispose(name);
-    current_class_name = new_class->name;
-    current_context = new_class->data.cls->context;
-
-    do {
-        Ident* fn_read_int_id = (Ident*)malloc(sizeof(Ident));
-        fn_read_int_id->class = str_init_const("ifj16");
-        fn_read_int_id->name = str_init_const("readInt");
-        /*Symbol* fn_read_int = */context_add_function(current_context, KW_INT, fn_read_int_id);
-        str_dispose(fn_read_int_id->class);
-        str_dispose(fn_read_int_id->name);
-        free(fn_read_int_id);
-
-        Ident* fn_read_double_id = (Ident*)malloc(sizeof(Ident));
-        fn_read_double_id->class = str_init_const("ifj16");
-        fn_read_double_id->name = str_init_const("readDouble");
-        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, fn_read_double_id);
-        str_dispose(fn_read_double_id->class);
-        str_dispose(fn_read_double_id->name);
-        free(fn_read_double_id);
-
-        Ident* fn_read_string_id = (Ident*)malloc(sizeof(Ident));
-        fn_read_string_id->class = str_init_const("ifj16");
-        fn_read_string_id->name = str_init_const("readString");
-        /*Symbol* fn_read_string = */context_add_function(current_context, KW_STRING, fn_read_string_id);
-        str_dispose(fn_read_string_id->class);
-        str_dispose(fn_read_string_id->name);
-        free(fn_read_string_id);
-
-        Ident* fn_length_id = (Ident*)malloc(sizeof(Ident));
-        fn_length_id->class = str_init_const("ifj16");
-        fn_length_id->name = str_init_const("length");
-        Symbol* fn_length = context_add_function(current_context, KW_INT, fn_length_id);
-        str_dispose(fn_length_id->class);
-        str_dispose(fn_length_id->name);
-        free(fn_length_id);
-        Ident* id0 = (Ident*)malloc(sizeof(Ident));
-        id0->class = NULL;
-        id0->name = str_init_const("s");
-        ListItemData param_type0, param_id0 = {
-            .id = id0
-        };
-        param_type0.var_type = VT_STRING;
-        list_insert_last(fn_length->data.fn->params_types_list, param_type0);
-        list_insert_last(fn_length->data.fn->params_ids_list, param_id0);
-
-        Ident* fn_substring_id = (Ident*)malloc(sizeof(Ident));
-        fn_substring_id->class = str_init_const("ifj16");
-        fn_substring_id->name = str_init_const("substr");
-        Symbol* fn_substring = context_add_function(current_context, KW_STRING, fn_substring_id);
-        str_dispose(fn_substring_id->class);
-        str_dispose(fn_substring_id->name);
-        free(fn_substring_id);
-        Ident* id1 = (Ident*)malloc(sizeof(Ident));
-        id1->class = NULL;
-        id1->name = str_init_const("s");
-        ListItemData param_type1, param_id1 = {
-            .id = id1
-        };
-        param_type1.var_type = VT_STRING;
-        list_insert_last(fn_substring->data.fn->params_types_list, param_type1);
-        list_insert_last(fn_substring->data.fn->params_ids_list, param_id1);
-        Ident* id2 = (Ident*)malloc(sizeof(Ident));
-        id2->class = NULL;
-        id2->name = str_init_const("i");
-        ListItemData param_type2, param_id2 = {
-            .id = id2
-        };
-        param_type2.var_type = VT_INTEGER;
-        list_insert_last(fn_substring->data.fn->params_types_list, param_type2);
-        list_insert_last(fn_substring->data.fn->params_ids_list, param_id2);
-        Ident* id3 = (Ident*)malloc(sizeof(Ident));
-        id3->class = NULL;
-        id3->name = str_init_const("n");
-        ListItemData param_type3, param_id3 = {
-            .id = id3
-        };
-        param_type3.var_type = VT_INTEGER;
-        list_insert_last(fn_substring->data.fn->params_types_list, param_type3);
-        list_insert_last(fn_substring->data.fn->params_ids_list, param_id3);
-
-        Ident* fn_compare_id = (Ident*)malloc(sizeof(Ident));
-        fn_compare_id->class = str_init_const("ifj16");
-        fn_compare_id->name = str_init_const("compare");
-        Symbol* fn_compare = context_add_function(current_context, KW_INT, fn_compare_id);
-        str_dispose(fn_compare_id->class);
-        str_dispose(fn_compare_id->name);
-        free(fn_compare_id);
-        Ident* id4 = (Ident*)malloc(sizeof(Ident));
-        id4->class = NULL;
-        id4->name = str_init_const("s1");
-        ListItemData param_type4, param_id4 = {
-            .id = id4
-        };
-        param_type4.var_type = VT_STRING;
-        list_insert_last(fn_compare->data.fn->params_types_list, param_type4);
-        list_insert_last(fn_compare->data.fn->params_ids_list, param_id4);
-        Ident* id5 = (Ident*)malloc(sizeof(Ident));
-        id5->class = NULL;
-        id5->name = str_init_const("s2");
-        ListItemData param_type5, param_id5 = {
-            .id = id5
-        };
-        param_type5.var_type = VT_STRING;
-        list_insert_last(fn_compare->data.fn->params_types_list, param_type5);
-        list_insert_last(fn_compare->data.fn->params_ids_list, param_id5);
-
-        Ident* fn_find_id = (Ident*)malloc(sizeof(Ident));
-        fn_find_id->class = str_init_const("ifj16");
-        fn_find_id->name = str_init_const("find");
-        Symbol* fn_find = context_add_function(current_context, KW_INT, fn_find_id);
-        str_dispose(fn_find_id->class);
-        str_dispose(fn_find_id->name);
-        free(fn_find_id);
-        Ident* id6 = (Ident*)malloc(sizeof(Ident));
-        id6->class = NULL;
-        id6->name = str_init_const("s");
-        ListItemData param_type6, param_id6 = {
-            .id = id6
-        };
-        param_type6.var_type = VT_STRING;
-        list_insert_last(fn_find->data.fn->params_types_list, param_type6);
-        list_insert_last(fn_find->data.fn->params_ids_list, param_id6);
-        Ident* id7 = (Ident*)malloc(sizeof(Ident));
-        id7->class = NULL;
-        id7->name = str_init_const("search");
-        ListItemData param_type7, param_id7 = {
-            .id = id7
-        };
-        param_type7.var_type = VT_STRING;
-        list_insert_last(fn_find->data.fn->params_types_list, param_type7);
-        list_insert_last(fn_find->data.fn->params_ids_list, param_id7);
-
-        Ident* fn_sort_id = (Ident*)malloc(sizeof(Ident));
-        fn_sort_id->class = str_init_const("ifj16");
-        fn_sort_id->name = str_init_const("sort");
-        Symbol* fn_sort = context_add_function(current_context, KW_STRING, fn_sort_id);
-        str_dispose(fn_sort_id->class);
-        str_dispose(fn_sort_id->name);
-        free(fn_sort_id);
-        Ident* id8 = (Ident*)malloc(sizeof(Ident));
-        id8->class = NULL;
-        id8->name = str_init_const("s");
-        ListItemData param_type8, param_id8 = {
-            .id = id8
-        };
-        param_type8.var_type = VT_STRING;
-        list_insert_last(fn_sort->data.fn->params_types_list, param_type8);
-        list_insert_last(fn_sort->data.fn->params_ids_list, param_id8);
-
-        Ident* fn_print_id = (Ident*)malloc(sizeof(Ident));
-        fn_print_id->class = str_init_const("ifj16");
-        fn_print_id->name = str_init_const("print");
-        Symbol* fn_print = context_add_function(current_context, KW_STRING, fn_print_id);
-        str_dispose(fn_print_id->class);
-        str_dispose(fn_print_id->name);
-        free(fn_print_id);
-        Ident* id9 = (Ident*)malloc(sizeof(Ident));
-        id9->class = NULL;
-        id9->name = str_init_const("s");
-        ListItemData param_type9, param_id9 = {
-            .id = id9
-        };
-        param_type9.var_type = VT_STRING;
-        list_insert_last(fn_print->data.fn->params_types_list, param_type9);
-        list_insert_last(fn_print->data.fn->params_ids_list, param_id9);
-    } while(false);
+    add_builtin_class(main_context);
 
     current_context = main_context;
     current_instructions = main_instructions;
@@ -481,9 +314,6 @@ void call_params_list_rule(List *fn_params_list, List *call_params_list) {
     }
 
 
-
-    // VariableType type = fn_params_list->active->data.var_type;
-    // printf("call_params_list before general_expression_rule call\n");
     Expression* expr = general_expression_rule(STT_COMMA, STT_RIGHT_PARENTHESE);
     //insert the expr to call_params_list
     if(second_run) {
@@ -803,7 +633,7 @@ void stat_rule(bool is_void, bool can_define) {
             set_error(ERR_SYNTAX);
         }
     } else {
-        // printf("Unexpected token: %s %s %d\n", token_to_string(current_token), __func__, __LINE__);
+        // fprintf(stderr, "Unexpected token: %s %s %d\n", token_to_string(current_token), __func__, __LINE__);
         return set_error(ERR_SYNTAX);
     }
 
@@ -833,7 +663,6 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
     Stack* nonterm_stack = stack_init(StT_EXPRESSION);
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
-        // printf("general_expression_rule %s\n", token_to_string(current_token));
         bool is_term = false;
         StackItemData data;
         data.expression = expression_init();
@@ -868,7 +697,6 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             case STT_IDENT:
             {
-                // printf("general_expression_rule IDENT 0\n");
                 is_term = true;
                 Ident* current_ident = (Ident*)malloc(sizeof(Ident));
                 current_ident->name = str_init_str(current_token->data->id->name);
@@ -881,13 +709,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 if(second_run) {
                     symbol = context_find_ident(current_context, main_context, current_ident);
                 }
-                // printf("general_expression_rule IDENT 1\n");
                 if(get_error()->type) return NULL;
                 if(next_token()->type == STT_LEFT_PARENTHESE) {
-                    // printf("general_expression_rule IDENT 2\n");
                     //function call
                     if(second_run) {
-                        // printf("general_expression_rule IDENT 2.5\n");
                         if(symbol->type != ST_FUNCTION) {
                             expression_dispose(data.expression);
                             set_error(ERR_SEMANTIC);
@@ -895,16 +720,12 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                         }
                     }
 
-                    // printf("general_expression_rule IDENT 2.75\n");
                     data.expression->op = EO_SYMBOL_CALL;
-                    // printf("general_expression_rule IDENT 3\n");
 
                     //list for params types
                     if(!second_run) {
-                        // printf("general_expression_rule IDENT 4\n");
                         next_token();
                         call_params_list_rule(NULL, NULL);
-                        // printf("general_expression_rule IDENT 5\n");
                     } else {
                         list_activate_first(symbol->data.fn->params_types_list);
                         next_token();
@@ -989,8 +810,11 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
             case STT_LOGIC_NOT_EQUAL:
                 data.expression->op = EO_LOGIC_NOT_EQUAL;
                 break;
+            case STT_NEGATE:
+                data.expression->op = EO_NEGATE;
+                break;
             default:
-                // printf(" Unexpected token %s\n", token_to_string(current_token));
+                // fprintf(stderr, " Unexpected token %s\n", token_to_string(current_token));
                 expression_dispose(data.expression);
                 set_error(ERR_SYNTAX);
                 return NULL;
@@ -998,11 +822,13 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
         }
 
         if(is_term) {
-            // printf("pushing term\n");
             stack_push(term_stack, data);
         } else {
             StackItemData* top = stack_top(nonterm_stack);
-            // printf("pushing nonterm\n");
+            if(top != NULL && precedence_table[top->expression->op][data.expression->op] == N) {
+                set_error(ERR_SYNTAX);
+                return NULL;
+            }
 
             //while there are ops on stack with priority equal or higher than current op => reduce
             while(top != NULL && precedence_table[top->expression->op][data.expression->op] > E) {
@@ -1010,26 +836,44 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 // and assigning them to the top expr
                 // the top expr will then be poped from nonterm stack and pushed to term stack
 
-                // first to ->expr2
-                StackItemData* term_top2 = stack_top(term_stack);
-                if(term_top2 == NULL) {
-                    expression_dispose(data.expression);
-                    set_error(ERR_SYNTAX);
-                    return NULL;
-                }
-                stack_pop(term_stack);
-                // second to ->expr1
-                StackItemData* term_top1 = stack_top(term_stack);
-                if(term_top1 == NULL) {
-                    expression_dispose(data.expression);
-                    set_error(ERR_SYNTAX);
-                    return NULL;
-                }
-                stack_pop(term_stack);
+                switch (top->expression->op) {
+                    case EO_NEGATE:
+                    {
+                        // negate only takes one expression
+                        StackItem* term_top1 = stack_pop(term_stack);
+                        if(term_top1 == NULL) {
+                            set_error(ERR_SYNTAX);
+                            return NULL;
+                        }
+                        top->expression->expr1 = term_top1->data.expression;
+                        free(term_top1);
 
-                //set terms for current top
-                top->expression->expr2 = term_top2->expression;
-                top->expression->expr1 = term_top1->expression;
+                        break;
+                    }
+                    default:
+                    {
+                        // first to ->expr2
+                        StackItem* term_top2 = stack_pop(term_stack);
+                        if(term_top2 == NULL) {
+                            set_error(ERR_SYNTAX);
+                            return NULL;
+                        }
+                        // second to ->expr1
+                        StackItem* term_top1 = stack_pop(term_stack);
+                        if(term_top1 == NULL) {
+                            set_error(ERR_SYNTAX);
+                            return NULL;
+                        }
+
+                        //set terms for current top
+                        top->expression->expr1 = term_top1->data.expression;
+                        top->expression->expr2 = term_top2->data.expression;
+                        free(term_top1);
+                        free(term_top2);
+
+                        break;
+                    }
+                }
 
                 //push the top to term
                 stack_push(term_stack, *top);
@@ -1039,6 +883,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
 
                 // set new top
                 top = stack_top(nonterm_stack);
+                if(top != NULL && precedence_table[top->expression->op][data.expression->op] == N) {
+                    set_error(ERR_SYNTAX);
+                    return NULL;
+                }
             }
 
             stack_push(nonterm_stack, data);
@@ -1054,22 +902,44 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
         // and assigning them to the top expr
         // the top expr will then be poped from nonterm stack and pushed to term stack
 
-        // first to ->expr2
-        StackItem* term_top2 = stack_pop(term_stack);
-        if(term_top2 == NULL) {
-            set_error(ERR_SYNTAX);
-            return NULL;
-        }
-        // second to ->expr1
-        StackItem* term_top1 = stack_pop(term_stack);
-        if(term_top1 == NULL) {
-            set_error(ERR_SYNTAX);
-            return NULL;
-        }
+        switch (top->expression->op) {
+            case EO_NEGATE:
+            {
+                // negate only takes one expression
+                StackItem* term_top1 = stack_pop(term_stack);
+                if(term_top1 == NULL) {
+                    set_error(ERR_SYNTAX);
+                    return NULL;
+                }
+                top->expression->expr1 = term_top1->data.expression;
+                free(term_top1);
 
-        //set terms for current top
-        top->expression->expr1 = term_top1->data.expression;
-        top->expression->expr2 = term_top2->data.expression;
+                break;
+            }
+            default:
+            {
+                // first to ->expr2
+                StackItem* term_top2 = stack_pop(term_stack);
+                if(term_top2 == NULL) {
+                    set_error(ERR_SYNTAX);
+                    return NULL;
+                }
+                // second to ->expr1
+                StackItem* term_top1 = stack_pop(term_stack);
+                if(term_top1 == NULL) {
+                    set_error(ERR_SYNTAX);
+                    return NULL;
+                }
+
+                //set terms for current top
+                top->expression->expr1 = term_top1->data.expression;
+                top->expression->expr2 = term_top2->data.expression;
+                free(term_top1);
+                free(term_top2);
+
+                break;
+            }
+        }
 
         //push the top to term
         stack_push(term_stack, *top);
@@ -1091,7 +961,5 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
 
     stack_dispose(term_stack);
     stack_dispose(nonterm_stack);
-
-    // printf("general_expression_rule return\n");
     return res->data.expression;
 }

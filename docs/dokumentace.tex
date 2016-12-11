@@ -18,11 +18,11 @@
         \vspace{3cm}
         {\scshape\LARGE Dokumentácia projektu IFJ\par}
         {\Large Interpret Jazyka IFJ16 \par}
-        \vfill
+        \vspace{2cm}
         {\Large Tým 003, Varianta a/2/I}\\
-        Rozšírenia: FUNEXP, BASE, BOOLEAN\\
-        \vspace{1cm}
-        \textbf{Svätoplik Hanzel(xhanze10)} - 20\% \\
+        Rozšírenia: FUNEXP, BASE, BOOLEAN, SIMPLE\\
+        \vfill
+        \textbf{Svätopluk Hanzel(xhanze10)} - 20\% \\
         Tomáš Haas(xhaast00) - 20\% \\
         Samuel Hulla(xhulla00) - 20\% \\
         Matúš Juhász(xjuhas02) - 20\% \\
@@ -48,7 +48,6 @@
         \subsection{Automatizované testy}
 	        Nevyhnutnou súčasťou takéhoto projektu sú automatizované testy. Napriek iniciatíve a snahe o ich včasné napísanie sa tak bohužial stalo až v poslednej tretine riešenia projektu. Napriek tomu nám však veľmi pomohli pri odhaľovaní chýb.\\
 	        Okrem automatizovaných testov sme pre odhaľovanie chýb používali aj nástroje na statickú analýzu kódu.
-	\newpage
 	\section{Riešenie interpretu}
     V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interprétu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať.
 
@@ -65,7 +64,6 @@
         Po bezproblémovom prechode sa môžeme presunúť na semantickú časť. Semantické chyby môžu nastať aj keď je program syntakticky v poriadku, napr. volanie neexistujúcej funkcie, alebo aj existujúcej, ale so zlým počtom parametrov, prípadne volanie neexistujúcich premenných, mylné priradenie hodnoty namiesto logického operátora atď..
 
         Zároveň sa v druhej časti generujú inštrukcie pre interpret s ktorými bude potom narábať.
-        \newpage
         \subsection{Interpretácia}
         Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.
 
@@ -110,17 +108,16 @@
 				Nevýhodou je, že musíme prvky udržovat usporiadané, to znamená, že ak chceme vložit nový prvok, musí být vložený presne tam, kam podla
 				svojej velkosti patrí.
 
-				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy} .
-    \newpage
+				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy}.
 	\section{Prílohy}
         \subsection{Konečný automat lexikálneho analyzátora} \label{sec:KA}
         Náš samotný lexiálny analyzátor \texttt{scanner} sa prepína medzi rozlišnými stavmi, podľa toho aké tokeny postupne číta a rozhoduje sa medzi nimi. Po každom možnom stave vyhodnocujeme aký ďaľší môže nastať, prípadne hlásime lexikálnu chybu, keďže sme prečítal znak, ktorý za žiadnych okolností nesmieme dostať v danom stave.
 
         Týmto spôsobom postupne eliminujeme všetkz možnosti a zo začiatočného bodu \textbf{start} sa postupne dostaneme až do finálneho stavu, ktorý je vyhodnotením a spracovaním spracovaného vstupu, prípadne hlásenie lexikálnej chyby \verb|SS_LEX_ERROR|. Vďaka daným vlastnostiam ho môžeme zakresliť aj vo forme konečného automatu.
 
-            \begin{center}
-            \includegraphics[width=\paperwidth,height=\textheight,keepaspectratio]{ka_scanner_diagram.pdf}
-            \end{center}
+	    \begin{center}
+	    	\includegraphics[height=\textheight]{ifj_scanner_diagram.pdf}
+	    \end{center}
 
         \subsection{LL gramatika}
 
@@ -136,19 +133,19 @@
             \hline
             SYMBOL & $+$ & $-$ & $*$ & $/$ & $<$ & $>$ & $<=$ & $>=$ & $==$ & $!=$ & $\&\&$ & $||$ & $!$\\
             \hline
-            $+$ & H & H & L & L & H & H & H & H & H & H & H & H & L\\
-            $-$ & H & H & L & L & H & H & H & H & H & H & H & H & L\\
-            $*$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
-            $/$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
-            $<$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
-            $>$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
-            $<=$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
-            $>=$ & L & L & L & L & H & H & H & H & H & H & H & H & L\\
-            $==$ & L & L & L & L & L & L & L & L & H & H & H & H & L\\
-            $!=$ & L & L & L & L & L & L & L & L & H & H & H & H & L\\
-            $\&\&$ & L & L & L & L & L & L & L & L & L & L & H & H & L\\
-            $||$ & L & L & L & L & L & L & L & L & L & L & L & H & L\\
-            $!$ & H & H & H & H & H & H & H & H & H & H & H & H & L\\
+            $+$ & E & H & L & L & H & H & H & H & H & H & H & H & L\\
+            $-$ & H & E & L & L & H & H & H & H & H & H & H & H & L\\
+            $*$ & H & H & E & H & H & H & H & H & H & H & H & H & L\\
+            $/$ & H & H & H & E & H & H & H & H & H & H & H & H & L\\
+            $<$ & L & L & L & L & E & H & H & H & H & H & H & H & L\\
+            $>$ & L & L & L & L & H & E & H & H & H & H & H & H & L\\
+            $<=$ & L & L & L & L & H & H & E & H & H & H & H & H & L\\
+            $>=$ & L & L & L & L & H & H & H & E & H & H & H & H & L\\
+            $==$ & L & L & L & L & L & L & L & L & E & H & H & H & L\\
+            $!=$ & L & L & L & L & L & L & L & L & H & E & H & H & L\\
+            $\&\&$ & L & L & L & L & L & L & L & L & L & L & E & H & L\\
+            $||$ & L & L & L & L & L & L & L & L & L & L & L & E & L\\
+            $!$ & H & H & H & H & H & H & H & H & H & H & H & H & E\\
             \hline
             \end{tabular}
         \end{center}

@@ -43,7 +43,6 @@ void interpretation_loop() {
     current_instruction = NULL;
     while(!stack_empty(callstack)) {
         current_frame = stack_top(callstack)->frame;
-        // printf("current_context: %d %d\n", current_frame->context, __LINE__);
 
         //start interpreting instructions
         process_frame();
@@ -57,23 +56,17 @@ void process_frame() {
         if(get_error()->type) return;
 
         current_instruction = current_frame->instructions->active->data.instruction;
-        // printf("\n\n");
-        // instruction_print(current_instruction);
         switch (current_instruction->code) {
             case IC_NOP:
                 // do nothing
                 break;
             case IC_RETURN:
             {
-                // expression_print((Expression*)current_instruction->op1);
-                // printf(" = ");
                 return_called = true;
                 if((Expression*)current_instruction->op1 != NULL) {
                     Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                     if(get_error()->type) return;
 
-                    // expression_print(res);
-                    // printf("\n");
                     if(current_frame->return_symbol != NULL) {
                         assign_value_to_variable(current_frame->return_symbol, res);
                         if(get_error()->type) return;
@@ -96,8 +89,6 @@ void process_frame() {
             }
             case IC_JMPTRUE:
             {
-                // printf("jmptrue cond expr: ");
-                // expression_print((Expression*)current_instruction->op1);
                 Expression* expr = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
 
@@ -120,13 +111,9 @@ void process_frame() {
             }
             case IC_JMPFALSE:
             {
-                // printf("jmpfalse cond expr: ");
-                // expression_print((Expression*)current_instruction->op1);
                 Expression* expr = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
                 if(get_error()->type) return;
 
-                // printf(" = ");
-                // expression_print(expr);
                 if (expr->op == EO_CONST_BOOL) {
                     if (expr->b != true) {
                         current_frame->instructions->active = (ListItem*)current_instruction->res;
@@ -147,23 +134,15 @@ void process_frame() {
             }
             case IC_EVAL:
             {
-                // printf("IC_EVAL: ");
-                // expression_print((Expression*)current_instruction->op1);
-                // printf(" = \n");
-                // fflush(stdout);
                 Expression* res = expression_evaluate((Expression*)current_instruction->op1, main_context, current_frame->context);
 
                 if(get_error()->type) return;
-                // expression_print(res);
 
                 if(current_instruction->res != NULL) {
                     Symbol* res_symbol = context_find_ident(current_frame->context, main_context, ((Symbol*)current_instruction->res)->id);
                     res_symbol->id = ((Symbol*)current_instruction->res)->id;
                     assign_value_to_variable(res_symbol, res);
                     if(get_error()->type) return;
-                    // printf(" = ");
-                    // symbol_print(res_symbol);
-                    // printf("\n");
                 }
 
                 break;
@@ -182,8 +161,6 @@ void process_frame() {
                 break;
             case IC_PRINT:
             {
-                // expression_print((Expression*)(((List*)current_instruction->op2)->first->data.expression));
-                // printf("\n");
                 Expression* res = expression_evaluate((Expression*)(((List*)current_instruction->op2)->first->data.expression), main_context, current_frame->context);
                 if(get_error()->type) return;
                 print_to_stdin(res);
@@ -202,44 +179,10 @@ void process_frame() {
     stack_pop(callstack);
     if(!stack_empty(callstack)) {
         current_frame = stack_top(callstack)->frame;
-        // printf("current_frame set to: %d %d\n", current_frame, __LINE__);
         if(current_frame->instructions->active) {
             current_instruction = current_frame->instructions->active->data.instruction;
         }
     }
-}
-
-
-void read_int_stdin(Symbol* op1) {
-    op1->data.var->value.i = read_int();
-}
-
-void read_double_stdin(Symbol* op1) {
-    op1->data.var->value.d = read_double();
-}
-
-void read_str_stdin(Symbol* op1) {
-    op1->data.var->value.s = read_str();
-}
-
-void length_str(Symbol* op1, Symbol* res) {
-    res->data.var->value.i = str_length(op1->data.var->value.s);
-}
-
-/*void substring(Symbol* op1, Symbol* op2, Symbol* op3, Symbol *res) {
-    res->data.var->value.s = substr(op1->data.var->value.s, op2->data.var->value.i, op3->data.var->value.i);
-   }*/
-
-void compare_str(Symbol* op1, Symbol* op2, Symbol* res) {
-    res->data.var->value.i = str_cmp(op1->data.var->value.s, op2->data.var->value.s);
-}
-
-void sort_str(Symbol* op1, Symbol* res) {
-    res->data.var->value.s = ial_sort(op1->data.var->value.s);
-}
-
-void find_str(Symbol* op1, Symbol* op2, Symbol* res) {
-    res->data.var->value.i = ial_find(op1->data.var->value.s, op2->data.var->value.s);
 }
 
 void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frames) {
@@ -248,8 +191,6 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
         list_activate_next(current_frame->instructions);
     }
 
-    // printf("calling: \n");
-    // symbol_print(fn_symbol);
     Context* parent_context = current_frame->context;
     current_frame = callframe_init(fn_symbol->data.fn->context, fn_symbol->data.fn->instructions, return_var);
     list_activate_first(current_frame->instructions);
@@ -261,12 +202,10 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 
     // populate parameters
     if(params != NULL) {
-        // printf(" with params:");
         list_activate_first(fn_symbol->data.fn->params_ids_list);
         list_activate_first(params);
 
         while(fn_symbol->data.fn->params_ids_list->active != NULL) {
-            // printf(" ");
             Symbol* symbol = context_find_ident(current_frame->context, main_context, fn_symbol->data.fn->params_ids_list->active->data.id);
             symbol->id = fn_symbol->data.fn->params_ids_list->active->data.id;
             Expression* val = expression_evaluate((params)->active->data.expression, main_context, parent_context);
@@ -274,36 +213,22 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
 
             assign_value_to_variable(symbol, expression_evaluate(val, main_context, current_frame->context));
             if(get_error()->type) return;
-            // symbol_print(symbol);
 
             list_activate_next(fn_symbol->data.fn->params_ids_list);
             list_activate_next(params);
         }
     }
 
-    // printf("\n");
-    // printf("new current_context: %d %d\n", current_frame->context, __LINE__);
     if(manage_frames) {
         process_frame();
 
         if(fn_symbol->data.fn->return_type != VT_VOID && !return_called) {
             return set_error(ERR_RUN_NON_INIT_VAR);
         }
-        // printf("post call process_frame context: %d %d\n", current_frame->context, __LINE__);
-        // stack_pop(callstack);
-        // if(!stack_empty(callstack)) {
-        //     current_frame = stack_top(callstack)->frame;
-        // }
     }
 }
 
 void assign_value_to_variable(Symbol* symbol, Expression* expr) {
-    // printf("assigning to ");
-    // symbol_print(symbol);
-    // printf("@ %d expression ", symbol);
-    // expression_print(expr);
-    // printf("in context: %d of frame: %d\n", current_frame->context, current_frame);
-
     if(get_error()->type) return;
     if(symbol->type != ST_VARIABLE) return set_error(ERR_INTERPRET);
     switch(symbol->data.var->type) {

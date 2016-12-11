@@ -41,25 +41,6 @@ int main(int argc, char** argv) {
     }
     fclose(f);
 
-
-    // list_activate_first(token_list);
-    // while(token_list->active != NULL) {
-    //     ScannerToken* token = token_list->active->data.token;
-    //     if(token->type == STT_IDENT) {
-    //         if(token->data->id->class != NULL) {
-    //             printf("%s:%s:%s\n", token_to_string(token), str_get_str(token->data->id->class), str_get_str(token->data->id->name));
-    //         } else {
-    //             printf("%s:%s\n", token_to_string(token), str_get_str(token->data->id->name));
-    //
-    //         }
-    //     } else {
-    //         printf("%s ", token_to_string(token));
-    //     }
-    //     list_activate_next(token_list);
-    // }
-    // printf("\n");
-
-
     Context* context = NULL;
     List* instructions = NULL;
     parse(token_list, &context, &instructions);

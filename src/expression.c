@@ -154,8 +154,6 @@ void expression_print (Expression* expr) {
             break;
         case EO_NEGATE:
             expression_print(expr->expr1);
-            printf(", ");
-            expression_print(expr->expr2);
             break;
         default:
             printf("???\n");
@@ -186,6 +184,34 @@ const ExpressionOperationSign OperationTablePlus[EO_CONST_BOOL + 1][EO_CONST_BOO
             [EO_CONST_STRING] = S,
             [EO_CONST_BOOL] = U }  //boolean
 };
+
+const ExpressionOperationSign OperationTableLogic[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {
+        [EO_CONST_INTEGER] =  {
+            [EO_CONST_INTEGER] = I,
+            [EO_CONST_DOUBLE] = D,
+            [EO_CONST_STRING] = U,
+            [EO_CONST_BOOL] = B
+        }, //int
+        [EO_CONST_DOUBLE] =  {
+            [EO_CONST_INTEGER] = D,
+            [EO_CONST_DOUBLE] = D,
+            [EO_CONST_STRING] = U,
+            [EO_CONST_BOOL] = B
+        }, //double
+        [EO_CONST_STRING] =  {
+            [EO_CONST_INTEGER] = U,
+            [EO_CONST_DOUBLE] = U,
+            [EO_CONST_STRING] = U,
+            [EO_CONST_BOOL] = U
+        }, //string
+        [EO_CONST_BOOL] =  {
+            [EO_CONST_INTEGER] = B,
+            [EO_CONST_DOUBLE] = B,
+            [EO_CONST_STRING] = U,
+            [EO_CONST_BOOL] = B
+        }  //boolean
+};
+
 
 const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {
         [EO_CONST_INTEGER] =  {
@@ -264,13 +290,10 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(res_expr->str, tmp_str);
                     str_dispose(tmp_str);
                 } else {
-                    // printf("EXPR1 STR(%d): %s\n", str_length(expr1->str), str_get_str(expr1->str));
-                    // printf("EXPR2 STR(%d): %s\n", str_length(expr2->str), str_get_str(expr2->str));
                     str_concat(res_expr->str, expr1->str);
                     str_concat(res_expr->str, expr2->str);
                 }
 
-                // printf("RES STR(%d): %s\n", str_length(expr2->str), str_get_str(res_expr->str));
             } else {
                 set_error(ERR_SEM_PARAMS);
 
@@ -355,31 +378,63 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
             break;
 
         case EO_OR:
-            if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
-                res_expr->op = EO_CONST_BOOL;
-                if ((expr1->b == true) || (expr2->b == true)) {
-                    res_expr->b = true;
-                } else {
-                    res_expr->b = false;
-                }
+        {
+            res_expr->op = EO_CONST_BOOL;
+            bool expr1bool = false;
+            bool expr2bool = false;
+
+            if(expr1->op == EO_CONST_BOOL) {
+                expr1bool = expr1->b;
+            } else if(expr1->op == EO_CONST_INTEGER) {
+                expr1bool = (expr1->i != 0);
+            } else if(expr1->op == EO_CONST_DOUBLE) {
+                expr1bool = (expr1->d != 0);
             } else {
                 set_error(ERR_SEM_PARAMS);
             }
-            break;
 
+            if(expr2->op == EO_CONST_BOOL) {
+                expr2bool = expr2->b;
+            } else if(expr2->op == EO_CONST_INTEGER) {
+                expr2bool = (expr2->i != 0);
+            } else if(expr2->op == EO_CONST_DOUBLE) {
+                expr2bool = (expr2->d != 0);
+            } else {
+                set_error(ERR_SEM_PARAMS);
+            }
+
+            res_expr->b = (expr1bool == true) || (expr2bool == true);
+            break;
+        }
         case EO_AND:
-            if ((expr1->op == EO_CONST_BOOL) && (expr2->op == EO_CONST_BOOL)) {
-                res_expr->op = EO_CONST_BOOL;
-                if ((expr1->b == true) && (expr2->b == true)) {
-                    res_expr->b = true;
-                } else {
-                    res_expr->b = false;
-                }
+        {
+            res_expr->op = EO_CONST_BOOL;
+            bool expr1bool = false;
+            bool expr2bool = false;
+
+            if(expr1->op == EO_CONST_BOOL) {
+                expr1bool = expr1->b;
+            } else if(expr1->op == EO_CONST_INTEGER) {
+                expr1bool = (expr1->i != 0);
+            } else if(expr1->op == EO_CONST_DOUBLE) {
+                expr1bool = (expr1->d != 0);
             } else {
                 set_error(ERR_SEM_PARAMS);
             }
-            break;
 
+            if(expr2->op == EO_CONST_BOOL) {
+                expr2bool = expr2->b;
+            } else if(expr2->op == EO_CONST_INTEGER) {
+                expr2bool = (expr2->i != 0);
+            } else if(expr2->op == EO_CONST_DOUBLE) {
+                expr2bool = (expr2->d != 0);
+            } else {
+                set_error(ERR_SEM_PARAMS);
+            }
+
+            res_expr->b = (expr1bool == true) && (expr2bool == true);
+            break;
+        }
         case EO_GREATER:
             res_expr->op = EO_CONST_BOOL;
             if (OperationTableOthers[expr1->op][expr2->op] == I) {
@@ -597,7 +652,24 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                 }
             }
             break;
+        case EO_NEGATE:
+        {
+            res_expr->op = EO_CONST_BOOL;
+            bool expr1bool = false;
 
+            if(expr1->op == EO_CONST_BOOL) {
+                expr1bool = expr1->b;
+            } else if(expr1->op == EO_CONST_INTEGER) {
+                expr1bool = (expr1->i != 0);
+            } else if(expr1->op == EO_CONST_DOUBLE) {
+                expr1bool = (expr1->d != 0);
+            } else {
+                set_error(ERR_SEM_PARAMS);
+            }
+
+            res_expr->b = !expr1bool;
+            break;
+        }
         default:
             return NULL;
             break;
@@ -607,7 +679,6 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
 }
 
 Expression *expression_evaluate(Expression *expr, Context* main_context, Context* context) {
-    // printf("expression_evaluate: OP = %s\n", operations_char[expr->op]);
     Expression* res_expr = NULL;
 
     switch(expr->op) {
@@ -623,7 +694,6 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 res_expr = expression_compare(expr1, expr2, EO_PLUS);
             }
             break;
-
         case EO_MINUS:
             if ((expr->expr1 != NULL) && (expr->expr2 != NULL)) {
                 Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
@@ -664,14 +734,12 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             break;
         case EO_SYMBOL_CALL:
         {
-            // printf("EO_SYMBOL_CALL 0\n");
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
             expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
-            // printf("EO_SYMBOL_CALL 1 %s\n", str_get_str(expr->symbol->id->name));
             if(expr->symbol == NULL) {
                 set_error(ERR_INTERPRET);
                 return NULL;
@@ -684,11 +752,9 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
-            // printf("EO_SYMBOL_CALL 2\n");
 
             if(expr->symbol->id->class != NULL  && str_cmp_const(expr->symbol->id->class, "ifj16") == 0) {
                 //builtin fn call
-                // printf("EO_SYMBOL_CALL builtin fn\n");
 
                 Expression* res_expr = expression_init();
                 if(str_cmp_const(expr->symbol->id->name, "readInt") == 0) {
@@ -824,26 +890,18 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
                 id->name = str_init_const("tmp_symbol");
 
                 tmp->id = id;
-                // printf("EO_SYMBOL_CALL 3\n");
                 tmp->type = ST_VARIABLE;
-                // printf("EO_SYMBOL_CALL 4: %d\n", expr->symbol->data.fn->return_type);
                 symbol_new_variable(tmp, expr->symbol->data.fn->return_type);
 
                 // call the fn
-                // printf("EO_SYMBOL_CALL 5\n");
                 call(expr->symbol, expr->call_params, tmp, true);
-                // printf("EO_SYMBOL_CALL 6\n");
 
                 // symbol -> expression
                 Expression expr;
-                // printf("EO_SYMBOL_CALL 7\n");
                 expr.op = EO_SYMBOL;
-                // printf("EO_SYMBOL_CALL 8\n");
                 expr.symbol = tmp;
-                // printf("EO_SYMBOL_CALL 9\n");
                 // res shall contain some const expression
                 Expression* res = expression_evaluate(&expr, main_context, context);
-                // printf("EO_SYMBOL_CALL 10\n");
                 //dispose tmp symbol
                 symbol_dispose(tmp);
 
@@ -853,58 +911,47 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
         }
         case EO_SYMBOL:
         {
-            // printf("expr eval EO_SYMBOL 0\n");
             if (expr->symbol == NULL) {
                 set_error(ERR_SEM_PARAMS);
                 return NULL;
             }
 
             if(str_cmp_const(expr->symbol->id->name, "tmp_symbol") != 0) {
-                // printf("expr eval EO_SYMBOL 1 %s\n", str_get_str(expr->symbol->id->name));
                 expr->symbol = context_find_ident(context, main_context, expr->symbol->id);
                 if(expr->symbol == NULL) {
                     set_error(ERR_INTERPRET);
                     return NULL;
                 }
-                // printf("expr eval EO_SYMBOL 2 %d in context %d\n", expr->symbol, context);
-                // printf("expr eval EO_SYMBOL 3 %d %d\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
                 if(expr->symbol->type != ST_VARIABLE) {
                     set_error(ERR_INTERPRET);
                     return NULL;
                 }
                 if(expr->symbol->data.var->initialized != true) {
-                    // printf("    \n\nSETTING ERROR: ERR_SEM_PARAMS: %d %d\n\n", expr->symbol->type != ST_VARIABLE, expr->symbol->data.var->initialized != true);
                     set_error(ERR_RUN_NON_INIT_VAR);
                     return NULL;
                 }
             }
 
-            // printf("expr eval EO_SYMBOL 4\n");
             switch (expr->symbol->data.var->type) {
                 case VT_INTEGER:
-                    // printf("expr eval EO_SYMBOL 4a\n");
                     res_expr = expression_init();
                     res_expr->i = expr->symbol->data.var->value.i;
                     res_expr->op = EO_CONST_INTEGER;
                     return res_expr;
 
                 case VT_DOUBLE:
-                    // printf("expr eval EO_SYMBOL 4b\n");
                     res_expr = expression_init();
                     res_expr->d = expr->symbol->data.var->value.d;
                     res_expr->op = EO_CONST_DOUBLE;
                     return res_expr;
 
                 case VT_STRING:
-                    // printf("expr eval EO_SYMBOL 4c\n");
                     res_expr = expression_init();
                     res_expr->str = expr->symbol->data.var->value.s;
                     res_expr->op = EO_CONST_STRING;
-                    // printf("expr eval EO_SYMBOL 4c1\n");
                     return res_expr;
 
                 case VT_BOOL:
-                    // printf("expr eval EO_SYMBOL 4d\n");
                     res_expr = expression_init();
                     res_expr->b = expr->symbol->data.var->value.b;
                     res_expr->op = EO_CONST_BOOL;
@@ -1056,15 +1103,18 @@ Expression *expression_evaluate(Expression *expr, Context* main_context, Context
             }
             break;
 
+        case EO_NEGATE:
+            if ((expr->expr1 != NULL)) {
+                Expression* expr1 = expression_evaluate(expr->expr1, main_context, context);
+                if(get_error()->type) {
+                    expression_dispose(expr1);
+                    return NULL;
+                }
+                res_expr = expression_compare(expr1, NULL, EO_NEGATE);
+            }
+            break;
         default:
             return NULL;
     }
-    // if (expr->expr1 == NULL) {
-        // printf("returt\n" );
-        // return NULL;
-    // }
-    // expression_dispose(expr->expr1);
-    // expression_dispose(expr->expr2);
-    // printf("expression_evaluate res: OP = %s\n", operations_char[expr->op]);
     return res_expr;
 }
