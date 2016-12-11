@@ -1,0 +1,9 @@
+class Main {
+    static void run(){
+        boolean x = true;
+        boolean z = false;
+        ifj16.print(x + "\n");
+        ifj16.print(x + "ahoj\n");
+        ifj16.print("ahoj" + z +"\n");
+    }
+}
