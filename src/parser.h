@@ -6,6 +6,7 @@
  *
  * Team:
  *  Dominik Križka   (xkrizk02)
+ *  Matúš Juhász     (xjuhas02)
  *  Samuel Hulla     (xhulla00)
  *  Svätopluk Hanzel (xhanze10)
  *  Tomáš Haas       (xhaast00)
