@@ -6,7 +6,7 @@
 \usepackage[dvipdf]{graphicx}
 \usepackage[letterpaper, margin=2cm]{geometry}
 \title{Dokumentácia projektu IFJ}
-\author{Svätopluk Hanzel, Samuel Hulla, Tomáš Haas}
+\author{Svätopluk Hanzel, Samuel Hulla, Tomáš Haas, Matúš Juhász, Dominik Križka}
 \date{9.12.2016}
 
 
@@ -22,13 +22,13 @@
         {\Large Tým 003, Varianta a/2/I}\\
         Rozšírenia: FUNEXP, BASE, BOOLEAN, SIMPLE\\
         \vfill
-        \textbf{Svätopluk Hanzel(xhanze10)} - 20\% \\
-        Tomáš Haas(xhaast00) - 20\% \\
-        Samuel Hulla(xhulla00) - 20\% \\
-        Matúš Juhász(xjuhas02) - 20\% \\
-        Dominik Križka(xkrizk02) - 20\% \\
+        \textbf{Svätopluk Hanzel(xhanze10)} - 24\% \\
+        Tomáš Haas(xhaast00) - 15\% \\
+        Samuel Hulla(xhulla00) - 13\% \\
+        Matúš Juhász(xjuhas02) - 24\% \\
+        Dominik Križka(xkrizk02) - 24\% \\
         \vspace{1cm}
-        {\hfill Brno, 22.12.2016}
+        {\hfill Brno, 9.12.2016}
         \end{center}
     \end{titlepage}
 
@@ -47,26 +47,27 @@
         \subsection{Automatizované testy}
 	        Nevyhnutnou súčasťou takéhoto projektu sú automatizované testy. Napriek iniciatíve a snahe o ich včasné napísanie sa tak bohužial stalo až v poslednej tretine riešenia projektu. Napriek tomu nám však veľmi pomohli pri odhaľovaní chýb.\\
 	        Okrem automatizovaných testov sme pre odhaľovanie chýb používali aj nástroje na statickú analýzu kódu.
+	    \subsection{Rozdelenie bodov}
+		    Kvôli nižšej aktivite niektorých členov tímu sme sa rozhodli rozdeliť body nerovnomerne a to priamo úmerne k úsiliu vynaloženému počas celého obdobia riešenia projektu.
 	\section{Riešenie interpretu}
-	    V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interprétu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať.
+	    V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interpretu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať.
 
-        \subsection{Lexikálna analýza}
-	        Keď sme začali riešiť lexikálnu analýzu, museli sme si najprv uvedomiť, ako budeme rozlišovať jednotlivé znaky. Rozhodli sme sa, že najpraktickejśie riešenie bude implementovať  \textbf{scanner}. Ten spracúvava jednotlivé znaky - \textbf{tokeny} a rozdeľuje ich do jednotlivých \textbf{stavov} ktoré môžu nastať.
-	
-	        Aj keď z hľadiska samotnej funkčnosti spracúvavame celý súbor a až potom vyhodnocujeme chyby, z lexikálneho hľadiska by sme mohli naraziť na syntaktickú chybu predtým ako by sme narazili ešte na lexikálnu.Z tohoto dôvodu prioritizujeme postup, kde ideme po jednolitvých tokenoch a skúmame, či je lexikálne všetko v poriadku. V prípade, že nie, dostaneme sa do stavu \verb|SS_LEX_ERROR|.
-	
-	        Presný postup samotného vyhodnocovania je relatívne komplikovaný a zdĺhavý a z toho dôvodu je aj spracovaný vo forme konečného automatu (\ref{sec:KA}) na strane \pageref{sec:KA}
+		\subsection{Lexikálna analýza} \label{sec:KA}
+			Základom lexikálnej analýzy je zo vstupného súboru načítať znaky a tie na základe určitých pravidiel rozdeliť na tzv. \textbf{tokeny}. Vytváranie tokenov zabezpečuje scanner, ktorý funguje na princípe konečného automatu. Schému konečného automatu prikladáme v našej dokumentacii. Vytvorené tokeny sa ukladajú do obojsmerného zoznamu. \\
+			Scanner je v koncovom stave schopný skonvertovať načítané znaky podľa toho, na čo bude daný token potrebný. Napríklad, ak by načítané znaky mali reprezentovať číslo, tak sa skonvertujú na typ int poprípade double a až po skonvertovaní sa vytvorí token s číselnou hodnotou. \\
+			V prípade lexikálnej chyby sa scanner neukončí, ale skontroluje celý vstupný súbor, či sa tam nenachádzajú náhodou dalšie lexikálne chyby (analýza pokračuje po prvej načítanej medzere po chybe). V prípade potreby môžeme vypisať všetky chyby.
 
         \subsection{Syntaktická a semantická analýza}
-	        Naša analýza prebieha dvojfázovo, v tej prvej časti sa venujeme \textbf{syntaktickej} časti, nasledovne sa upriamime na lokálne premenné, najprv v hlavnom tele programu a potom aj v jednotlivých funkciách, ktorú riešime pomocou \textbf{tabuľky symbolov}.\\
-	        Po bezproblémovom prechode sa môžeme presunúť na semantickú časť. Semantické chyby môžu nastať aj keď je program syntakticky v poriadku, napr. volanie neexistujúcej funkcie, alebo aj existujúcej, ale so zlým počtom parametrov, prípadne volanie neexistujúcich premenných, mylné priradenie hodnoty namiesto logického operátora atď..\\
-	        Zároveň sa v druhej časti generujú inštrukcie pre interpret s ktorými bude potom narábať.
+			V prípade úspešného dokončenia lexikálnej analýzy sa načítaný zoznam tokenov odovzdá parseru, ktorý má na starosti syntaktickú a sémantickú analýzu.\\
+			Vzhľadom na to, že jazyk IFJ16 umožnuje definíciu statických premenných v triede neskôr ako sú použité, zvolili sme dvojfázový prechod. Počas prvého prechodu sa vyhodnocuje syntaktická správnosť programu a zároveň sa do tabuliek symbolov ukladajú jednotlivé lokálne premenné, statické premenné tried, statické funkcie tried a ich parametre.\\
+			V druhom prechode sa hľadajú sémantické chyby, tj. chybné počty a typy parametrov, nedefinované premenné, predefinovanie funkcií zo zabaľujúcej triedy a pod. Zároveň sa však už aj generujú inštrukcie, ktoré sa opäť ukladajú do zoznamov, ktoré sú špecifické pre jednotlivé funkcie.\\
+			Výstupom interpretu je zoznam počiatočných inštrukcií, ktoré inicializujú statické premenné tried a následne zavolajú funkciu \verb|Main.run| a globálna tabuľka symbolov.
 	        
         \subsection{Interpretácia}
-	        Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.\\
-	        Pomocou troj-adresového kódu, ktorý využíva  vytvorenú \textbf{sadu inštrukcií} zisťujeme chovanie nášho interpréta. Pri cykloch sme namiesto jednotlivých inštrukcií využila skoky, aby sme zlepšili efektivitu programu.\\
-	        Dostávame inštrukciu \verb|IC_EVAL| ktorá volá funckiu \verb|evaluate_expression()|, kde následne rozlišujeme aritmetické a logické operácie a určí výslednú hodnotu výrazu.\\
-	        Je dôležité upozoniť, že samotná interpretácia prebieha za behu. Interprét spracúva jednotlivé inštrukcie lineárne a vyhodnocuje ich, až kým všetko neprejdeme a dostaneme náš žiadaný výsledok
+		    Interpretácia je záverečná časť projektu. Prebieha po úspešnej sémantickej analýze. Ako vstup dostáva výstup parsera - inicializačné inštrukcie a globálnu tabuľku symbolov.
+		    Inštrukcie majú formu trojadresného kódu. Každá inštrukcia má svoj typ (\verb|InstructionCode|) a 3 operandy: \verb|op1|, \verb|op2| a \verb|res|.\\
+		    V sade inštrukcií máme len 11 inštrukcií. Najzaujímavejšia z nich je pritom \verb|IC_EVAL|, ktorá má na starosti vyhodnocovanie výrazov. Tento prístup nám umožnilo jednoduchú implementáciu rozšírenia FUNEXP.\\
+		    Ďalšou zaujímavou časťou riešenia intepretácie boli volania funkcií vrámci výrazov aj mimo nich. Po tom ako sa vykoná inštrukcia IC\textunderscore{}CALL, je na zásobník rámcov volaní vložený nový rámec, ktorý obsahuje kópiu tabuľky symbolov danej funkcie. Následne sú hodnoty predaných parametrov uložené do tabuľku symbolov a začnú sa vykonávať inštrukcie od prvej inštrukcie z inštrukčnej pásky danej funkcie. Každý rámec má špeciálny symbol, do ktorého sa v prípade volania \verb|return| uloží hodnota výrazu za ním. Po ukončení vykonávania inštrukcií danej funkcie je možné túto hodnotu predať ďalej, prip. uložiť do premennej.
 
         \subsection{Algoritmy}
         Oproti zdrojům z předmětu IAL, kde se při práci s řetězci používalo indexování od jedničky, v naší implementaci je využito indexování od 0, což zjednodušilo některé podmínky a zlepšilo přehlednost.
@@ -105,13 +106,7 @@
 
 				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy}.
 	\section{Prílohy}
-        \subsection{Lexikálna analýza} \label{sec:KA}
-        Základom lexikálnej analýzy je zo vstupného súboru načítať znaky a tie na základe určitých pravidiel rozdeliť na tzv. \textbf{tokeny}. Vytváranie tokenov zabezpečuje scanner. Scanner funguje na princípe konečného automatu. Schému konečného automatu prikladáme v našej dokumentacii. Vytvorené tokeny sa ukladajú do obojsmerného zoznamu. 
-        
-        Scanner je v koncovom stave schopný skonvertovať načítané znaky podľa toho, na čo bude danný token potrebný. Napríklad, ak by načítané znaky mali reprezentovať číslo, tak sa skonvertujú na typ int poprípade double a až po skonvertovaní sa vytvorí token s číselnou hodnotou.
-        
-        V prípade lexikálnej chyby sa scanner neukončí, ale skontroluje celý vstupný súbor, či sa tam nenachádzajú náhodou dalšie lexikálne chyby. Ak by sme chceli, môžeme si vypísať všetky lexikálne chyby.
-
+        \subsection{Diagram konečného automatu} \label{sec:KA}
 	    \begin{center}
 	    	\includegraphics[height=\textheight]{ifj_scanner_diagram.pdf}
 	    \end{center}
@@ -139,7 +134,7 @@
 				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}\epsilon \)
 				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}EXPR CALL\textunderscore{}PARAMS\textunderscore{}LIST2 \)
 				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}\epsilon \)
-				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}',' EXPR CALL\textunderscore{}PARAMS\textunderscore{}LIST2 \)
+				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}',' EXPR\ CALL\textunderscore{}PARAMS\textunderscore{}LIST2 \)
 				\item \( EXPR\quad{}\rightarrow\quad{}ID \)
 				\item \( EXPR\quad{}\rightarrow\quad{}ID '(' CALL\textunderscore{}PARAMS\textunderscore{}LIST ')' \)
 				\item \( EXPR\quad{}\rightarrow\quad{}LITERAL \)
@@ -159,33 +154,33 @@
 	        \end{enumerate}
 
         \subsection{Precedenčná tabuľka} \label{sec:tab}
-        Precedenčná tabuľka slúži na určenie priority tokenov.
-
-        \textbf{L} znamená, že token na vrchole zásobníka má menšiu prioritu ako ten vstupný
-
-        \textbf{H} naopak znamená, źe je mu nadriadený (má väčšiu prioritu)
-
-        \begin{center}
-            \begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c | c | c |}
-            \hline
-            SYMBOL & $+$ & $-$ & $*$ & $/$ & $<$ & $>$ & $<=$ & $>=$ & $==$ & $!=$ & $\&\&$ & $||$ & $!$\\
-            \hline
-            $+$ & E & H & L & L & H & H & H & H & H & H & H & H & L\\
-            $-$ & H & E & L & L & H & H & H & H & H & H & H & H & L\\
-            $*$ & H & H & E & H & H & H & H & H & H & H & H & H & L\\
-            $/$ & H & H & H & E & H & H & H & H & H & H & H & H & L\\
-            $<$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $>$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $<=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $>=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $==$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $!=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
-            $\&\&$ & L & L & L & L & L & L & L & L & L & L & E & H & L\\
-            $||$ & L & L & L & L & L & L & L & L & L & L & L & E & L\\
-            $!$ & H & H & H & H & H & H & H & H & H & H & H & H & N\\
-            \hline
-            \end{tabular}
-        \end{center}
+	        Precedenčná tabuľka slúži na určenie priority tokenov.\\
+	        \textbf{L} znamená, že token na vrchole zásobníka má menšiu prioritu ako ten vstupný\\
+	        \textbf{H} znamená, źe je mu nadriadený (má väčšiu prioritu)\\
+	        \textbf{E} znamená, źe je má rovnakú prioritu\\
+	        \textbf{N} znamená, źe takáto kombinácia sa na zásobníku nemôže objaviť\\
+	
+	        \begin{center}
+	            \begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c | c | c |}
+	            \hline
+	            SYMBOL & $+$ & $-$ & $*$ & $/$ & $<$ & $>$ & $<=$ & $>=$ & $==$ & $!=$ & $\&\&$ & $||$ & $!$\\
+	            \hline
+	            $+$ & E & H & L & L & H & H & H & H & H & H & H & H & L\\
+	            $-$ & H & E & L & L & H & H & H & H & H & H & H & H & L\\
+	            $*$ & H & H & E & H & H & H & H & H & H & H & H & H & L\\
+	            $/$ & H & H & H & E & H & H & H & H & H & H & H & H & L\\
+	            $<$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $>$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $<=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $>=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $==$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $!=$ & L & L & L & L & N & N & N & N & N & N & H & H & L\\
+	            $\&\&$ & L & L & L & L & L & L & L & L & L & L & E & H & L\\
+	            $||$ & L & L & L & L & L & L & L & L & L & L & L & E & L\\
+	            $!$ & H & H & H & H & H & H & H & H & H & H & H & H & N\\
+	            \hline
+	            \end{tabular}
+	        \end{center}
         \subsection{Literatúra}
 	        Pri tvobre projektu sme využívali nasledovné zdroje:
 	        \begin{itemize}
