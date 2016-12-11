@@ -25,7 +25,7 @@ static bool return_called;
 void interpret(Context* _main_context, List* instructions) {
     return_called = false;
     main_context = _main_context;
-    callstack = stack_init();
+    callstack = stack_init(StT_FRAME);
 
     current_frame = callframe_init(main_context, instructions, NULL);
     StackItemData item = {
@@ -248,8 +248,7 @@ void call(Symbol* fn_symbol, List* params, Symbol* return_var, bool manage_frame
         list_activate_next(current_frame->instructions);
     }
 
-    // Symbol* fn_symbol = (Symbol*)current_instruction->op1;
-    // printf("calling: ");
+    // printf("calling: \n");
     // symbol_print(fn_symbol);
     Context* parent_context = current_frame->context;
     current_frame = callframe_init(fn_symbol->data.fn->context, fn_symbol->data.fn->instructions, return_var);

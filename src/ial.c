@@ -136,7 +136,7 @@ Symbol* table_insert_symbol(SymbolTableNode* symbol_table, Symbol* symbol) {
 
 Symbol* table_insert_bool(SymbolTableNode* symbol_table, SymbolName name, bool data) {
 
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_BOOL);
     symbol->data.var->value.b = data;
 
@@ -145,7 +145,7 @@ Symbol* table_insert_bool(SymbolTableNode* symbol_table, SymbolName name, bool d
 
 Symbol* table_insert_integer(SymbolTableNode* symbol_table, SymbolName name, int data) {
 
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_INTEGER);
     symbol->data.var->value.i = data;
 
@@ -154,7 +154,7 @@ Symbol* table_insert_integer(SymbolTableNode* symbol_table, SymbolName name, int
 
 
 Symbol* table_insert_double(SymbolTableNode* symbol_table, SymbolName name, double data) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_DOUBLE);
     symbol->data.var->value.d = data;
 
@@ -162,7 +162,7 @@ Symbol* table_insert_double(SymbolTableNode* symbol_table, SymbolName name, doub
 }
 
 Symbol *table_insert_string(SymbolTableNode* symbol_table, SymbolName name, String* str) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_STRING);
     symbol->data.var->value.s = str;
 
@@ -170,14 +170,14 @@ Symbol *table_insert_string(SymbolTableNode* symbol_table, SymbolName name, Stri
 }
 
 Symbol* table_insert_class(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_class(symbol, parent_context);
 
     return table_insert_symbol(symbol_table, symbol);
 }
 
 Symbol* table_insert_function(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_function(symbol, parent_context);
 
     return table_insert_symbol(symbol_table, symbol);
@@ -247,7 +247,8 @@ void tree_dispose(SymbolTableNode* node) {
     if (node->key != NULL) {
         tree_dispose(node->left); // dispose lavych uzlov
         tree_dispose(node->right); // dispose pravych uzlov
-        str_dispose(node->key);
+        // str_dispose(node->key);
+
         symbol_dispose(node->data);
         free(node);
     } else {
@@ -268,7 +269,7 @@ SymbolTableNode* table_insert_symbol_copy(SymbolTableNode* symbol_table, Symbol*
 
 SymbolTableNode* table_insert_bool_copy(SymbolTableNode* symbol_table, SymbolName name, bool data) {
 
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_BOOL);
     symbol->data.var->value.b = data;
 
@@ -277,7 +278,7 @@ SymbolTableNode* table_insert_bool_copy(SymbolTableNode* symbol_table, SymbolNam
 
 SymbolTableNode* table_insert_integer_copy(SymbolTableNode* symbol_table, SymbolName name, int data) {
 
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_INTEGER);
     symbol->data.var->value.i = data;
 
@@ -286,7 +287,7 @@ SymbolTableNode* table_insert_integer_copy(SymbolTableNode* symbol_table, Symbol
 
 
 SymbolTableNode* table_insert_double_copy(SymbolTableNode* symbol_table, SymbolName name, double data) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_DOUBLE);
     symbol->data.var->value.d = data;
 
@@ -294,7 +295,7 @@ SymbolTableNode* table_insert_double_copy(SymbolTableNode* symbol_table, SymbolN
 }
 
 SymbolTableNode *table_insert_string_copy(SymbolTableNode* symbol_table, SymbolName name, String* str) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_variable(symbol, VT_STRING);
     symbol->data.var->value.s = str;
 
@@ -302,14 +303,14 @@ SymbolTableNode *table_insert_string_copy(SymbolTableNode* symbol_table, SymbolN
 }
 
 SymbolTableNode* table_insert_class_copy(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_class(symbol, parent_context);
 
     return table_insert_symbol_copy(symbol_table, symbol);
 }
 
 SymbolTableNode* table_insert_function_copy(SymbolTableNode* symbol_table, SymbolName name, Context* parent_context) {
-    Symbol* symbol = symbol_init(name);
+    Symbol* symbol = symbol_init(str_init_str(name));
     symbol_new_function(symbol, parent_context);
 
     return table_insert_symbol_copy(symbol_table, symbol);

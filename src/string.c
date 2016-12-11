@@ -37,6 +37,13 @@ String* str_init_const(char* src) {
     return str;
 }
 
+String* str_init_str(String* src) {
+    String* str = str_init_n(src->length);
+    str_concat(str, src);
+
+    return str;
+}
+
 void _str_resize_raw(String* s, int size) {
     s->str = (char*) realloc(s->str, size);
     if (!s->str) {
@@ -48,7 +55,10 @@ void _str_resize_raw(String* s, int size) {
 
 void str_dispose(String *s) {
     if(s != NULL) {
-        free(s->str);
+        if(s->str != NULL) {
+            free(s->str);
+        }
+
         free(s);
     }
 }
@@ -69,18 +79,18 @@ void str_append(String* s1, char c) {
 }
 
 void str_concat(String* dest, String* src) {
-    if(dest->length + src->length >= dest->mem_size) {
-        _str_resize_raw(dest, (dest->length + src->length));
-    }
-
-    strncat(dest->str, src->str, dest->mem_size);
-    dest->length += src->length;
+    str_concat_const(dest, src->str);
 }
 
 void str_concat_const(String* dest, char* src) {
+    if(dest == NULL || src == NULL) {
+        set_error(ERR_INTERPRET);
+        return;
+    }
+
     int l = strlen(src);
     if(dest->length + l > dest->mem_size) {
-        _str_resize_raw(dest, dest->length + l);
+        _str_resize_raw(dest, dest->length + l + 1);
     }
 
     strncat(dest->str, src, dest->mem_size);
@@ -140,15 +150,14 @@ void bool_to_string(String* s, bool b) {
 }
 
 String* substr(String* s, int i, int n) {
-    if (i < 0 || n < 0 || n < i || (i+n) > s->length) {
+    if (i < 0 || n < 0 || (i+n) > s->length) {
         set_error(ERR_OTHER_RUN);
         return NULL;
     }
-    int sublen = n - i + 1;
-    String* ret = str_init_n(sublen);
-    for (int j = 0; j <= sublen; j++) {
-        ret->str[j] = s->str[j+i];
-    }
-    ret->length = sublen;
+
+    String* ret = str_init_n(n);
+    memcpy(ret->str, &(s->str[i]), n);
+    ret->str[n] = '\0';
+
     return ret;
 }

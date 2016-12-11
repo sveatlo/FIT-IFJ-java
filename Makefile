@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -Wall -Wextra -O1 -g
+CFLAGS=-std=c99 -Wall -Wextra -O2 -g
 CC=gcc
 SRC_DIR=src/
 DIST_DIR=dist/

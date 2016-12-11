@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "scanner_token.h"
 #include "error.h"
@@ -13,6 +14,10 @@ ScannerToken* token_init () {
 }
 
 void token_delete (ScannerToken *token) {
+    if(token == NULL) {
+        return;
+    }
+
     if (token->type == STT_INT) {
         free(token->data);
     } else if (token->type == STT_DOUBLE) {

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "context.h"
 #include "error.h"
 #include "expression.h"
@@ -54,163 +55,174 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     main_context = context_init(NULL);
     current_context = main_context;
     current_class_name = NULL;
-    main_instructions = list_init();
+    main_instructions = list_init(LT_INSTRUCTION);
     current_instructions = main_instructions;
 
     //add builtin fns
-    current_class_name = str_init_const("ifj16");
-    Symbol* new_class = table_insert_class(main_context->symbol_table, current_class_name, main_context);
+    String* name = str_init_const("ifj16");
+    Symbol* new_class = table_insert_class(main_context->symbol_table, name, main_context);
+    str_dispose(name);
+    current_class_name = new_class->name;
     current_context = new_class->data.cls->context;
 
     do {
-        Ident fn_read_int_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("readInt")
-        };
-        /*Symbol* fn_read_int = */context_add_function(current_context, KW_INT, &fn_read_int_id);
+        Ident* fn_read_int_id = (Ident*)malloc(sizeof(Ident));
+        fn_read_int_id->class = str_init_const("ifj16");
+        fn_read_int_id->name = str_init_const("readInt");
+        /*Symbol* fn_read_int = */context_add_function(current_context, KW_INT, fn_read_int_id);
+        str_dispose(fn_read_int_id->class);
+        str_dispose(fn_read_int_id->name);
+        free(fn_read_int_id);
 
-        Ident fn_read_double_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("readDouble")
-        };
-        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, &fn_read_double_id);
-        Ident fn_read_string_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("readString")
-        };
-        /*Symbol* fn_read_string = */context_add_function(current_context, KW_STRING, &fn_read_string_id);
+        Ident* fn_read_double_id = (Ident*)malloc(sizeof(Ident));
+        fn_read_double_id->class = str_init_const("ifj16");
+        fn_read_double_id->name = str_init_const("readDouble");
+        /*Symbol* fn_read_double = */context_add_function(current_context, KW_DOUBLE, fn_read_double_id);
+        str_dispose(fn_read_double_id->class);
+        str_dispose(fn_read_double_id->name);
+        free(fn_read_double_id);
 
-        Ident fn_length_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("length")
-        };
-        Symbol* fn_length = context_add_function(current_context, KW_INT, &fn_length_id);
-        Ident id0 = {
-            .class = NULL,
-            .name = str_init_const("s")
-        };
+        Ident* fn_read_string_id = (Ident*)malloc(sizeof(Ident));
+        fn_read_string_id->class = str_init_const("ifj16");
+        fn_read_string_id->name = str_init_const("readString");
+        /*Symbol* fn_read_string = */context_add_function(current_context, KW_STRING, fn_read_string_id);
+        str_dispose(fn_read_string_id->class);
+        str_dispose(fn_read_string_id->name);
+        free(fn_read_string_id);
+
+        Ident* fn_length_id = (Ident*)malloc(sizeof(Ident));
+        fn_length_id->class = str_init_const("ifj16");
+        fn_length_id->name = str_init_const("length");
+        Symbol* fn_length = context_add_function(current_context, KW_INT, fn_length_id);
+        str_dispose(fn_length_id->class);
+        str_dispose(fn_length_id->name);
+        free(fn_length_id);
+        Ident* id0 = (Ident*)malloc(sizeof(Ident));
+        id0->class = NULL;
+        id0->name = str_init_const("s");
         ListItemData param_type0, param_id0 = {
-            .id = &id0
+            .id = id0
         };
         param_type0.var_type = VT_STRING;
         list_insert_last(fn_length->data.fn->params_types_list, param_type0);
         list_insert_last(fn_length->data.fn->params_ids_list, param_id0);
 
-        Ident fn_substring_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("substr")
-        };
-        Symbol* fn_substring = context_add_function(current_context, KW_STRING, &fn_substring_id);
-        Ident id1 = {
-            .class = NULL,
-            .name = str_init_const("s")
-        };
+        Ident* fn_substring_id = (Ident*)malloc(sizeof(Ident));
+        fn_substring_id->class = str_init_const("ifj16");
+        fn_substring_id->name = str_init_const("substr");
+        Symbol* fn_substring = context_add_function(current_context, KW_STRING, fn_substring_id);
+        str_dispose(fn_substring_id->class);
+        str_dispose(fn_substring_id->name);
+        free(fn_substring_id);
+        Ident* id1 = (Ident*)malloc(sizeof(Ident));
+        id1->class = NULL;
+        id1->name = str_init_const("s");
         ListItemData param_type1, param_id1 = {
-            .id = &id1
+            .id = id1
         };
         param_type1.var_type = VT_STRING;
         list_insert_last(fn_substring->data.fn->params_types_list, param_type1);
         list_insert_last(fn_substring->data.fn->params_ids_list, param_id1);
-        Ident id2 = {
-            .class = NULL,
-            .name = str_init_const("i")
-        };
+        Ident* id2 = (Ident*)malloc(sizeof(Ident));
+        id2->class = NULL;
+        id2->name = str_init_const("i");
         ListItemData param_type2, param_id2 = {
-            .id = &id2
+            .id = id2
         };
         param_type2.var_type = VT_INTEGER;
         list_insert_last(fn_substring->data.fn->params_types_list, param_type2);
         list_insert_last(fn_substring->data.fn->params_ids_list, param_id2);
-        Ident id3 = {
-            .class = NULL,
-            .name = str_init_const("n")
-        };
+        Ident* id3 = (Ident*)malloc(sizeof(Ident));
+        id3->class = NULL;
+        id3->name = str_init_const("n");
         ListItemData param_type3, param_id3 = {
-            .id = &id3
+            .id = id3
         };
         param_type3.var_type = VT_INTEGER;
         list_insert_last(fn_substring->data.fn->params_types_list, param_type3);
         list_insert_last(fn_substring->data.fn->params_ids_list, param_id3);
 
-        Ident fn_compare_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("compare")
-        };
-        Symbol* fn_compare = context_add_function(current_context, KW_INT, &fn_compare_id);
-        Ident id4 = {
-            .class = NULL,
-            .name = str_init_const("s1")
-        };
+        Ident* fn_compare_id = (Ident*)malloc(sizeof(Ident));
+        fn_compare_id->class = str_init_const("ifj16");
+        fn_compare_id->name = str_init_const("compare");
+        Symbol* fn_compare = context_add_function(current_context, KW_INT, fn_compare_id);
+        str_dispose(fn_compare_id->class);
+        str_dispose(fn_compare_id->name);
+        free(fn_compare_id);
+        Ident* id4 = (Ident*)malloc(sizeof(Ident));
+        id4->class = NULL;
+        id4->name = str_init_const("s1");
         ListItemData param_type4, param_id4 = {
-            .id = &id4
+            .id = id4
         };
         param_type4.var_type = VT_STRING;
         list_insert_last(fn_compare->data.fn->params_types_list, param_type4);
         list_insert_last(fn_compare->data.fn->params_ids_list, param_id4);
-        Ident id5 = {
-            .class = NULL,
-            .name = str_init_const("s2")
-        };
+        Ident* id5 = (Ident*)malloc(sizeof(Ident));
+        id5->class = NULL;
+        id5->name = str_init_const("s2");
         ListItemData param_type5, param_id5 = {
-            .id = &id5
+            .id = id5
         };
         param_type5.var_type = VT_STRING;
         list_insert_last(fn_compare->data.fn->params_types_list, param_type5);
         list_insert_last(fn_compare->data.fn->params_ids_list, param_id5);
 
-        Ident fn_find_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("find")
-        };
-        Symbol* fn_find = context_add_function(current_context, KW_INT, &fn_find_id);
-        Ident id6 = {
-            .class = NULL,
-            .name = str_init_const("s")
-        };
+        Ident* fn_find_id = (Ident*)malloc(sizeof(Ident));
+        fn_find_id->class = str_init_const("ifj16");
+        fn_find_id->name = str_init_const("find");
+        Symbol* fn_find = context_add_function(current_context, KW_INT, fn_find_id);
+        str_dispose(fn_find_id->class);
+        str_dispose(fn_find_id->name);
+        free(fn_find_id);
+        Ident* id6 = (Ident*)malloc(sizeof(Ident));
+        id6->class = NULL;
+        id6->name = str_init_const("s");
         ListItemData param_type6, param_id6 = {
-            .id = &id6
+            .id = id6
         };
         param_type6.var_type = VT_STRING;
         list_insert_last(fn_find->data.fn->params_types_list, param_type6);
         list_insert_last(fn_find->data.fn->params_ids_list, param_id6);
-        Ident id7 = {
-            .class = NULL,
-            .name = str_init_const("search")
-        };
+        Ident* id7 = (Ident*)malloc(sizeof(Ident));
+        id7->class = NULL;
+        id7->name = str_init_const("search");
         ListItemData param_type7, param_id7 = {
-            .id = &id7
+            .id = id7
         };
         param_type7.var_type = VT_STRING;
         list_insert_last(fn_find->data.fn->params_types_list, param_type7);
         list_insert_last(fn_find->data.fn->params_ids_list, param_id7);
 
-        Ident fn_sort_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("sort")
-        };
-        Symbol* fn_sort = context_add_function(current_context, KW_STRING, &fn_sort_id);
-        Ident id8 = {
-            .class = NULL,
-            .name = str_init_const("s")
-        };
+        Ident* fn_sort_id = (Ident*)malloc(sizeof(Ident));
+        fn_sort_id->class = str_init_const("ifj16");
+        fn_sort_id->name = str_init_const("sort");
+        Symbol* fn_sort = context_add_function(current_context, KW_STRING, fn_sort_id);
+        str_dispose(fn_sort_id->class);
+        str_dispose(fn_sort_id->name);
+        free(fn_sort_id);
+        Ident* id8 = (Ident*)malloc(sizeof(Ident));
+        id8->class = NULL;
+        id8->name = str_init_const("s");
         ListItemData param_type8, param_id8 = {
-            .id = &id8
+            .id = id8
         };
         param_type8.var_type = VT_STRING;
         list_insert_last(fn_sort->data.fn->params_types_list, param_type8);
         list_insert_last(fn_sort->data.fn->params_ids_list, param_id8);
 
-        Ident fn_print_id = {
-            .class = str_init_const("ifj16"),
-            .name = str_init_const("print")
-        };
-        Symbol* fn_print = context_add_function(current_context, KW_STRING, &fn_print_id);
-        Ident id9 = {
-            .class = NULL,
-            .name = str_init_const("s")
-        };
+        Ident* fn_print_id = (Ident*)malloc(sizeof(Ident));
+        fn_print_id->class = str_init_const("ifj16");
+        fn_print_id->name = str_init_const("print");
+        Symbol* fn_print = context_add_function(current_context, KW_STRING, fn_print_id);
+        str_dispose(fn_print_id->class);
+        str_dispose(fn_print_id->name);
+        free(fn_print_id);
+        Ident* id9 = (Ident*)malloc(sizeof(Ident));
+        id9->class = NULL;
+        id9->name = str_init_const("s");
         ListItemData param_type9, param_id9 = {
-            .id = &id9
+            .id = id9
         };
         param_type9.var_type = VT_STRING;
         list_insert_last(fn_print->data.fn->params_types_list, param_type9);
@@ -220,13 +232,20 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     current_context = main_context;
     current_instructions = main_instructions;
 
+
+
     // start the actual parsing
     // first thing in file should be class (or several)
     second_run = false;
     class_list_rule();
 
     // don't do 2nd run if errors occured
-    if(get_error()->type) return;
+    if(get_error()->type) {
+        *_context = main_context;
+        *_instructions = main_instructions;
+
+        return;
+    }
 
     second_run = true;
     current_context = main_context;
@@ -238,12 +257,14 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
 
     if(get_error()->type) return;
 
-    Ident id = {
-        .class = str_init_const("Main"),
-        .name = str_init_const("run")
-    };
+    Ident* main_run_id = (Ident*)malloc(sizeof(Ident));
+    main_run_id->class = str_init_const("Main");
+    main_run_id->name = str_init_const("run");
 
-    Symbol* main_run_fn = context_find_ident(main_context, main_context, &id);
+    Symbol* main_run_fn = context_find_ident(main_context, main_context, main_run_id);
+    str_dispose(main_run_id->class);
+    str_dispose(main_run_id->name);
+    free(main_run_id);
     if(get_error()->type) return;
     instruction_insert_to_list(main_instructions, instruction_generate(IC_CALL, main_run_fn, NULL, NULL));
 
@@ -323,14 +344,14 @@ void class_member_rule() {
     if(next_token()->type != STT_KEYWORD_TYPE) return set_error(ERR_SYNTAX);
     KeywordType current_type = current_token->data->keyword_type;
     if(next_token()->type != STT_IDENT) return set_error(ERR_SYNTAX);
-    ScannerToken* current_ident = current_token;
-    //add class to symbol ID
-    current_ident->data->id->class = current_class_name;
+    Ident* current_ident = (Ident*)malloc(sizeof(Ident));
+    current_ident->class = str_init_str(current_class_name);
+    current_ident->name = str_init_str(current_token->data->id->name);
     next_token();
     if(current_token->type == STT_SEMICOLON) {
         //add variable to context
         if(!second_run) {
-            context_add_variable(current_context, current_type, current_ident->data->id);
+            context_add_variable(current_context, current_type, current_ident);
         }
         if(get_error()->type) return;
         //syntax ok
@@ -338,9 +359,9 @@ void class_member_rule() {
         //add variable to context
         Symbol* symbol = NULL;
         if(!second_run) {
-            symbol = context_add_variable(current_context, current_type, current_ident->data->id);
+            symbol = context_add_variable(current_context, current_type, current_ident);
         } else {
-            symbol = context_find_ident(current_context, main_context, current_ident->data->id);
+            symbol = context_find_ident(current_context, main_context, current_ident);
         }
         if(get_error()->type) return;
 
@@ -362,9 +383,9 @@ void class_member_rule() {
 
         Symbol* fn_symbol = NULL;
         if(!second_run) {
-            fn_symbol = context_add_function(current_context, current_type, current_ident->data->id);
+            fn_symbol = context_add_function(current_context, current_type, current_ident);
         } else {
-            fn_symbol = context_find_ident(current_context, main_context, current_ident->data->id);
+            fn_symbol = context_find_ident(current_context, main_context, current_ident);
         }
         if(get_error()->type) return;
         current_context = fn_symbol->data.fn->context;
@@ -384,6 +405,11 @@ void class_member_rule() {
         current_context = current_context->parent_context;
         current_instructions = main_instructions;
     }
+
+
+    str_dispose(current_ident->class);
+    str_dispose(current_ident->name);
+    free(current_ident);
     next_token();
 }
 
@@ -407,8 +433,13 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
     if(!second_run) {
         ListItemData data1;
         ListItemData data2 = {
-            .id = current_token->data->id
+            .id = (Ident*)malloc(sizeof(Ident))
         };
+        data2.id->class = NULL;
+        data2.id->name = str_init_str(current_token->data->id->name);
+        if(current_token->data->id->class) {
+            data2.id->class = str_init_str(current_token->data->id->class);
+        }
         switch (current_type) {
             case KW_BOOLEAN:
                 data1.var_type = VT_BOOL;
@@ -642,14 +673,14 @@ void stat_rule(bool is_void, bool can_define) {
                 //list for params types
                 list_activate_first(symbol->data.fn->params_types_list);
                 next_token();
-                List *call_params_list = list_init();
+                List *call_params_list = list_init(LT_EXPRESSION);
                 call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                if(get_error()->type) return NULL;
                 if(symbol->data.fn->params_types_list->active != NULL) {
                     //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
                     return set_error(ERR_SEM_PARAMS);
                 }
-                if(get_error()->type) return;
 
                 if(current_ident->class != NULL && str_cmp_const(current_ident->class, "ifj16") == 0) {
                     /*
@@ -758,8 +789,8 @@ Expression* expression_rule() {
 }
 
 Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType or_end_token) {
-    Stack* term_stack = stack_init();
-    Stack* nonterm_stack = stack_init();
+    Stack* term_stack = stack_init(StT_EXPRESSION);
+    Stack* nonterm_stack = stack_init(StT_EXPRESSION);
 
     while(current_token->type != end_token && current_token->type != or_end_token) {
         // printf("general_expression_rule %s\n", token_to_string(current_token));
@@ -781,7 +812,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
             case STT_STRING:
                 is_term = true;
                 data.expression->op = EO_CONST_STRING;
-                data.expression->str = current_token->data->str;
+                data.expression->str = str_init_str(current_token->data->str);
                 break;
             case STT_KEYWORD:
                 //is keyword => check if is "true" or "false"
@@ -790,8 +821,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->op = EO_CONST_BOOL;
                     data.expression->b = current_token->data->keyword_type == KW_TRUE ? true : false;
                 } else {
-                    set_error(ERR_SYNTAX);
                     expression_dispose(data.expression);
+                    set_error(ERR_SYNTAX);
                     return NULL;
                 }
                 break;
@@ -799,10 +830,16 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
             {
                 // printf("general_expression_rule IDENT 0\n");
                 is_term = true;
-                Ident* current_ident = current_token->data->id;
+                Ident* current_ident = (Ident*)malloc(sizeof(Ident));
+                current_ident->name = str_init_str(current_token->data->id->name);
+                current_ident->class = NULL;
+                if(current_token->data->id->class != NULL) {
+                    current_ident->class = str_init_str(current_token->data->id->class);
+                }
+
                 Symbol* symbol = NULL;
                 if(second_run) {
-                    symbol = context_find_ident(current_context, main_context, current_token->data->id);
+                    symbol = context_find_ident(current_context, main_context, current_ident);
                 }
                 // printf("general_expression_rule IDENT 1\n");
                 if(get_error()->type) return NULL;
@@ -812,7 +849,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     if(second_run) {
                         // printf("general_expression_rule IDENT 2.5\n");
                         if(symbol->type != ST_FUNCTION) {
-                            set_error(ERR_OTHER_SEMANTIC);
+                            expression_dispose(data.expression);
+                            set_error(ERR_SEMANTIC);
                             return NULL;
                         }
                     }
@@ -830,11 +868,13 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     } else {
                         list_activate_first(symbol->data.fn->params_types_list);
                         next_token();
-                        List *call_params_list = list_init();
+                        List *call_params_list = list_init(LT_EXPRESSION);
                         call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
+                        if(get_error()->type) return NULL;
                         if(symbol->data.fn->params_types_list->active != NULL) {
                             //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                             //fn params but call params ended
+                            expression_dispose(data.expression);
                             set_error(ERR_SEM_PARAMS);
                             return NULL;
                         }
@@ -854,7 +894,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                     data.expression->op = EO_SYMBOL;
                     if(second_run) {
                         if(symbol->type != ST_VARIABLE) {
-                            set_error(ERR_OTHER_SEMANTIC);
+                            expression_dispose(data.expression);
+                            set_error(ERR_SEMANTIC);
                             return NULL;
                         }
                         data.expression->symbol = symbol;
@@ -879,7 +920,10 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 expression_dispose(data.expression);
                 next_token();
                 data.expression = general_expression_rule(STT_RIGHT_PARENTHESE, end_token);
-                if(get_error()->type) return NULL;
+                if(get_error()->type) {
+                    expression_dispose(data.expression);
+                    return NULL;
+                }
                 break;
             case STT_AND:
                 data.expression->op = EO_AND;
@@ -907,8 +951,8 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 break;
             default:
                 // printf(" Unexpected token %s\n", token_to_string(current_token));
-                set_error(ERR_SYNTAX);
                 expression_dispose(data.expression);
+                set_error(ERR_SYNTAX);
                 return NULL;
                 break;
         }
@@ -929,16 +973,16 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                 // first to ->expr2
                 StackItemData* term_top2 = stack_top(term_stack);
                 if(term_top2 == NULL) {
-                    set_error(ERR_SYNTAX);
                     expression_dispose(data.expression);
+                    set_error(ERR_SYNTAX);
                     return NULL;
                 }
                 stack_pop(term_stack);
                 // second to ->expr1
                 StackItemData* term_top1 = stack_top(term_stack);
                 if(term_top1 == NULL) {
-                    set_error(ERR_SYNTAX);
                     expression_dispose(data.expression);
+                    set_error(ERR_SYNTAX);
                     return NULL;
                 }
                 stack_pop(term_stack);
@@ -971,23 +1015,21 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
         // the top expr will then be poped from nonterm stack and pushed to term stack
 
         // first to ->expr2
-        StackItemData* term_top2 = stack_top(term_stack);
+        StackItem* term_top2 = stack_pop(term_stack);
         if(term_top2 == NULL) {
             set_error(ERR_SYNTAX);
             return NULL;
         }
-        stack_pop(term_stack);
         // second to ->expr1
-        StackItemData* term_top1 = stack_top(term_stack);
+        StackItem* term_top1 = stack_pop(term_stack);
         if(term_top1 == NULL) {
             set_error(ERR_SYNTAX);
             return NULL;
         }
-        stack_pop(term_stack);
 
         //set terms for current top
-        top->expression->expr2 = term_top2->expression;
-        top->expression->expr1 = term_top1->expression;
+        top->expression->expr1 = term_top1->data.expression;
+        top->expression->expr2 = term_top2->data.expression;
 
         //push the top to term
         stack_push(term_stack, *top);
@@ -1006,6 +1048,9 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
         expression_dispose(res->data.expression);
         return NULL;
     }
+
+    stack_dispose(term_stack);
+    stack_dispose(nonterm_stack);
 
     // printf("general_expression_rule return\n");
     return res->data.expression;

@@ -45,26 +45,32 @@ Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
     Symbol* symbol = NULL;
     switch (type) {
         case KW_INT:
-            symbol =  table_insert_integer(context->symbol_table, id->name, 0);
+            symbol = table_insert_integer(context->symbol_table, id->name, 0);
             break;
         case KW_DOUBLE:
-            symbol =  table_insert_double(context->symbol_table, id->name, 0);
+            symbol = table_insert_double(context->symbol_table, id->name, 0);
             break;
         case KW_BOOLEAN:
-            symbol =  table_insert_bool(context->symbol_table, id->name, NULL);
+            symbol = table_insert_bool(context->symbol_table, id->name, NULL);
             break;
         case KW_STRING:
-            symbol =  table_insert_string(context->symbol_table, id->name, NULL);
+            symbol = table_insert_string(context->symbol_table, id->name, NULL);
             break;
         case KW_VOID:
-            symbol =  table_insert_function(context->symbol_table, id->name, context);
+            symbol = table_insert_function(context->symbol_table, id->name, context);
             break;
         default:
             set_error(ERR_SYNTAX);
             return NULL;
     }
 
-    symbol->id = id;
+    symbol->id = (Ident*)malloc(sizeof(Ident));
+    if(id->class != NULL) {
+        symbol->id->class = str_init_str(id->class);
+    } else {
+        symbol->id->class = NULL;
+    }
+    symbol->id->name = str_init_str(id->name);
     return symbol;
 }
 
@@ -98,11 +104,18 @@ Symbol* context_add_function(Context* context, KeywordType type, Ident* id) {
             return NULL;
     }
 
-    Symbol* sym = table_insert_function(context->symbol_table, id->name, context);
-    sym->data.fn->return_type = return_type;
-    sym->id = id;
+    Symbol* symbol = table_insert_function(context->symbol_table, id->name, context);
+    symbol->data.fn->return_type = return_type;
 
-    return sym;
+    symbol->id = (Ident*)malloc(sizeof(Ident));
+    if(id->class != NULL) {
+        symbol->id->class = str_init_str(id->class);
+    } else {
+        symbol->id->class = NULL;
+    }
+    symbol->id->name = str_init_str(id->name);
+
+    return symbol;
 }
 
 Symbol* context_find_ident(Context* context, Context* root_context, Ident* token_ident) {
@@ -112,7 +125,7 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
         if(class_symbol == NULL) {
             set_error(ERR_SEMANTIC);
             if(str_cmp_const(token_ident->class, "ifj16")) {
-                //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
+                // fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
             }
             return NULL;
         }
@@ -123,9 +136,9 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
     if(symbol == NULL) {
         set_error(ERR_SEMANTIC);
         if(token_ident->class != NULL) {
-            //fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
+            // fprintf(stderr, "Symbol \"%s\" is not defined in class \"%s\".\n", str_get_str(token_ident->name), str_get_str(token_ident->class));
         } else {
-            //fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
+            // fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->name));
         }
         return NULL;
     } else {

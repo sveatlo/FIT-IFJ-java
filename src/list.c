@@ -3,12 +3,13 @@
 #include "list.h"
 #include "error.h"
 
-List* list_init () {
+List* list_init(ListType type) {
     List* list = (List*) malloc(sizeof(List));
     if (list == NULL) {
         set_error(ERR_INTERPRET);
         return NULL;
     }
+    list->type = type;
 
     list->active = NULL;
     list->first = NULL;
@@ -20,12 +21,34 @@ List* list_init () {
 void list_dispose (List* list) {
     ListItem *tmp;
 
+    if(list == NULL) {
+        return;
+    }
+
     list_activate_first(list);
     while(list->active != NULL) {
         tmp = list->active;
         list_activate_next(list);
-        //delete token, then delete the item
-        token_delete(tmp->data.token);
+
+        switch (list->type) {
+            case LT_EXPRESSION:
+                expression_dispose(tmp->data.expression);
+                break;
+            case LT_TOKEN:
+                token_delete(tmp->data.token);
+                break;
+            case LT_INSTRUCTION:
+                instruction_dispose(tmp->data.instruction);
+                break;
+            case LT_VAR_TYPE:
+                break;
+            case LT_ID:
+                str_dispose(tmp->data.id->name);
+                str_dispose(tmp->data.id->class);
+                free(tmp->data.id);
+                break;
+        }
+
         free(tmp);
     }
 

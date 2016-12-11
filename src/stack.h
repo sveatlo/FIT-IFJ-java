@@ -25,17 +25,24 @@ typedef struct StackItemStruct {
     StackItemData data;
 } StackItem;
 
+
+typedef enum {
+    StT_EXPRESSION,
+    StT_FRAME,
+} StackType;
+
 /**
  *  Stack used for creating expressions
  *
  *  @ingroup Stack
  */
 typedef struct {
+    StackType type;
     StackItem* top;
 } Stack;
 
 
-Stack* stack_init();
+Stack* stack_init(StackType type);
 void stack_dispose(Stack* stack);
 void stack_push(Stack* stack, StackItemData item);
 StackItem* stack_pop(Stack* stack);
