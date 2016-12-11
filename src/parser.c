@@ -581,12 +581,24 @@ void stat_rule(bool is_void, bool can_define) {
             instruction_insert_to_list(current_instructions, jmp_to_else);
         }
 
-        // {
-        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        // statements inside IF
+
+        bool is_simple = false;
         next_token();
-        stat_list_rule(is_void, false);
-        if(get_error()->type) return;
+        if(current_token->type == STT_LEFT_BRACE) {
+            // {
+            // statements inside IF (ELSE)
+            next_token();
+            stat_list_rule(is_void, false);
+            if(get_error()->type) return;
+            // }
+        } else {
+            is_simple = true;
+            //simple
+            stat_rule(is_void, false);
+            if(get_error()->type) return;
+            prev_token();
+        }
+        if(!is_simple && current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
         Instruction* jmp_after_else = NULL;
         Instruction* nop_before_else = NULL;
         Instruction* nop_after_else = NULL;
@@ -595,8 +607,6 @@ void stat_rule(bool is_void, bool can_define) {
             jmp_after_else = instruction_generate(IC_JMP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
             instruction_insert_to_list(current_instructions, jmp_after_else);
         }
-        // }
-        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
 
         if(second_run) {
             nop_before_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
@@ -606,18 +616,37 @@ void stat_rule(bool is_void, bool can_define) {
 
         // ELSE
         next_token();
-        if(current_token->type != STT_KEYWORD || current_token->data->keyword_type != KW_ELSE) return set_error(ERR_SYNTAX);
-        // {
-        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        // statements inside IF (ELSE)
-        next_token();
-        stat_list_rule(is_void, false);
-        // }
-        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
-        if(second_run) {
-            nop_after_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
-            item = instruction_insert_to_list(current_instructions, nop_after_else);
-            jmp_after_else->res = item;
+        if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_ELSE) {
+            is_simple = false;
+            next_token();
+            if(current_token->type == STT_LEFT_BRACE) {
+                // {
+                // statements inside IF (ELSE)
+                next_token();
+                stat_list_rule(is_void, false);
+                if(get_error()->type) return;
+                // }
+            } else {
+                is_simple = true;
+                //simple
+                stat_rule(is_void, false);
+                if(get_error()->type) return;
+                prev_token();
+            }
+            if(!is_simple && current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
+            if(second_run) {
+                nop_after_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
+                item = instruction_insert_to_list(current_instructions, nop_after_else);
+                jmp_after_else->res = item;
+            }
+        } else {
+            prev_token();
+
+            if(second_run) {
+                nop_after_else = instruction_generate(IC_NOP, NULL, NULL, NULL); // instruction to be jumped to is not set yet
+                item = instruction_insert_to_list(current_instructions, nop_after_else);
+                jmp_after_else->res = item;
+            }
         }
     } else if(current_token->type == STT_KEYWORD && current_token->data->keyword_type == KW_WHILE) { // WHILE
         //(
@@ -629,7 +658,7 @@ void stat_rule(bool is_void, bool can_define) {
         // )
         if(current_token->type != STT_RIGHT_PARENTHESE) return set_error(ERR_SYNTAX);
 
-        // {
+
         ListItem* nop_before_while_cond = NULL;
         Instruction* jmp_after_while = NULL;
         if(second_run) {
@@ -638,15 +667,26 @@ void stat_rule(bool is_void, bool can_define) {
             instruction_insert_to_list(current_instructions, jmp_after_while);
         }
 
-        if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
-        //statements inside WHILE
         next_token();
-        stat_list_rule(is_void, false);
-        if(second_run) {
-            instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
+        if(current_token->type == STT_LEFT_BRACE) {
+            // {
+            //statements inside WHILE
+            next_token();
+            stat_list_rule(is_void, false);
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
+            }
+            // }
+            if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
+        } else {
+            //simple
+            stat_rule(is_void, false);
+            prev_token();
+            if(second_run) {
+                instruction_insert_to_list(current_instructions, instruction_generate(IC_JMP, NULL, NULL, nop_before_while_cond));
+            }
         }
-        // }
-        if(current_token->type != STT_RIGHT_BRACE) return set_error(ERR_SYNTAX);
+
         if(second_run) {
             Instruction* nop_after_while = instruction_generate(IC_NOP, NULL, NULL, NULL);
             ListItem* item = instruction_insert_to_list(current_instructions, nop_after_while);
@@ -675,7 +715,7 @@ void stat_rule(bool is_void, bool can_define) {
                 next_token();
                 List *call_params_list = list_init(LT_EXPRESSION);
                 call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
-                if(get_error()->type) return NULL;
+                if(get_error()->type) return;
                 if(symbol->data.fn->params_types_list->active != NULL) {
                     //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
@@ -763,7 +803,7 @@ void stat_rule(bool is_void, bool can_define) {
             set_error(ERR_SYNTAX);
         }
     } else {
-        printf("Unexpected token: %s %s %d\n", token_to_string(current_token), __func__, __LINE__);
+        // printf("Unexpected token: %s %s %d\n", token_to_string(current_token), __func__, __LINE__);
         return set_error(ERR_SYNTAX);
     }
 

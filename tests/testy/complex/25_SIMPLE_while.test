@@ -3,8 +3,8 @@ class Main {
         int a = 4;
         while (a > 0) {
             while (a > 0)
-                ifj16.print("idem\n");
-            a = a - 1;
+                a = a - 1;
+            ifj16.print("idem\n");
         }
     }
 }

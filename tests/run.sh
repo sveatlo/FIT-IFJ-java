@@ -25,7 +25,7 @@ run_tests() {
     echo "Testing of [${YELLOW} $test_name ${RESET}] has been launched"
     echo "============================================================"
 
-    for file in $(find "$test_dir" -mindepth 1 -maxdepth 1 -name "*.test"); do
+    for file in $(find "$test_dir" -mindepth 1 -maxdepth 1 -name "*.test" | sort -n); do
         echo -n "Running [${YELLOW} $file ${RESET}] "
         # 2&>1 takes STDERR into equation
         file=${file%.*}
