@@ -65,12 +65,8 @@ char* token_to_string (ScannerToken *token) {
         return "<STT_SEMICOLON>";
     case STT_PLUS:
         return "<STT_PLUS>";
-    case STT_PLUS_EQUAL:
-        return "<STT_PLUS_EQUAL>";
     case STT_MINUS:
         return "<STT_MINUS>";
-    case STT_MINUS_EQUAL:
-        return "<STT_MINUS_EQUAL>";
     case STT_MULTIPLY:
         return "<STT_MULTIPLY>";
     case STT_DIVIDE:
