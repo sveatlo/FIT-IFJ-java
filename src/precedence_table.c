@@ -125,7 +125,8 @@ const TokenPrecedence precedence_table[][STT_STRING] = {
         [EO_LOGIC_EQUAL] = N,
         [EO_LOGIC_NOT_EQUAL] = N,
         [EO_AND] = H,
-        [EO_OR] = H
+        [EO_OR] = H,
+        [EO_NEGATE] = L
     },
     [EO_LOGIC_EQUAL] = {
         [EO_PLUS] = L,
@@ -142,7 +143,7 @@ const TokenPrecedence precedence_table[][STT_STRING] = {
         [EO_OR] = H,
         [EO_NEGATE] = L
     },
-    [EO_LOGIC_NOT_EQUAL]   = {
+    [EO_LOGIC_NOT_EQUAL] = {
         [EO_PLUS] = L,
         [EO_MINUS] = L,
         [EO_MULTIPLY] = L,
