@@ -185,33 +185,6 @@ const ExpressionOperationSign OperationTablePlus[EO_CONST_BOOL + 1][EO_CONST_BOO
             [EO_CONST_BOOL] = U }  //boolean
 };
 
-const ExpressionOperationSign OperationTableLogic[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {
-        [EO_CONST_INTEGER] =  {
-            [EO_CONST_INTEGER] = I,
-            [EO_CONST_DOUBLE] = D,
-            [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = B
-        }, //int
-        [EO_CONST_DOUBLE] =  {
-            [EO_CONST_INTEGER] = D,
-            [EO_CONST_DOUBLE] = D,
-            [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = B
-        }, //double
-        [EO_CONST_STRING] =  {
-            [EO_CONST_INTEGER] = U,
-            [EO_CONST_DOUBLE] = U,
-            [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = U
-        }, //string
-        [EO_CONST_BOOL] =  {
-            [EO_CONST_INTEGER] = B,
-            [EO_CONST_DOUBLE] = B,
-            [EO_CONST_STRING] = U,
-            [EO_CONST_BOOL] = B
-        }  //boolean
-};
-
 
 const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_BOOL + 1] = {
         [EO_CONST_INTEGER] =  {
@@ -269,7 +242,7 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     double_to_string(res_expr->str, expr1->d);
                     str_concat(res_expr->str, expr2->str);
                 } else if (expr1->op == EO_CONST_BOOL) {
-                    bool_to_string(res_expr->str, expr1->d);
+                    bool_to_string(res_expr->str, expr1->b);
                     str_concat(res_expr->str, expr2->str);
                 } else if (expr2->op == EO_CONST_INTEGER) {
                     String* tmp_str = str_init();
