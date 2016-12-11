@@ -37,12 +37,10 @@ typedef enum {
     STT_LESS, ///< <
     STT_LOGIC_EQUAL, ///< ==
     STT_LOGIC_NOT_EQUAL, ///< !=
-    STT_MINUS_EQUAL, /// -=
     STT_MINUS, ///< `-`
     STT_MULTIPLY, ///< `*`
     STT_NEGATE, /// !
     STT_OR, ///< ||
-    STT_PLUS_EQUAL, /// +=
     STT_PLUS,   ///< `+`
     STT_RIGHT_BRACE, ///< }
     STT_RIGHT_PARENTHESE, ///< )
