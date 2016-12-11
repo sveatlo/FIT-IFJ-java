@@ -84,9 +84,10 @@ void class_member_rule();
  *  Parses parameters for function
  *
  *  Parses <params_list> rule<br>
- *  <call_params_list> -> <definition>,<call_params_list><br>
+ *  <call_params_list> -> <expr>,<call_params_list><br>
  *
- *  @param[out] params_list List of `VariableType`s (for detecting sem errors)
+ *  @param[out] fn_params_list List of `VariableType`s (for detecting sem errors)
+ *  @param[out] call_params_list List of `Expressions`s for call params
  *
  *  @ingroup Parser
  */
@@ -118,6 +119,8 @@ void stat_list_rule(bool is_void, bool can_define);
  *  Parses <stat> rule<br>
  *  <stat> -> "IF" "(" <expr> ")" "{" <stat_list> "}" [<else>]<br>
  *  <stat> -> "while" "(" <expr> ")" "{" <stat_list> "}"<br>
+ *  <stat> -> TYPE ID";"<br>
+ *  <stat> -> TYPE ID "=" <expr> ";"<br>
  *  <stat> -> ID "=" <expr> ";"<br>
  *  <stat> -> ID "("<params_list>")"<br>
  *
@@ -144,17 +147,16 @@ Expression* expression_rule();
 /**
  * Abstraction of expression rules
  *
- *  <bool_expr> -> "(" <bool_expr> ")"<br>
- *  <bool_expr> -> true<br>
- *  <bool_expr> -> false<br>
- *  <bool_expr> -> INT or DOUBLE or STRING literal <br>
- *  <bool_expr> -> ID<br>
- *  <bool_expr> -> ID "(" <params_list> ")"<br>
- *  <bool_expr> -> <bool_expr> "&&" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "||" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "!=" <bool_expr><br>
- *  <bool_expr> -> <bool_expr> "==" <bool_expr><br>
  *  <expr> -> "(" <expr> ")"<br>
+ *  <expr> -> true<br>
+ *  <expr> -> false<br>
+ *  <expr> -> INT or DOUBLE or STRING literal <br>
+ *  <expr> -> ID<br>
+ *  <expr> -> ID "(" <params_list> ")"<br>
+ *  <expr> -> <expr> "&&" <expr><br>
+ *  <expr> -> <expr> "||" <expr><br>
+ *  <expr> -> <expr> "!=" <expr><br>
+ *  <expr> -> <expr> "==" <expr><br>
  *  <expr> -> <bool_expr><br>
  *  <expr> -> <expr> "+" <expr><br>
  *  <expr> -> <expr> "-" <expr><br>

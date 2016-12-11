@@ -12,13 +12,13 @@
 #include "scanner_token.h"
 #include "stack.h"
 
+static Context* current_context; ///< context, which is currently being used
+static Context* main_context; ///< main context
+static List* current_instructions; ///< list of instructions of current function
+static List* main_instructions;    ///< list of main instructions - these are used for members initialization and to call Main.run fn
 static List* token_list; ///< list of tokens
 static ScannerToken* current_token; ///< token currently being processed
-static Context* main_context; ///< main context
-static Context* current_context; ///< context, which is currently being used
-static SymbolName current_class_name; ///< name of current class
-static List* main_instructions;    ///< list of main instructions - these are used for members initialization and to call Main.run fn
-static List* current_instructions; ///< list of instructions of current function
+static Symbol* current_class; ///< class currently being processed
 
 static bool second_run;
 
@@ -55,7 +55,7 @@ void parse(List* _token_list, Context** _context, List** _instructions) {
     current_token = token_list->active->data.token;
     main_context = context_init(NULL);
     current_context = main_context;
-    current_class_name = NULL;
+    current_class = NULL;
     main_instructions = list_init(LT_INSTRUCTION);
     current_instructions = main_instructions;
 
@@ -115,7 +115,7 @@ void class_list_rule() {
                 next_token();
                 class_rule();
                 current_context = main_context;
-                current_class_name = NULL;
+                current_class = NULL;
                 next_token();
 
                 break;
@@ -134,18 +134,16 @@ void class_list_rule() {
 //finish @ STT_RIGHT_BRACE
 void class_rule() {
     if(current_token->type != STT_IDENT) return set_error(ERR_SYNTAX);
-    Symbol* new_class = NULL;
     if(!second_run) {
         if(table_find_symbol(main_context->symbol_table, current_token->data->id->name) != NULL) {
             set_error(ERR_SEMANTIC);
             return;
         }
-        new_class = table_insert_class(main_context->symbol_table, current_token->data->id->name, main_context);
+        current_class = table_insert_class(main_context->symbol_table, current_token->data->id->name, main_context);
     } else {
-        new_class = context_find_ident(main_context, main_context, current_token->data->id);
+        current_class = context_find_ident(main_context, main_context, current_token->data->id);
     }
-    current_class_name = current_token->data->id->name;
-    current_context = new_class->data.cls->context;
+    current_context = current_class->data.cls->context;
 
     if(next_token()->type != STT_LEFT_BRACE) return set_error(ERR_SYNTAX);
     if(next_token()->type != STT_RIGHT_BRACE) {
@@ -178,7 +176,7 @@ void class_member_rule() {
     KeywordType current_type = current_token->data->keyword_type;
     if(next_token()->type != STT_IDENT) return set_error(ERR_SYNTAX);
     Ident* current_ident = (Ident*)malloc(sizeof(Ident));
-    current_ident->class = str_init_str(current_class_name);
+    current_ident->class = str_init_str(current_class->name);
     current_ident->name = str_init_str(current_token->data->id->name);
     next_token();
     if(current_token->type == STT_SEMICOLON) {
@@ -260,6 +258,9 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
     //add variable to current context
     if(!second_run) {
         context_add_variable(current_context, current_type, current_token->data->id);
+    } else {
+        SymbolTableNode* symbol = table_find_symbol(current_class->data.cls->context->symbol_table, current_token->data->id->name);
+        if(symbol != NULL && symbol->data->type == ST_FUNCTION) return set_error(ERR_SEMANTIC);
     }
 
     //add to params_list
@@ -270,9 +271,6 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
         };
         data2.id->class = NULL;
         data2.id->name = str_init_str(current_token->data->id->name);
-        if(current_token->data->id->class) {
-            data2.id->class = str_init_str(current_token->data->id->class);
-        }
         switch (current_type) {
             case KW_BOOLEAN:
                 data1.var_type = VT_BOOL;
@@ -354,6 +352,13 @@ Symbol* definition_rule() {
     if(!second_run) {
         return context_add_variable(current_context, current_type, current_token->data->id);
     } else {
+        // check whether there is a fn on class level with same name. if so => err
+        SymbolTableNode* symbol = table_find_symbol(current_class->data.cls->context->symbol_table, current_token->data->id->name);
+        if(symbol != NULL && symbol->data->type == ST_FUNCTION) {
+            set_error(ERR_SEMANTIC);
+            return NULL;
+        }
+
         SymbolTableNode* node = table_find_symbol(current_context->symbol_table, current_token->data->id->name);
         if(node != NULL) {
             return node->data;
