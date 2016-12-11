@@ -1,0 +1,11 @@
+class Main {
+    static void run(){
+        int a = 4;
+        int b = 7;
+        if ((a < b) && (a == b)) {
+            ifj16.print("ahoj\n");
+        } else {
+            ifj16.print("nie\n");
+        }
+    }
+}
