@@ -105,10 +105,12 @@
 
 				V binárnom strome máme uložené názvy symbolou ich data, ich typ a konkrétne id. Naša implementácia je napísaná rekurzívne. Pre vkladanie nových symbolov sa využíva funkcia \textit{table insert symbol}. Ktorá využíva funkciu \textit{tree insert} pre prácu so binárnym stromom sa využíva aj funkcia \textit{tree search} ktorý vyhladáva na základe zadaného kluča.Po skončení práce sa pomocou funkcie \textit{tree dispose} . Pre naše potreby sme potrebovali hlbkovú kopiu nášho binárneho stromu a z toho dôvodu vznikla funkcia \textit{tree copy}.
 	\section{Prílohy}
-        \subsection{Konečný automat lexikálneho analyzátora} \label{sec:KA}
-        Náš samotný lexiálny analyzátor \texttt{scanner} sa prepína medzi rozlišnými stavmi, podľa toho aké tokeny postupne číta a rozhoduje sa medzi nimi. Po každom možnom stave vyhodnocujeme aký ďaľší môže nastať, prípadne hlásime lexikálnu chybu, keďže sme prečítal znak, ktorý za žiadnych okolností nesmieme dostať v danom stave.
-
-        Týmto spôsobom postupne eliminujeme všetkz možnosti a zo začiatočného bodu \textbf{start} sa postupne dostaneme až do finálneho stavu, ktorý je vyhodnotením a spracovaním spracovaného vstupu, prípadne hlásenie lexikálnej chyby \verb|SS_LEX_ERROR|. Vďaka daným vlastnostiam ho môžeme zakresliť aj vo forme konečného automatu.
+        \subsection{Lexikálna analýza} \label{sec:KA}
+        Základom lexikálnej analýzy je zo vstupného súboru načítať znaky a tie na základe určitých pravidiel rozdeliť na tzv. \textbf{tokeny}. Vytváranie tokenov zabezpečuje scanner. Scanner funguje na princípe konečného automatu. Schému konečného automatu prikladáme v našej dokumentacii. Vytvorené tokeny sa ukladajú do obojsmerného zoznamu. 
+        
+        Scanner je v koncovom stave schopný skonvertovať načítané znaky podľa toho, na čo bude danný token potrebný. Napríklad, ak by načítané znaky mali reprezentovať číslo, tak sa skonvertujú na typ int poprípade double a až po skonvertovaní sa vytvorí token s číselnou hodnotou.
+        
+        V prípade lexikálnej chyby sa scanner neukončí, ale skontroluje celý vstupný súbor, či sa tam nenachádzajú náhodou dalšie lexikálne chyby. Ak by sme chceli, môžeme si vypísať všetky lexikálne chyby.
 
 	    \begin{center}
 	    	\includegraphics[height=\textheight]{ifj_scanner_diagram.pdf}
