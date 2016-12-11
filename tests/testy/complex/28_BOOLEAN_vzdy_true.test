@@ -1,0 +1,11 @@
+class Main {
+    static void run(){
+        double c = 2.5;
+        boolean x = true;
+        if (x && (x || (c < 5))) {
+            ifj16.print("ahoj\n");
+        } else {
+            ifj16.print("nie\n");
+        }
+    }
+}
