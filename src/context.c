@@ -124,9 +124,6 @@ Symbol* context_find_ident(Context* context, Context* root_context, Ident* token
         Symbol* class_symbol = context_find_symbol(root_context, token_ident->class);
         if(class_symbol == NULL) {
             set_error(ERR_SEMANTIC);
-            if(str_cmp_const(token_ident->class, "ifj16")) {
-                // fprintf(stderr, "Symbol \"%s\" is not defined.\n", str_get_str(token_ident->class));
-            }
             return NULL;
         }
         context = class_symbol->data.cls->context;
