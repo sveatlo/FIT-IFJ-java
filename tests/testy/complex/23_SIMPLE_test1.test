@@ -1,0 +1,50 @@
+class Main {
+	static int i = 5;
+	static void run() {
+		while(i > 0)
+			iterator.value();
+
+		iterator.printStatus(i);
+		i = 6;
+
+		while(i > 1)
+			iterator.value();
+
+		iterator.printStatus(i);
+		i = 6;
+
+		while(i > 2)
+			iterator.value();
+
+		iterator.printStatus(i);
+		i = 10;
+
+		while(i > 4)
+		{
+			iterator.value();
+			iterator.value();
+		}
+
+		iterator.printStatus(i);
+	}
+}
+
+class iterator {
+	static void value() {
+		ifj16.print(Main.i + "\n");
+		Main.i = Main.i - 1;
+	}
+	static void printStatus(int i) {
+		if(i == 0)
+			ifj16.print("Success!\n");
+		else if(i == 1)
+		    ifj16.print("Fail 1\n");
+		else if(i == 2)
+			ifj16.print("Fail 2\n");
+		else if(i > 2)
+		{
+			ifj16.print("Fail > 2\n");
+			return;
+		}
+	}
+}

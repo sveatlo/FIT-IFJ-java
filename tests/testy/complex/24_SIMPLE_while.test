@@ -1,0 +1,13 @@
+class Main {
+    static void run(){
+        int a = 4;
+        while (i < a) {
+            if (i == 3)
+                ifj16.print("ahoj\n");
+            if (i == 0)
+                ifj16.print("konec\n");
+
+            a = a - 1;
+        }
+    }
+}

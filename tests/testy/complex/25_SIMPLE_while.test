@@ -1,0 +1,10 @@
+class Main {
+    static void run(){
+        int a = 4;
+        while (a > 0) {
+            while (a > 0)
+                ifj16.print("idem\n");
+            a = a - 1;
+        }
+    }
+}
