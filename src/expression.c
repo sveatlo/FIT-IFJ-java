@@ -216,8 +216,6 @@ const ExpressionOperationSign OperationTableOthers[EO_CONST_BOOL + 1][EO_CONST_B
 
 
 Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionOperation operation) {
-    // printf("expr comp %d\n", OperationTablePlus[expr1->op][expr2->op]);
-    // fflush(stdout);
     Expression *res_expr = expression_init();
     switch (operation) {
         case EO_PLUS:
@@ -266,9 +264,13 @@ Expression *expression_compare(Expression *expr1, Expression *expr2, ExpressionO
                     str_concat(res_expr->str, tmp_str);
                     str_dispose(tmp_str);
                 } else {
+                    // printf("EXPR1 STR(%d): %s\n", str_length(expr1->str), str_get_str(expr1->str));
+                    // printf("EXPR2 STR(%d): %s\n", str_length(expr2->str), str_get_str(expr2->str));
                     str_concat(res_expr->str, expr1->str);
                     str_concat(res_expr->str, expr2->str);
                 }
+
+                // printf("RES STR(%d): %s\n", str_length(expr2->str), str_get_str(res_expr->str));
             } else {
                 set_error(ERR_SEM_PARAMS);
 

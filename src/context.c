@@ -45,25 +45,24 @@ Symbol* context_add_variable(Context* context, KeywordType type, Ident* id) {
     Symbol* symbol = NULL;
     switch (type) {
         case KW_INT:
-            symbol =  table_insert_integer(context->symbol_table, id->name, 0);
+            symbol = table_insert_integer(context->symbol_table, id->name, 0);
             break;
         case KW_DOUBLE:
-            symbol =  table_insert_double(context->symbol_table, id->name, 0);
+            symbol = table_insert_double(context->symbol_table, id->name, 0);
             break;
         case KW_BOOLEAN:
-            symbol =  table_insert_bool(context->symbol_table, id->name, NULL);
+            symbol = table_insert_bool(context->symbol_table, id->name, NULL);
             break;
         case KW_STRING:
-            symbol =  table_insert_string(context->symbol_table, id->name, NULL);
+            symbol = table_insert_string(context->symbol_table, id->name, NULL);
             break;
         case KW_VOID:
-            symbol =  table_insert_function(context->symbol_table, id->name, context);
+            symbol = table_insert_function(context->symbol_table, id->name, context);
             break;
         default:
             set_error(ERR_SYNTAX);
             return NULL;
     }
-
 
     symbol->id = (Ident*)malloc(sizeof(Ident));
     if(id->class != NULL) {

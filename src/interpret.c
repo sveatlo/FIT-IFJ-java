@@ -25,7 +25,7 @@ static bool return_called;
 void interpret(Context* _main_context, List* instructions) {
     return_called = false;
     main_context = _main_context;
-    callstack = stack_init();
+    callstack = stack_init(StT_FRAME);
 
     current_frame = callframe_init(main_context, instructions, NULL);
     StackItemData item = {

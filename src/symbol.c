@@ -31,6 +31,7 @@ void symbol_dispose(Symbol* symbol) {
         }
 
         // free the variable structure
+        free(symbol->data.var);
     } else if(symbol->type == ST_FUNCTION) {
         context_dispose(symbol->data.fn->context);
         list_dispose(symbol->data.fn->instructions);
@@ -45,9 +46,8 @@ void symbol_dispose(Symbol* symbol) {
     str_dispose(symbol->name);
     if(symbol->id != NULL) {
         str_dispose(symbol->id->class);
-        if(symbol->name != symbol->id->name) {
-            str_dispose(symbol->id->name);
-        }
+        str_dispose(symbol->id->name);
+        free(symbol->id);
     }
 
     // free the symbol itself

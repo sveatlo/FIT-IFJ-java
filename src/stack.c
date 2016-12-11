@@ -3,9 +3,10 @@
 #include "error.h"
 
 //inicializace stacku
-Stack* stack_init() {
+Stack* stack_init(StackType type) {
     Stack* stack = (Stack*)malloc(sizeof(Stack));
     stack->top = NULL;
+    stack->type = type;
 
     return stack;
 }
@@ -16,19 +17,19 @@ void stack_dispose(Stack* stack) {
 
 //vlozime prvek na &stack
 void stack_push(Stack* stack, StackItemData item) {
-    StackItem* pom;
+    StackItem* tmp;
 
     // alokujeme element
-    pom = (StackItem*)malloc(sizeof(StackItem));
-    if (pom == NULL) {
+    tmp = (StackItem*)malloc(sizeof(StackItem));
+    if (tmp == NULL) {
         set_error(ERR_INTERPRET);
         return;
     }
 
     // nastavime hodnoty
-    pom->data = item;
-    pom->next = stack->top;
-    stack->top = pom;
+    tmp->data = item;
+    tmp->next = stack->top;
+    stack->top = tmp;
 }
 
 //odstranime prvek z topu stacku

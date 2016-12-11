@@ -57,6 +57,7 @@
 		\subsection{Syntaktická a sémantická analýza}
 		\subsection{Interpretácia}
 		\subsection{Algoritmy}
+			Oproti zdrojům z předmětu IAL, kde se při práci s řetězci používalo indexování od jedničky, v naší implementaci je využito indexování od 0, což zjednodušilo některé podmínky a zlepšilo přehlednost.
 			\subsubsection{Knuth-Morris-Prattův algoritmus}
 				Jedná se o algoritmus pro vyhledání podřetězce v řetězci. Klasické (triviální) vyhledávání podřetězce – tedy když postupně procházíme řetězec a u každého znaku zjišťujeme, zda se shoduje s podřetězcem, a v případě neshody se posuneme na další znak a musíme porovnávat s podřetězcem zase od začátku – vede v nejhorším případě až na časovou složitost \textbf{O(m·n)}, kde \textbf{m} je délka řetězce a \textbf{n} délka hledaného podřetězce. Tento algoritmus je tedy velmi neefektivní. O(m+n), tedy je mnohem rychlejší. KMP algoritmus dokáže sledovat, zda se v hledaném podřetězci opakují určité skupiny znaků (podřetězce). Při procházení textu pak při neshodě zjistí, zda se v části podřetězce, která už byla zkontrolována (dokud nedošlo k neshodě), nachází sufix, který je shodný s prefixem.\\
 				\textbf{Př.:}\\

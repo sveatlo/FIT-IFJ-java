@@ -90,7 +90,7 @@ void str_concat_const(String* dest, char* src) {
 
     int l = strlen(src);
     if(dest->length + l > dest->mem_size) {
-        _str_resize_raw(dest, dest->length + l);
+        _str_resize_raw(dest, dest->length + l + 1);
     }
 
     strncat(dest->str, src, dest->mem_size);
