@@ -23,9 +23,7 @@ int main(int argc, char** argv) {
 
     FILE *f = parse_parameters(argc, argv);
     if(get_error()->type) {
-        // lex error => exit
-        // TODO: cleanup
-        print_error();
+        // print_error();
         return get_error()->type;
     }
 
@@ -36,7 +34,7 @@ int main(int argc, char** argv) {
     if(get_error()->type) {
         // lex error => exit
         list_dispose(token_list);
-        print_error();
+        // print_error();
         return get_error()->type;
     }
     fclose(f);
@@ -48,18 +46,18 @@ int main(int argc, char** argv) {
 
     if(get_error()->type) {
         // parser error => exit
-        // TODO: cleanup
         list_dispose(instructions);
         context_dispose(context);
-        print_error();
+        // print_error();
         return get_error()->type;
     }
 
     interpret(context, instructions);
     if(get_error()->type) {
         // interpret error => exit
-        // TODO: cleanup
-        print_error();
+        list_dispose(instructions);
+        context_dispose(context);
+        // print_error();
         return get_error()->type;
     }
 

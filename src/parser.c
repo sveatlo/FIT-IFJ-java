@@ -260,6 +260,17 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
     //add variable to current context
     if(!second_run) {
         context_add_variable(current_context, current_type, current_token->data->id);
+    } else {
+        //check whether there is a fn on class level with same name. if so => err
+        Ident* symbol_id = (Ident*)malloc(sizeof(Ident));
+        symbol_id->class = str_init_str(current_class_name);
+        symbol_id->name = str_init_str(current_token->data->id->name);
+        Symbol* symbol = context_find_ident(current_context, main_context, symbol_id);
+        str_dispose(symbol_id->class);
+        str_dispose(symbol_id->name);
+        free(symbol_id);
+
+        if(symbol != NULL && symbol->type == ST_FUNCTION) return set_error(ERR_SEMANTIC);
     }
 
     //add to params_list
@@ -270,9 +281,6 @@ void params_list_rule(List* params_types_list, List* params_ids_list) {
         };
         data2.id->class = NULL;
         data2.id->name = str_init_str(current_token->data->id->name);
-        if(current_token->data->id->class) {
-            data2.id->class = str_init_str(current_token->data->id->class);
-        }
         switch (current_type) {
             case KW_BOOLEAN:
                 data1.var_type = VT_BOOL;
@@ -354,6 +362,20 @@ Symbol* definition_rule() {
     if(!second_run) {
         return context_add_variable(current_context, current_type, current_token->data->id);
     } else {
+        //check whether there is a fn on class level with same name. if so => err
+        Ident* symbol_id = (Ident*)malloc(sizeof(Ident));
+        symbol_id->class = str_init_str(current_class_name);
+        symbol_id->name = str_init_str(current_token->data->id->name);
+        Symbol* symbol = context_find_ident(current_context, main_context, symbol_id);
+        str_dispose(symbol_id->class);
+        str_dispose(symbol_id->name);
+        free(symbol_id);
+
+        if(symbol != NULL && symbol->type == ST_FUNCTION) {
+            set_error(ERR_SEMANTIC);
+            return NULL;
+        }
+
         SymbolTableNode* node = table_find_symbol(current_context->symbol_table, current_token->data->id->name);
         if(node != NULL) {
             return node->data;

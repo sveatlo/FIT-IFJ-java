@@ -37,10 +37,9 @@
     \setcounter{page}{1}
     \section{Úvod}
     Táto dokumentácia slúži ako textová časť riešenia projektu z predmetu IFJ pre rok 2016/2017. Celý dokument sa delí do niekoľkých kapitol a príloh. Postupne sú rozoberané všetky dôležité prvky implementácie jednotlivých častí interpretu
-    \newpage
     \section{Práca v tíme}
-     Zo začiatku projektu bola v našom tíme snaha o pravidelne stretnutia 1-2-krát týždenne. To sa však postupne ukázalo ako neefektívne vzhľadom na malé množstvo užitočných informácii, ktoré sa prebrali počas týchto stretnutí a tak sa celá komunikácia presunula na Slack a skôr sa rozdelila medzi ľudí spolupracujúcich na jednotlivých častiach projektu.Tým pádom sa často stalo, že na jednotlivých častiach projektu sa pracovalo skôr skupinovo ako individuálne \\
-	 Rozhodnutia o smerovaní projektu boli síce centralizované, ale zároveň otvorené k diskusii.
+	    Zo začiatku projektu bola v našom tíme snaha o pravidelne stretnutia 1-2-krát týždenne. To sa však postupne ukázalo ako neefektívne vzhľadom na malé množstvo užitočných informácii, ktoré sa prebrali počas týchto stretnutí a tak sa celá komunikácia presunula na Slack a skôr sa rozdelila medzi ľudí spolupracujúcich na jednotlivých častiach projektu.Tým pádom sa často stalo, že na jednotlivých častiach projektu sa pracovalo skôr skupinovo ako individuálne \\
+		 Rozhodnutia o smerovaní projektu boli síce centralizované, ale zároveň otvorené k diskusii.
         \subsection{Verzovací systém}
 			Ako nástroj na správu verzií a zdielanie kódu sme zvolili GIT, pričom vzdialený ako vzdialený repozitár bol zvolený privátny server GitLab, ktorý zároveň slúžil na zadávanie tzv. \texttt{issues} , teda problémov, ktoré treba vyriešiť.
 		\subsection{Rozdelenie práce}
@@ -49,29 +48,25 @@
 	        Nevyhnutnou súčasťou takéhoto projektu sú automatizované testy. Napriek iniciatíve a snahe o ich včasné napísanie sa tak bohužial stalo až v poslednej tretine riešenia projektu. Napriek tomu nám však veľmi pomohli pri odhaľovaní chýb.\\
 	        Okrem automatizovaných testov sme pre odhaľovanie chýb používali aj nástroje na statickú analýzu kódu.
 	\section{Riešenie interpretu}
-    V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interprétu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať.
+	    V tejto kapitole bude detailne rozobraný postup pri tvorbe, správenie sa a optimalizácia našeho interprétu. Jednotlivé problematiky sú rozdelné do viacero častí, kde sa každej budeme podrobnejšie venovať.
 
         \subsection{Lexikálna analýza}
-        Keď sme začali riešiť lexikálnu analýzu, museli sme si najprv uvedomiť, ako budeme rozlišovať jednotlivé znaky. Rozhodli sme sa, že najpraktickejśie riešenie bude implementovať  \textbf{scanner}. Ten spracúvava jednotlivé znaky - \textbf{tokeny} a rozdeľuje ich do jednotlivých \textbf{stavov} ktoré môžu nastať.
-
-        Aj keď z hľadiska samotnej funkčnosti spracúvavame celý súbor a až potom vyhodnocujeme chyby, z lexikálneho hľadiska by sme mohli naraziť na syntaktickú chybu predtým ako by sme narazili ešte na lexikálnu.Z tohoto dôvodu prioritizujeme postup, kde ideme po jednolitvých tokenoch a skúmame, či je lexikálne všetko v poriadku. V prípade, že nie, dostaneme sa do stavu \verb|SS_LEX_ERROR|.
-
-        Presný postup samotného vyhodnocovania je relatívne komplikovaný a zdĺhavý a z toho dôvodu je aj spracovaný vo forme konečného automatu (\ref{sec:KA}) na strane \pageref{sec:KA}
+	        Keď sme začali riešiť lexikálnu analýzu, museli sme si najprv uvedomiť, ako budeme rozlišovať jednotlivé znaky. Rozhodli sme sa, že najpraktickejśie riešenie bude implementovať  \textbf{scanner}. Ten spracúvava jednotlivé znaky - \textbf{tokeny} a rozdeľuje ich do jednotlivých \textbf{stavov} ktoré môžu nastať.
+	
+	        Aj keď z hľadiska samotnej funkčnosti spracúvavame celý súbor a až potom vyhodnocujeme chyby, z lexikálneho hľadiska by sme mohli naraziť na syntaktickú chybu predtým ako by sme narazili ešte na lexikálnu.Z tohoto dôvodu prioritizujeme postup, kde ideme po jednolitvých tokenoch a skúmame, či je lexikálne všetko v poriadku. V prípade, že nie, dostaneme sa do stavu \verb|SS_LEX_ERROR|.
+	
+	        Presný postup samotného vyhodnocovania je relatívne komplikovaný a zdĺhavý a z toho dôvodu je aj spracovaný vo forme konečného automatu (\ref{sec:KA}) na strane \pageref{sec:KA}
 
         \subsection{Syntaktická a semantická analýza}
-        Naša analýza prebieha dvojfázovo, v tej prvej časti sa venujeme \textbf{syntaktickej} časti, nasledovne sa upriamime na lokálne premenné, najprv v hlavnom tele programu a potom aj v jednotlivých funkciách, ktorú riešime pomocou \textbf{tabuľky symbolov}.
-
-        Po bezproblémovom prechode sa môžeme presunúť na semantickú časť. Semantické chyby môžu nastať aj keď je program syntakticky v poriadku, napr. volanie neexistujúcej funkcie, alebo aj existujúcej, ale so zlým počtom parametrov, prípadne volanie neexistujúcich premenných, mylné priradenie hodnoty namiesto logického operátora atď..
-
-        Zároveň sa v druhej časti generujú inštrukcie pre interpret s ktorými bude potom narábať.
+	        Naša analýza prebieha dvojfázovo, v tej prvej časti sa venujeme \textbf{syntaktickej} časti, nasledovne sa upriamime na lokálne premenné, najprv v hlavnom tele programu a potom aj v jednotlivých funkciách, ktorú riešime pomocou \textbf{tabuľky symbolov}.\\
+	        Po bezproblémovom prechode sa môžeme presunúť na semantickú časť. Semantické chyby môžu nastať aj keď je program syntakticky v poriadku, napr. volanie neexistujúcej funkcie, alebo aj existujúcej, ale so zlým počtom parametrov, prípadne volanie neexistujúcich premenných, mylné priradenie hodnoty namiesto logického operátora atď..\\
+	        Zároveň sa v druhej časti generujú inštrukcie pre interpret s ktorými bude potom narábať.
+	        
         \subsection{Interpretácia}
-        Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.
-
-        Pomocou troj-adresového kódu, ktorý využíva  vytvorenú \textbf{sadu inštrukcií} zisťujeme chovanie nášho interpréta. Pri cykloch sme namiesto jednotlivých inštrukcií využila skoky, aby sme zlepšili efektivitu programu.
-
-        Dostávame inštrukciu \verb|IC_EVAL| ktorá volá funckiu \verb|evaluate_expression()|, kde následne rozlišujeme aritmetické a logické operácie a určí výslednú hodnotu výrazu.
-
-        Je dôležité upozoniť, že samotná interpretácia prebieha za behu. Interprét spracúva jednotlivé inštrukcie lineárne a vyhodnocuje ich, až kým všetko neprejdeme a dostaneme náš žiadaný výsledok
+	        Jedná sa o záverečnú - finalizačnú časť projektu, ktorá prebehne až po vykonaní lexikálnej, syntaktickej a sémantickej analýze. Ak zistíme, že je všetko v poriadku, môžeme začat s interpretovaním.\\
+	        Pomocou troj-adresového kódu, ktorý využíva  vytvorenú \textbf{sadu inštrukcií} zisťujeme chovanie nášho interpréta. Pri cykloch sme namiesto jednotlivých inštrukcií využila skoky, aby sme zlepšili efektivitu programu.\\
+	        Dostávame inštrukciu \verb|IC_EVAL| ktorá volá funckiu \verb|evaluate_expression()|, kde následne rozlišujeme aritmetické a logické operácie a určí výslednú hodnotu výrazu.\\
+	        Je dôležité upozoniť, že samotná interpretácia prebieha za behu. Interprét spracúva jednotlivé inštrukcie lineárne a vyhodnocuje ich, až kým všetko neprejdeme a dostaneme náš žiadaný výsledok
 
         \subsection{Algoritmy}
         Oproti zdrojům z předmětu IAL, kde se při práci s řetězci používalo indexování od jedničky, v naší implementaci je využito indexování od 0, což zjednodušilo některé podmínky a zlepšilo přehlednost.
@@ -120,6 +115,46 @@
 	    \end{center}
 
         \subsection{LL gramatika}
+	        \begin{enumerate}
+				\item \( CLASS\textunderscore{}LIST\quad{}\rightarrow\quad{}CLASS CLASS\textunderscore{}LIST \)
+				\item \( CLASS\quad{}\rightarrow\quad{}'class'\ ID\ '\{'\ CLASS\textunderscore{}MEMBERS '\}' \)
+				\item \( CLASS\textunderscore{}MEMBERS\quad{}\rightarrow\quad{}'static'\ TYPE\ CLASS\textunderscore{}MEMBER\ CLASS\textunderscore{}MEMBERS \)
+				\item \( CLASS\textunderscore{}MEMBER\quad{}\rightarrow\quad{}ID\ ';' \)
+				\item \( CLASS\textunderscore{}MEMBER\quad{}\rightarrow\quad{}ID\ '='\ EXPR ';' \)
+				\item \( CLASS\textunderscore{}MEMBER\quad{}\rightarrow\quad{}ID '\left(' PARAMS\textunderscore{}LIST '\right)'\ '\{' STAT\textunderscore{}LIST '\}' \)
+				\item \( PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}\epsilon \)
+				\item \( PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}TYPE\ ID\ PARAMS\textunderscore{}LIST2 \)
+				\item \( PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}\epsilon \)
+				\item \( PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}','\ TYPE\ ID \)
+				\item \( STAT\textunderscore{}LIST\quad{}\rightarrow\quad{}STAT\ STAT\textunderscore{}LIST \)
+				\item \( STAT\quad{}\rightarrow\quad{}TYPE\ STAT\textunderscore{}VAR\textunderscore{}DEFINITION \)
+				\item \( STAT\textunderscore{}VAR\textunderscore{}DEFINITION\quad{}\rightarrow\quad{}ID ';' \)
+				\item \( STAT\textunderscore{}VAR\textunderscore{}DEFINITION\quad{}\rightarrow\quad{}ID\ '='\ EXPR ';' \)
+				\item \( STAT\quad{}\rightarrow\quad{}'IF'\ \ '\left(' EXPR '\right)'\ '\{'\ STAT\textunderscore{}LIST\ '\}'\ 'ELSE'\ '\{'STAT\textunderscore{}LIST\ '\}'\)
+				\item \( STAT\quad{}\rightarrow\quad{}WHILE\ \ '(' EXPR ')'\ \ '\{' STAT\textunderscore{}LIST '\}' \)
+				\item \( STAT\quad{}\rightarrow\quad{}ID\ '='\ EXPR \)
+				\item \( STAT\quad{}\rightarrow\quad{}ID\ \left( CALL\textunderscore{}PARAMS\textunderscore{}LIST \right) ';' \)
+				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}\epsilon \)
+				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST\quad{}\rightarrow\quad{}EXPR CALL\textunderscore{}PARAMS\textunderscore{}LIST2 \)
+				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}\epsilon \)
+				\item \( CALL\textunderscore{}PARAMS\textunderscore{}LIST2\quad{}\rightarrow\quad{}',' EXPR CALL\textunderscore{}PARAMS\textunderscore{}LIST2 \)
+				\item \( EXPR\quad{}\rightarrow\quad{}ID \)
+				\item \( EXPR\quad{}\rightarrow\quad{}ID '(' CALL\textunderscore{}PARAMS\textunderscore{}LIST ')' \)
+				\item \( EXPR\quad{}\rightarrow\quad{}LITERAL \)
+				\item \( EXPR\quad{}\rightarrow\quad{}'(' EXPR ')' \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ +\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ -\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ *\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ /\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ <\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ >\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ <=\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ >=\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ ==\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ !=\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ ||\ EXPR \)
+				\item \( EXPR\quad{}\rightarrow\quad{}EXPR\ \&\&\ EXPR \)
+	        \end{enumerate}
 
         \subsection{Precedenčná tabuľka} \label{sec:tab}
         Precedenčná tabuľka slúži na určenie priority tokenov.
@@ -150,10 +185,9 @@
             \end{tabular}
         \end{center}
         \subsection{Literatúra}
-        \begin{itemize}
-            \item Prednašky, skriptá a materiály k predmetu IFJ
-        \end{itemize}
-        \newpage
-    \section{Záver}
-    Ak by sme mali zhodnotiť projekt jedným slovom, tak by to asi bolo náročný. Odtestoval nie len naše programátorské schopnosti, ale okrem toho, na ktoré priam dosloval tlačil aj tímové. Celkovo ale hodnotíme projekt pozitívne, lebo nám dal veľa nových skúseností. Tématika projektu bola zaujímavá aj napriek jeho relatívnej obtiažnosti a pomohol nám nie len k lepšiemu chápaniu samotného interpréta, ale aj nám rozšíril znalosti a problematiku týkajúcu sa predmetu IFJ, či aj dokonca ako by približne vyzerala reálna tímová práca v našich potenciálnych zamestnaniach.
+	        Pri tvobre projektu sme využívali nasledovné zdroje:
+	        \begin{itemize}
+	            \item Prednašky, skriptá a materiály k predmetu IFJ
+	            \item MEDUNA, Alexander. 2000. Automata and languages: theory and applications. London: Springer, xv, 916 s.
+	        \end{itemize}
 \end{document}
