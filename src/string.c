@@ -144,8 +144,8 @@ void double_to_string(String* s, double d) {
 }
 
 void bool_to_string(String* s, bool b) {
-    _str_resize_raw(s, 5);
-    snprintf(s->str, 5, "%s", b ? "true" : "false");
+    _str_resize_raw(s, 6);
+    snprintf(s->str, 6, "%s", b ? "true" : "false");
     s->length = strlen(s->str);
 }
 
