@@ -44,7 +44,7 @@ Error* get_error () {
 }
 
 void print_error () {
-    printf("An error occured: %s %d %s:%d %s\n", err_strings[last_error.type], last_error.type, last_error.filename, last_error.line, last_error.function);
+    fprintf(stderr, "An error occured: %s %d %s:%d %s\n", err_strings[last_error.type], last_error.type, last_error.filename, last_error.line, last_error.function);
 }
 
 void clear_error () {

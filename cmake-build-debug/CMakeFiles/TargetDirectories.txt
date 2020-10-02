@@ -1,0 +1,3 @@
+/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/CMakeFiles/proj1.dir

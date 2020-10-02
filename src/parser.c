@@ -568,7 +568,7 @@ void stat_rule(bool is_void, bool can_define) {
                 call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
                 if(get_error()->type) return;
                 if(symbol->data.fn->params_types_list->active != NULL) {
-                    //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                    fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                     //fn params but call params ended
                     return set_error(ERR_SEM_PARAMS);
                 }
@@ -626,7 +626,7 @@ void stat_rule(bool is_void, bool can_define) {
                 instruction_insert_to_list(current_instructions, instruction_generate(IC_EVAL, expr, NULL, symbol));
             }
         } else {
-            //fprintf(stderr, "Unexpected token: %s\n", token_to_string(current_token));
+            fprintf(stderr, "Unexpected token: %s\n", token_to_string(current_token));
             return set_error(ERR_SYNTAX);
         }
     } else if(current_token->type == STT_KEYWORD_TYPE) {
@@ -754,7 +754,7 @@ Expression* general_expression_rule(ScannerTokenType end_token, ScannerTokenType
                         call_params_list_rule(symbol->data.fn->params_types_list, call_params_list);
                         if(get_error()->type) return NULL;
                         if(symbol->data.fn->params_types_list->active != NULL) {
-                            //fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
+                            fprintf(stderr, "Not all params supplied for fn: %s\n", str_get_str(symbol->name));
                             //fn params but call params ended
                             expression_dispose(data.expression);
                             set_error(ERR_SEM_PARAMS);

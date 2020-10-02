@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="proj1"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="proj1">
+				<Option output="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/proj1" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 proj1"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="proj1/fast">
+				<Option output="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/proj1" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.3.1/../../../../include/c++/6.3.1/backward"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 proj1/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/callframe.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/callframe.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/callstack.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/context.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/context.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/error.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/error.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/expression.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/expression.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/ial.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/ial.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/inbuilt.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/inbuilt.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/instruction.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/instruction.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/interpret.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/interpret.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/list.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/list.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/main.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/parser.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/parser.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/precedence_table.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/precedence_table.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/scanner.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/scanner.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/scanner_token.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/scanner_token.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/stack.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/stack.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/string.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/string.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/symbol.c">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/symbol.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/src/variable.h">
+			<Option target="proj1"/>
+		</Unit>
+		<Unit filename="/home/sveatlo/Documents/school/uni/assignments/2/winter/IFJ/proj1/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

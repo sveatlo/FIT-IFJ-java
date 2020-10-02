@@ -55,6 +55,44 @@ int main(int argc, char** argv) {
     }
     fclose(f);
 
+    // list_activate_first(token_list);
+    // char keywords[][255] = {
+    //     [KW_BOOLEAN] = "KW_BOOLEAN",
+    //     [KW_BREAK] = "KW_BREAK",
+    //     [KW_CLASS] = "KW_CLASS",
+    //     [KW_CONTINUE] = "KW_CONTINUE",
+    //     [KW_DO] = "KW_DO",
+    //     [KW_DOUBLE] = "KW_DOUBLE",
+    //     [KW_ELSE] = "KW_ELSE",
+    //     [KW_FALSE] = "KW_FALSE",
+    //     [KW_FOR] = "KW_FOR",
+    //     [KW_IF] = "KW_IF",
+    //     [KW_INT] = "KW_INT",
+    //     [KW_RETURN] = "KW_RETURN",
+    //     [KW_STATIC] = "KW_STATIC",
+    //     [KW_STRING] = "KW_STRING",
+    //     [KW_TRUE] = "KW_TRUE",
+    //     [KW_VOID] = "KW_VOID",
+    //     [KW_WHILE] = "KW_WHILE"
+    // };
+    // for(ScannerToken* current_token = token_list->active->data.token; token_list->active != NULL; list_activate_next(token_list), current_token = token_list->active != NULL ? token_list->active->data.token : NULL) {
+    //     switch (current_token->type) {
+    //         case STT_IDENT:
+    //             if(current_token->data->id->class) {
+    //                 printf("<%s:%s.%s>", token_to_string(current_token), str_get_str(current_token->data->id->class), str_get_str(current_token->data->id->name));
+    //             } else {
+    //                 printf("<%s:%s>", token_to_string(current_token), str_get_str(current_token->data->id->name));
+    //             }
+    //             break;
+    //         case STT_KEYWORD:
+    //             printf("<%s:%s>", token_to_string(current_token), keywords[current_token->data->keyword_type]);
+    //             break;
+    //         default:
+    //             printf("<%s>", token_to_string(current_token));
+    //     }
+    // }
+    // return -1;
+
     Context* context = NULL;
     List* instructions = NULL;
     parse(token_list, &context, &instructions);
